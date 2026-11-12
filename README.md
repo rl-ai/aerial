@@ -99,12 +99,3 @@ hybrid — use the best model for the task, keep the governance local.*
 - A prompt-injection attempt embedded in job data was **refused and
   logged as evidence** — the agent treated the attack as a finding, not an
   instruction.
-
-## Honest Limits
-
-- v0.9-rc1: self-hosted, single-operator focus; multi-tenant is not
-  designed yet.
-- The decision queue's live feed is in final integration.
-- A 7-day reliability record and dogfood validation are in progress.
-- Local models trail frontier cloud models on raw capability — that's why
-  routing is hybrid and per-task.
