@@ -161,17 +161,8 @@ A long transaction from ~04:50 blocked all writes   <span class="tag inferred">I
 <!-- 5 · CLOSE -->
 <section id="close">
   <div class="kicker">what it won't do — on purpose</div>
-  <h2>Try it on your own notes.</h2>
+  <h2>Built by its own agents.</h2>
   <p class="muted"><b>Honest limits:</b> the gateway is read-only (writes stay in the curator pipeline). No enumeration tool. Exact dedup only — no supersession resolution yet. Deterministic governance (regex/ledger/hash), so borderline content is refused rather than rewritten. Single vault, single user, local process, stdio only.</p>
-  <p>Point it at a folder of markdown notes with a sensitivity label, create a grant, and hand the tools to any MCP client (Claude Code, Cursor, …):</p>
-  <pre class="code">python3 -m secondbrain_mcp --vault ~/notes-ws --grant &lt;grant_id&gt; --key &lt;key&gt;</pre>
-  <pre class="code">{"mcpServers": {"secondbrain": {
-  "command": "python3",
-  "args": ["-m", "secondbrain_mcp", "--vault", "/home/you/notes-ws",
-           "--grant", "g-2026-11-abc123", "--key", "sk-g…"],
-  "env": {"PYTHONPATH": "/path/to/secondbrain-mcp"}}}}</pre>
-  <p>Ask it <em>"search my notes for squat progress"</em> — every result comes back with a sensitivity label, source file, timestamp and citation hashes, locations generalized, dates cut to month granularity, exactly as your grant's disclosure rules require.</p>
-  <p><b>Aerial v0.9-rc1</b> — built and governed by its own agents.</p>
 </section>
 
 <footer>
