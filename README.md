@@ -41,7 +41,7 @@ measure it against what's happening in your world — money leaking, time
 wasted, an opening that matches your work. The gaps become queue items;
 the work gets done; you see the evidence.
 
-## The chief of staff
+## Executive agent — chief of staff
 
 One executive agent consolidates updates and insights into a personalized
 report: what happened, what the agents did, and the decisions that
