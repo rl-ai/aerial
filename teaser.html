@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aerial — a 60-second glimpse</title>
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0 0 64px;
+    font: 16px/1.55 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #f6f7f9; color: #1c2330;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 20px; }
+  header.top { padding: 44px 0 8px; }
+  h1 { font-size: 30px; line-height: 1.2; margin: 0 0 10px; letter-spacing: -0.5px; }
+  h2 { font-size: 21px; margin: 0 0 14px; letter-spacing: -0.3px; }
+  h3 { font-size: 15px; margin: 18px 0 8px; color: #5a6577; text-transform: uppercase; letter-spacing: 0.6px; }
+  p { margin: 0 0 12px; }
+  a { color: #0b62d6; }
+  section { margin-top: 52px; }
+  .kicker { font-size: 12px; letter-spacing: 1.4px; text-transform: uppercase; color: #7a8496; margin-bottom: 6px; }
+  .muted { color: #5a6577; font-size: 14px; }
+  .card {
+    background: #fff; border: 1px solid #dde2ea; border-radius: 10px;
+    padding: 16px 18px; margin: 12px 0;
+  }
+  .flow { display: grid; grid-template-columns: 1fr; gap: 0; }
+  .step { display: flex; gap: 14px; }
+  .step .rail { width: 34px; flex: none; text-align: center; }
+  .step .dot {
+    width: 28px; height: 28px; border-radius: 50%; background: #0b62d6; color: #fff;
+    font-weight: 700; font-size: 13px; line-height: 28px; margin: 2px auto 0;
+  }
+  .step.fail .dot { background: #b3261e; }
+  .step.heal .dot { background: #1b7f4d; }
+  .step .body { border-left: 2px solid #dde2ea; padding: 0 0 22px 14px; margin-left: -15px; flex: 1; }
+  .step:last-of-type .body { border-left-color: transparent; padding-bottom: 6px; }
+  .step h4 { margin: 2px 0 6px; font-size: 16px; }
+  .step.fail h4 { color: #b3261e; }
+  .step.heal h4 { color: #1b7f4d; }
+  .evidence { font: 12.5px/1.5 ui-monospace, "SF Mono", Menlo, Consolas, monospace; background: #f0f2f6; border: 1px solid #dde2ea; border-radius: 6px; padding: 8px 10px; margin: 8px 0; overflow-x: auto; white-space: pre-wrap; word-break: break-word; }
+  .tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; padding: 1px 7px; border-radius: 4px; vertical-align: 1px; }
+  .tag.verified { background: #1b7f4d; color: #fff; }
+  .tag.inferred { border: 1px solid #8b93a3; color: #5a6577; }
+  .tag.live { background: #1b7f4d; color: #fff; }
+  .quote { border-left: 3px solid #0b62d6; padding: 2px 0 2px 14px; margin: 10px 0; }
+  .stat { display: inline-block; background: #fff; border: 1px solid #dde2ea; border-radius: 10px; padding: 12px 18px; margin: 6px 8px 6px 0; }
+  .stat b { display: block; font-size: 26px; letter-spacing: -0.5px; }
+  .stat span { font-size: 13px; color: #5a6577; }
+  .banner { background: #fdf3d7; border: 1px solid #e7d28a; color: #6b5410; border-radius: 6px; padding: 8px 12px; font-size: 14px; }
+  code { font: 13px ui-monospace, "SF Mono", Menlo, Consolas, monospace; background: #f0f2f6; padding: 1px 5px; border-radius: 4px; }
+  pre.code { font: 13px/1.5 ui-monospace, "SF Mono", Menlo, Consolas, monospace; background: #14181f; color: #e6e9ef; border-radius: 8px; padding: 14px 16px; overflow-x: auto; }
+  footer { margin-top: 60px; border-top: 1px solid #dde2ea; padding-top: 18px; color: #5a6577; font-size: 14px; }
+  .src { font-size: 12.5px; color: #7a8496; }
+  @media (prefers-color-scheme: dark) {
+    body { background: #101319; color: #dfe4ec; }
+    h3, .muted, footer, .src, .stat span, table.themes th { color: #98a2b3; }
+    .card { background: #171c25; border-color: #2a3140; }
+    .step .body, table.themes th, table.themes td { border-color: #2a3140; }
+    .evidence, code { background: #1d2430; border-color: #2a3140; }
+    a { color: #6db2ff; }
+    .banner { background: #33290f; border-color: #5a4a1a; color: #d9c37a; }
+    .quote { border-left-color: #6db2ff; }
+    .tag.inferred { border-color: #98a2b3; color: #98a2b3; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div class="kicker">Aerial · friends &amp; family preview</div>
+  <h1>Agents that show their work — and refuse when they should.</h1>
+  <p class="muted">Aerial is a self-hosted agent system where every claim carries an evidence label, every decision has a named owner, and the private stuff stays private. Here's 60 seconds of what that looks like, using real artifacts from our own fleet — nothing staged.</p>
+</header>
+
+<!-- 1 · HOOK -->
+<section id="hook">
+  <h2>We audited ourselves first.</h2>
+  <div class="stat"><b>48%</b><span>of our own agents' tool calls were made by a role we had already retired</span></div>
+  <p class="muted">3,638 calls reconciled against our model-call ledger: 1,763 came from a retired polling role (<code>qwen-listen</code>) that kept firing — nobody told the scheduler it was gone. Every agent system has ghosts like this. Ours at least can count them.</p>
+  <p class="src">Source: internal fleet audit (t4 ledger), <code>lanes-bizdev/audit-sprint/audit-onepager.md</code></p>
+</section>
+
+<!-- 2 · THE STORY -->
+<section id="story">
+  <div class="kicker">a real incident, told by the agents who handled it</div>
+  <h2>One job fails. Watch the system work.</h2>
+  <p class="muted">On Nov 12 at 05:15 UTC, a scheduled job that publishes our orchestration rules to the wiki died with an HTTP 500. What follows is the actual chain — findings, review, brief — quoted from the board.</p>
+
+  <div class="flow">
+    <div class="step fail">
+      <div class="rail"><div class="dot">1</div></div>
+      <div class="body">
+        <h4>The failure</h4>
+        <p><code>orchestration_sync.py publish-wiki</code> → <span class="evidence" style="display:inline-block;padding:2px 8px">2026-11-12T05:15:02.168Z "POST /wiki/orchestrator-model-calls HTTP/1.1" 500 Internal Server Error</span> — verified in the hub's own docker logs.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="rail"><div class="dot">2</div></div>
+      <div class="body">
+        <h4>The curator investigates — with evidence labels, not vibes</h4>
+        <div class="evidence">sqlite3.OperationalError: database is locked  →  store.py:699 put_page   <span class="tag verified">VERIFIED</span>
+A concurrent PATCH /jobs/runs succeeded 1 ms after the 500 — same second, same lock   <span class="tag verified">VERIFIED</span>
+A long transaction from ~04:50 blocked all writes   <span class="tag inferred">INFERRED</span></div>
+        <p class="muted">The curator pulled the server-side traceback out of the hub container and named exactly which claims were verified and which were inferred. The identical request retried → <span class="evidence" style="display:inline;padding:2px 6px">05:16:38.631 POST /wiki/orchestrator-model-calls 201 Created</span> <span class="tag verified">VERIFIED</span></p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="rail"><div class="dot">3</div></div>
+      <div class="body">
+        <h4>The lead reviews and decides</h4>
+        <div class="quote"><p>"Pursue the hub-side fix first: set <code>PRAGMA busy_timeout=5000</code> and enable WAL mode … and add a short retry-with-backoff around write transactions."</p><p class="muted">— lead review, after independently re-checking every cited log line. Client-side bug: REJECT (verified ruled out — retry succeeded, code unchanged since Nov 5).</p></div>
+      </div>
+    </div>
+
+    <div class="step heal">
+      <div class="rail"><div class="dot">4</div></div>
+      <div class="body">
+        <h4>The self-heal — the part we're proud of</h4>
+        <p>Diagnosing the failure <em>required</em> re-POSTing the page. That diagnostic call succeeded and published the page at <b>rev 8</b> — <b>the failed job's work got done as a side effect of investigating it.</b> No human touched anything. The exec brief then wrote itself:</p>
+        <div class="card"><p><b>What happened:</b> The scheduled <code>orchestration_sync.py publish-wiki</code> run died with an HTTP 500 from the ticket hub because its SQLite database was locked by a concurrent writer (<code>store.py:699 put_page</code>), a transient hub-side failure, not a client bug — the page was already published on the diagnostic re-POST (rev 8).</p><p><b>What was decided:</b> Fix the hub first — enable WAL mode and <code>PRAGMA busy_timeout=5000</code> on connection open, plus short retry-with-backoff around write transactions in <code>ticket_hub/store.py</code>; the client-side 500/503 retry in <code>hub_http()</code> is worth doing but secondary.</p></div>
+      </div>
+    </div>
+  </div>
+  <p class="src">Source: <code>orchestration-sync-20261112T051627/{findings.md, review.md, brief.md}</code> — quoted verbatim.</p>
+</section>
+
+<!-- 3 · GOVERNANCE -->
+<section id="governance">
+  <div class="kicker">the moment most agent products skip</div>
+  <h2>Ask it about your intimate notes. It refuses. By design.</h2>
+  <p>Aerial's knowledge gateway exposes exactly two tools to any outside agent — <code>brain_search</code> and <code>brain_get</code> — over a scoped, revocable grant. Content labeled <code>intimate</code> is never returned in any form. What a refusal actually looks like (a structured result, so the calling agent adapts gracefully instead of erroring out):</p>
+  <pre class="code">{"refused": true, "reason": "intimate"}        // never released
+{"refused": true, "reason": "outside_scope"}   // exists, but not in this grant's closure
+{"refused": true, "reason": "not_found"}       // unknown or tombstoned — indistinguishable on purpose</pre>
+  <p>And when a degraded gateway can't fully validate the grant, graph, or vault, it fails <b>closed</b>: you get a tool error, never open content. Every call lands in the grant ledger; the withheld count surfaces to the operator as governance you can see working.</p>
+  <p class="src">Source: <code>secondbrain_mcp/README.md</code> — the governed read path over your private notes.</p>
+</section>
+
+<!-- 4 · CONSOLE GLIMPSE -->
+<section id="console">
+  <div class="kicker">the operator console · v0.9-rc1</div>
+  <h2>One board for the whole fleet.</h2>
+  <p>The daily board, exactly as the live console rendered it at 18:57 — including the sections that were honestly marked degraded. We don't fake dashboards, even in a teaser.</p>
+  <div class="card">
+    <p><b>Operator Console</b> · generated 18:57 &nbsp; <span class="tag live">A live</span> <span class="tag live">B live</span> <span class="tag live">C live</span></p>
+    <p style="margin:10px 0 4px"><b>Zone B — needs a person:</b> queue empty.</p>
+    <p style="margin:10px 0 4px"><b>Zone A — project statuses:</b> 25 agent roles tracked (dispatch, model calls, curator pipelines, switchboard) with status, ETA, tokens and evidence columns.</p>
+    <p style="margin:10px 0 4px"><b>Executive summary</b> and <b>Themes &amp; trends</b>:</p>
+    <div class="banner">unavailable — no last-known-good read</div>
+    <p class="muted" style="margin-top:8px">When the data layer degrades, the board says so in those words instead of showing stale numbers with a straight face. Zones A/B/C kept their live chips the whole time.</p>
+  </div>
+  <p class="src">Source: <code>build/demo/console-dashboard.html</code> — static snapshot of the live board, embedded as rendered.</p>
+</section>
+
+<!-- 5 · CLOSE -->
+<section id="close">
+  <div class="kicker">what it won't do — on purpose</div>
+  <h2>Try it on your own notes.</h2>
+  <p class="muted"><b>Honest limits:</b> the gateway is read-only (writes stay in the curator pipeline). No enumeration tool. Exact dedup only — no supersession resolution yet. Deterministic governance (regex/ledger/hash), so borderline content is refused rather than rewritten. Single vault, single user, local process, stdio only.</p>
+  <p>Point it at a folder of markdown notes with a sensitivity label, create a grant, and hand the tools to any MCP client (Claude Code, Cursor, …):</p>
+  <pre class="code">python3 -m secondbrain_mcp --vault ~/notes-ws --grant &lt;grant_id&gt; --key &lt;key&gt;</pre>
+  <pre class="code">{"mcpServers": {"secondbrain": {
+  "command": "python3",
+  "args": ["-m", "secondbrain_mcp", "--vault", "/home/you/notes-ws",
+           "--grant", "g-2026-11-abc123", "--key", "sk-g…"],
+  "env": {"PYTHONPATH": "/path/to/secondbrain-mcp"}}}}</pre>
+  <p>Ask it <em>"search my notes for squat progress"</em> — every result comes back with a sensitivity label, source file, timestamp and citation hashes, locations generalized, dates cut to month granularity, exactly as your grant's disclosure rules require.</p>
+  <p><b>Aerial v0.9-rc1</b> — built and governed by its own agents.</p>
+</section>
+
+<footer>
+  <p>Everything above is quoted from real artifacts of this system: the fleet audit ledger, the incident findings / review / brief of Nov 12, the secondbrain-mcp README, and the rendered operator console. No numbers were invented for this page.</p>
+</footer>
+
+</div>
+</body>
+</html>
