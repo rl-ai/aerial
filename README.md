@@ -5,7 +5,7 @@ your knowledge base, and turn gaps into opportunities that they act on —
 and one executive agent, your chief of staff, consolidates it all into a
 personalized report built specifically for you.
 
-## In one glance
+## In One Glance
 
 - **A daily planner built around you** — it connects your accounts,
   plans your day locally, and finds things that bring joy without costing
@@ -19,7 +19,7 @@ personalized report built specifically for you.
 - **A chief of staff, not a dashboard** — one executive agent brings you
   a personalized report: what happened, what it did, what needs you.
 
-## The planner
+## The Planner
 
 It plans your day around you — finding things that bring joy without
 costing money. It saw the one sunny hour and moved your run there; it
@@ -41,13 +41,13 @@ measure it against what's happening in your world — money leaking, time
 wasted, an opening that matches your work. The gaps become queue items;
 the work gets done; you see the evidence.
 
-## Executive agent — chief of staff
+## Executive Agent — Chief of Staff
 
 One executive agent consolidates updates and insights into a personalized
 report: what happened, what the agents did, and the decisions that
 genuinely need you — 15 seconds and you know your day.
 
-## Under the hood
+## Under the Hood
 
 - Content-addressed knowledge base; sensitivity labels on everything
   (public/personal/sensitive/intimate, conservative default)
@@ -65,7 +65,7 @@ genuinely need you — 15 seconds and you know your day.
 - Every improvement is A/B-tested against a scenario suite before
   adoption
 
-## How it compares
+## How It Compares
 
 | Capability | **Aerial** | dsh-superagent | LangChain/LangSmith | CrewAI | Mem0 | Zep | Claude Code/Cursor | Devin |
 |---|---|---|---|---|---|---|---|---|
@@ -89,7 +89,7 @@ CrewAI's community and maturity, Zep's memory scale, frontier cloud
 models' raw capability, and everyone's polish. That's why routing is
 hybrid — use the best model for the task, keep the governance local.*
 
-## Proof from our own fleet
+## Proof From Our Own Fleet
 
 - Our agents discovered that **48% of our own AI spend** went to a retired
   role nobody told the scheduler.
@@ -100,7 +100,7 @@ hybrid — use the best model for the task, keep the governance local.*
   logged as evidence** — the agent treated the attack as a finding, not an
   instruction.
 
-## Honest limits
+## Honest Limits
 
 - v0.9-rc1: self-hosted, single-operator focus; multi-tenant is not
   designed yet.
