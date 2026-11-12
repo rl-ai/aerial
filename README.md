@@ -5,7 +5,7 @@ your knowledge base, and turn gaps into opportunities that they act on —
 and one executive agent, your chief of staff, consolidates it all into a
 personalized report built specifically for you.
 
-## In One Glance
+## In a Glance
 
 - **A daily planner built around you** — it connects your accounts,
   plans your day locally, and finds things that bring joy without costing
@@ -19,7 +19,7 @@ personalized report built specifically for you.
 - **A chief of staff, not a dashboard** — one executive agent brings you
   a personalized report: what happened, what it did, what needs you.
 
-## The Planner
+## The Daily Planner
 
 It plans your day around you — finding things that bring joy without
 costing money. It saw the one sunny hour and moved your run there; it
