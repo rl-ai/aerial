@@ -45,12 +45,13 @@ the work gets done; you see the evidence.
 
 One executive agent consolidates updates and insights into a personalized
 report: what happened, what the agents did, and the decisions that
-genuinely need you — 15 seconds and you know your day. Investigations
-are real: one agent found a locked database, fixed the stuck page, and
-left a written diagnosis before anyone opened a ticket. Another dug
-through our own model-call ledger and found that 48% of our AI spend was
-going to a retired role nobody told the scheduler — money burning quietly,
-surfaced by the system that was burning it.
+genuinely need you — 15 seconds and you know your day. It doesn't do the
+work it reports on. Behind it, investigator agents found a locked
+database, fixed the stuck page, and left a written diagnosis before
+anyone opened a ticket; another dug through our own model-call ledger and
+found that 48% of our AI spend was going to a retired role nobody told
+the scheduler — money burning quietly, surfaced by the system that was
+burning it.
 
 ## Under the hood
 
