@@ -62,7 +62,10 @@ page, and left a written diagnosis before anyone opened a ticket.
   trust; regression demotes automatically
 - Local-first model fleet, hybrid routing — your GPUs, cloud optional per
   task
-- Every improvement A/B-tested against adversarial scenarios before
+- Model choice per agent or per group — the base roles ship as exec,
+  team lead, and curator; add custom agents (research, red-team,
+  anything) when you want them
+- Every improvement is A/B-tested against a scenario suite before
   adoption
 
 ## How it compares
@@ -77,7 +80,6 @@ page, and left a written diagnosis before anyone opened a ticket.
 | Shadow→live promotion gate | ✓ | partial³ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | Gap analysis → opportunities → action | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | Local-first + hybrid routing | ✓ | partial | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
-| Adversarial self-testing | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | Self-hosted | ✓ | ✓ | ✓⁴ | ✓ | ✓ | ✓ | ✗ | ✗ |
 
 ¹ Access control exists at the enterprise tier; content-level labeling at
