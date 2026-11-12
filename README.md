@@ -5,61 +5,55 @@ your knowledge base, and turn gaps into opportunities that they act on —
 and one executive agent, your chief of staff, consolidates it all into a
 personalized report built specifically for you.
 
-## The four beats
+## A daily planner built around you
 
-**1 · Planner** — A daily planner that connects the accounts and platforms
-you choose, consolidates everything locally, and plans your day around
-you — finding things that bring joy without costing money.
+A planner that connects the accounts and platforms you choose,
+consolidates everything locally, and plans your day around you — finding
+things that bring joy without costing money. It saw the one sunny hour
+and moved your run there; it batched the errands; it guarded your
+deep-work block. Every suggestion shows why, and dismissing one makes
+tomorrow quieter.
 
-**2 · Privacy by design** — You choose your models, accounts, platforms,
-and storage location. Everything stays where you want unless you choose
-cloud.
+## Privacy by design
 
-**3 · Opportunities** — Curates your knowledge base from the sources you
-choose, measures it against your world, and turns gaps into opportunities
-that agents act on.
+You choose your models, accounts, platforms, and storage location.
+Everything stays where you want unless you choose cloud. Content is
+labeled at ingest (public/personal/sensitive/intimate, conservative
+default), agents read through a governed path that refuses sensitive
+material, and every access is logged where you can see it. The public
+packages make no network calls beyond your own hub and model endpoints.
 
-**4 · Chief of staff** — One executive agent — your chief of staff —
-consolidates updates and insights into a personalized report built
-specifically for you.
+## From gaps to opportunities
 
-## What it does (features)
+The agents curate your knowledge base from the sources you choose,
+measure it against what's happening in your world, and turn the gaps
+into opportunities they act on — money leaking, time wasted, an opening
+that matches your work. From our own fleet: 48% of our AI spend was going
+to a retired role nobody told the scheduler, found by the system itself.
 
-**Knowledge & ingestion**
-- Content-addressed knowledge base: everything you ingest is labeled,
-  connected, and current
-- Content-level sensitivity gating: public/personal/sensitive/intimate on
-  every item — refuse-by-default
-- Citation-closure reads: an agent can only cite sources it's authorized
-  to see
-- Gap analysis: your knowledge base measured against what's happening in
-  your world
+## Your chief of staff
 
-**Agent operations**
-- Governed role hierarchy: an investigator finds, a reviewer checks, an
-  executive briefs — with review gates between
-- Evidence-labeled findings: every claim verified, inferred, or missing —
-  unverifiable claims never count
-- Admission-scored exception queue: you see only what deserves a person
-- Scoped, expiring authority: agents act within mandates, everything
-  audited
+One executive agent consolidates updates and insights into a personalized
+report built specifically for you: what happened, what the agents did,
+and the decisions that genuinely need you — 15 seconds and you know your
+day. Investigations are real: in one incident, an agent found a locked
+database, fixed the stuck page, and left a written diagnosis before
+anyone opened a ticket.
+
+## Under the hood
+
+- Content-addressed knowledge base with sensitivity labels on everything
+  (public/personal/sensitive/intimate, conservative default)
+- Citation-closure reads: agents can only cite sources they're authorized
+  for
+- Admission-scored decision queue with scoped, expiring authority and a
+  full audit ledger
 - Shadow→live promotion: new agent behaviors run record-only until they
-  earn trust, with automatic demotion on regression
-
-**Proactive surface**
-- Daily executive brief: what happened, what it did, what needs you — in
-  15 seconds
-- Listen → curate → gap → opportunities: dozens of sources distilled
-  daily into themes, trends, and what touches your work
-- Self-expanding radar: adjacent sources, repos, and communities
-  discovered and proposed for your approval
-
-**Platform**
-- Local-first model fleet with hybrid routing: your GPUs, cloud optional
+  earn trust; regression demotes them automatically
+- Local-first model fleet with hybrid routing — your GPUs, cloud optional
   per task
-- Stress + adversarial self-testing: every agent improvement is A/B'd
-  against attack scenarios before adoption
-- Self-hosted, single-command MCP install for your own notes
+- Every agent improvement is A/B-tested against adversarial scenarios
+  before adoption
 
 ## How it compares
 
@@ -68,23 +62,23 @@ specifically for you.
 | Content-level sensitivity gating | ✓ | ✗ | ✗ | ✗ | ✗ | partial¹ | ✗ | ✗ |
 | Citation-closure enforced reads | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | Evidence-labeled findings | ✓ | ✗ | partial² | ✗ | ✗ | ✗ | ✗ | ✗ |
-| Admission-scored exception queue | ✓ | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| Admission-scored decision queue | ✓ | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | Scoped, expiring authority (mandates) | ✓ | ✓ | ✗ | ✗ | ✗ | ✗ | partial | partial |
 | Shadow→live promotion gate | ✓ | partial³ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | Gap analysis → opportunities → action | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | Local-first + hybrid routing | ✓ | partial | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
 | Adversarial self-testing | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
-| Self-hosted, one-command install | ✓ | ✓ | ✓⁴ | ✓ | ✓ | ✓ | ✗ | ✗ |
+| Self-hosted | ✓ | ✓ | ✓⁴ | ✓ | ✓ | ✓ | ✗ | ✗ |
 
-¹ Access-control exists at the enterprise tier; content-level labeling at
+¹ Access control exists at the enterprise tier; content-level labeling at
 retrieval time is not the model. ² Traces and logs, not claim-level
 evidence labels. ³ Record-only shadow mode exists; a promotion gate does
 not. ⁴ Self-hosting is an enterprise offering.
 
 *Where others are genuinely ahead today: LangSmith's observability depth,
-CrewAI's community and maturity, Zep's memory scale, frontier cloud models'
-raw capability, and everyone's polish. That's why hybrid routing exists —
-use the best model for the task, keep the governance local.*
+CrewAI's community and maturity, Zep's memory scale, frontier cloud
+models' raw capability, and everyone's polish. That's why routing is
+hybrid — use the best model for the task, keep the governance local.*
 
 ## The proof from our own fleet
 
@@ -97,21 +91,11 @@ use the best model for the task, keep the governance local.*
   logged as evidence** — the agent treated the attack as a finding, not an
   instruction.
 
-## Honest limits (v0.9-rc1)
+## Honest limits
 
-- Self-hosted, single-operator focused; multi-tenant is not designed yet.
-- The exception queue's live feed is the last build in progress.
+- v0.9-rc1: self-hosted, single-operator focus; multi-tenant is not
+  designed yet.
+- The decision queue's live feed is in final integration.
+- A 7-day reliability record and dogfood validation are in progress.
 - Local models trail frontier cloud models on raw capability — that's why
   routing is hybrid and per-task.
-- Seven-day reliability record and dogfood validation are in progress.
-
-## Try it
-
-The governed read path for your own notes installs in one command:
-
-```
-uvx secondbrain-mcp --vault ~/notes --grant <id> --key <key>
-```
-
-Point Claude Code, Cursor, or any MCP client at it. Ask about something
-sensitive — watch it refuse, by design.
