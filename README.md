@@ -38,17 +38,19 @@ beyond your own hub and model endpoints.
 
 The agents curate your knowledge base from the sources you choose and
 measure it against what's happening in your world — money leaking, time
-wasted, an opening that matches your work. From our own fleet: 48% of our
-AI spend was going to a retired role nobody told the scheduler, found by
-the system itself.
+wasted, an opening that matches your work. The gaps become queue items;
+the work gets done; you see the evidence.
 
 ## The chief of staff
 
 One executive agent consolidates updates and insights into a personalized
 report: what happened, what the agents did, and the decisions that
-genuinely need you — 15 seconds and you know your day. Investigations are
-real: in one incident, an agent found a locked database, fixed the stuck
-page, and left a written diagnosis before anyone opened a ticket.
+genuinely need you — 15 seconds and you know your day. Investigations
+are real: one agent found a locked database, fixed the stuck page, and
+left a written diagnosis before anyone opened a ticket. Another dug
+through our own model-call ledger and found that 48% of our AI spend was
+going to a retired role nobody told the scheduler — money burning quietly,
+surfaced by the system that was burning it.
 
 ## Under the hood
 
