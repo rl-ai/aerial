@@ -19,7 +19,7 @@ personalized report built specifically for you.
 - **A chief of staff, not a dashboard** — one executive agent brings you
   a personalized report: what happened, what it did, what needs you.
 
-## The Daily Planner
+## Daily Planner
 
 It plans your day around you — finding things that bring joy without
 costing money. It saw the one sunny hour and moved your run there; it
