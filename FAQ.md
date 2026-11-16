@@ -1,38 +1,31 @@
-# Frequently asked questions
+# FAQ
 
-**Does Aerial need specific hardware or a GPU cluster?**
-No. The code runs with generic defaults on any machine. Model-seat
-liveness monitoring, VRAM management, and seat-swap automation are
-useful only if you run local model seats; without them the console and
-daily board still work, and seat probes simply report gaps.
+**Does Aerial need a GPU cluster?**
+No. It runs on any machine with Python 3.10+. Fleet features (seat liveness, VRAM manager, seat-swap) light up when local model seats exist — without them, everything else still works.
 
 **Where does my data go?**
-Nowhere. The hub, console, gateway, and runners are all local services.
-There are no telemetry or phone-home paths. See PRIVACY.md.
+Nowhere. Hub, console, runners, and models are all local. No telemetry, no phone-home. Details in [PRIVACY.md](PRIVACY.md).
 
-**Why is email disabled by default?**
-The generic profile has no recipient (`email.recipient_email` empty).
-With no recipient, `send_report` is a no-op that returns `False`. Set
-the recipient in `config/deployment.yaml` or
-`AERIAL_EMAIL__RECIPIENT_EMAIL` to enable delivery.
+**Why is email off by default?**
+No recipient configured. Set `email.recipient_email` in `config/deployment.yaml` (or `AERIAL_EMAIL__RECIPIENT_EMAIL`) to turn it on.
 
-**How do I rename the node prefix (`aerial:`) used in job ids?**
-Set `cluster.node_name` in the profile (or `AERIAL_NODE_NAME`). Job
-parsing, re-trigger commands, and severity-adjacent job lists derive
-from it.
+**How do I rename the `aerial:` job prefix?**
+Set `cluster.node_name` (or `AERIAL_NODE_NAME`). Done.
 
-**What is a "virtual day"?**
-`dashboard/chaos.py` injects deterministic day-types (quiet,
-failure-storm, mixed, recovery, anomalous) into real stores so a 7-day
-observation window can be validated in minutes. It is guarded: it is a
-no-op unless `AERIAL_TIME_ACCELERATION > 1` AND `AERIAL_CHAOS=1`.
+**What's a "virtual day"?**
+Deterministic fake days (quiet, failure-storm, recovery…) injected into real stores, so a 7-day observation window validates in minutes. Guarded — inert unless `AERIAL_TIME_ACCELERATION > 1` and `AERIAL_CHAOS=1`.
 
-**Do I need the deployment profile at all?**
-No. Without `config/deployment.yaml` everything falls back to generic
-defaults. The profile exists so a real deployment can customize values
-without touching code.
+**Do I need the deployment profile?**
+No — defaults work out of the box. The profile exists to customize a real deployment without touching code.
 
 **Which Python?**
-Python 3.10+ (uses `X | Y` unions). No third-party runtime dependencies
-for the dashboard/integration code; the gateway has its own
-`pyproject.toml`.
+3.10+. No third-party runtime dependencies for the core services.
+
+**Is Aerial an agent framework?**
+No. It's the operations layer *over* your agents — supervision, failure triage, cost accounting, fleet management. See [COMPARISON.md](COMPARISON.md).
+
+**Can Aerial run my scheduling?**
+Yes. Crontab-backed job runner with re-trigger support, plus a shadow scheduler for observing new behavior before it goes live.
+
+**How do I start?**
+[GETTING-STARTED.md](GETTING-STARTED.md) — clone to running console in about five minutes.
