@@ -2,6 +2,31 @@
 
 What Aerial does, by area. *(A few components live in the internal deployment and are noted where so.)*
 
+## Why Aerial over DeepSeek Harness
+
+Aerial is an operations layer, not another chat surface. Compared feature-for-feature with **DeepSeek Harness (DSH)** — the strongest execution harness in the category:
+
+| Feature | 🛩️ DSH | 🗼 Aerial |
+|---|---|---|
+| **Fleet-wide operations, 24/7** — an ops agent that polls, classifies, fixes, and verifies without you | | ✅ |
+| **Every GPU working** — models resident on VRAM, demand displaces idle, empty seats take backlog work | | ✅ |
+| **Failure triage that ends in a fix** — not a trace to read, but a verified resolution | | ✅ |
+| **Evidence-backed audit trail** — every claim on a ticket, releases gated 5/5 by the gauntlet | | ✅ |
+| **Cost per call and per seat** — tokens, tok/s, concurrency, on a 15-minute report | | ✅ |
+| **Self-healing seats** — dead seats detect, eject, relaunch, verify autonomously | | ✅ |
+| **Fully local** — hub, console, runners, and models on your hardware; zero telemetry | | ✅ |
+| **Runs on your harness** — supervision layer speaks HTTP + files; ships Hermes-native, other harnesses are a small adapter | | ✅* |
+| **Interactive execution** — conversational work with file previews | ✅ | capable via agents |
+| **Plugin ecosystem** — marketplace plus plugins built from chat (Creator mode) | ✅ | extends via governed jobs |
+| **Open source** | ✅ | ✅ MIT |
+
+DSH is the aircraft — polished, fast, a genuine pleasure for interactive work. Aerial is the control tower. They compose: DSH executes, Aerial operates.
+
+*\*The supervision layer speaks HTTP + files. Ships Hermes-native; other harnesses are a small adapter away.*
+
+---
+
+
 ## See everything — operator surface
 
 You shouldn't have to open six terminals to know how your fleet slept. One board, one inbox, one queue.
@@ -59,23 +84,3 @@ The unglamorous layer that makes everything above survive a reboot, a rename, an
 - **Cold-start sandbox** — the whole stack boots in a dockerized systemd container, first-boot assertions included. *(internal deployment)*
 
 
-## How it compares
-
-Against **DeepSeek Harness (DSH)** — the strongest execution harness in the category. The emoji marks the stronger product on each row.
-
-| | 🛩️ DSH | 🗼 Aerial |
-|---|---|---|
-| Interactive execution | ✈️ Conversational, with file previews and Creator mode | Capable through its agents |
-| Plugin ecosystem | ✈️ Marketplace plus plugins built from chat | Extends via governed jobs and the hub API |
-| Overnight failures | | 🗼 Classified, ticketed, safe-fixed, and verified by the ops agent |
-| GPU utilization | | 🗼 Models resident on VRAM; demand displaces idle; a broker fills empty seats |
-| Evidence trail | | 🗼 Every claim on a hub ticket; releases gated by the 5-layer gauntlet |
-| Cost accounting | | 🗼 Per-call and per-seat tokens, latency, tok/s — 15-minute reports |
-| Privacy | | 🗼 Entirely local: hub, console, runners, and models; no telemetry |
-| Self-healing | | 🗼 Dead seats detect, eject, relaunch, and verify autonomously |
-| Runs on your harness | | 🗼 Supervision layer speaks HTTP and files; other harnesses need a small adapter |
-| Open source | ✅ | ✅ MIT |
-
-DSH is the aircraft — polished, fast, a genuine pleasure for interactive work. Aerial is the control tower. They compose: DSH executes, Aerial operates.
-
-*\*The supervision layer speaks HTTP + files. Ships Hermes-native; other harnesses are a small adapter away.*
