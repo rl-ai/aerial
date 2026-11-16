@@ -7,10 +7,15 @@ Aerial is the control tower for your agent fleet — the operations layer that s
 ![Operator console](docs/console-hero.png)
 
 
-Aerial is an always-on operations platform for a small local AI cluster:
-a ticket hub, an ops agent that polls → classifies → acts → verifies,
-an operator console, a daily exec report, and an integration harness
-that validates the whole pipeline on compressed virtual days.
+**Set up in an afternoon. Runs around the clock.**
+
+| | |
+|---|---|
+| **5 min** | clone to running console |
+| **435** | tests green on every release |
+| **5/5** | gauntlet layers, or it doesn't ship |
+| **15 min** | between fleet reports — tokens, tok/s, saturation |
+| **0** | bytes of telemetry |
 
 This is the open-source split of an internal deployment. Everything
 runs with **generic defaults** out of the box: `localhost` URLs, no
