@@ -25,19 +25,18 @@ host paths, service units) live in a gitignored profile — see
 
 ## Quick start
 
-```bash
-cp config/deployment.yaml.example config/deployment.yaml   # optional
-python3 -m pytest dashboard/tests -q                       # unit suites
-python3 -m pytest integration -q                           # integration suites
-```
+See **[GETTING-STARTED.md](GETTING-STARTED.md)** for the full
+zero-to-running walkthrough. In short:
 
-Requires Python 3.10+ (no third-party runtime dependencies). The hub,
-console, and seats are services you run yourself - see [TECHNICAL.md](TECHNICAL.md)
-for the components.
+1. `cp config/deployment.yaml.example config/deployment.yaml` (optional — generic defaults work)
+2. Start the ticket hub (not in this repo — external service on `:8020`)
+3. `python3 dashboard/serve_console.py` (console on `:8777`, bearer-authed)
+4. `python3 -m dashboard.followup.runner --interval 300` (ops agent)
+5. `python3 integration/scheduler.py --interval 30` (shadow scheduler)
 
-The scheduler and runners accept explicit flags (`--hub-db`, `--hub-url`,
-…) or read the profile. Nothing phones home; the hub, console, and seats
-are all services you run yourself.
+Requires Python 3.10+ (no third-party runtime dependencies). Nothing
+phones home; the hub, console, and seats are all services you run
+yourself. Feature tour: [FEATURES.md](FEATURES.md).
 
 ## Deployment profile
 
@@ -61,6 +60,8 @@ Key settings:
 
 ## Docs
 
+- [`GETTING-STARTED.md`](GETTING-STARTED.md) — zero to a running stack: config, services, health checks, troubleshooting
+- [`FEATURES.md`](FEATURES.md) — the feature list by area, with code locations
 - [`docs/testing-service.md`](docs/testing-service.md) — the testing service and how suites map to it
 - [`docs/pipeline-checkpoints.md`](docs/pipeline-checkpoints.md) — PC-1..PC-7 conformance checkpoints
 - [`docs/decision-points.md`](docs/decision-points.md) — recorded decision points
