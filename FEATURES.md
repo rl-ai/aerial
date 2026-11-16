@@ -4,7 +4,7 @@ What Aerial does, by area. *(A few components live in the internal deployment an
 
 ## Why Aerial over DeepSeek Harness
 
-Aerial is an operations layer, not another chat surface. Compared feature-for-feature with **DeepSeek Harness (DSH)** — the strongest execution harness in the category:
+Aerial is pilot-less operations for autonomous agents — agents fly solo, Aerial runs the control tower. Compared feature-for-feature with **DeepSeek Harness (DSH)**, the strongest execution harness in the category:
 
 | Feature | DSH | Aerial |
 |---|---|---|
@@ -40,7 +40,7 @@ You shouldn't have to open six terminals to know how your fleet slept. One board
 
 ## Never wake up to a surprise — automation
 
-Most agent failures die quietly and wait for you. These don't: they get classified, filed, fixed, and verified before you've poured coffee.
+Autonomous triage: failures get classified, filed, fixed, and verified — the fix backed by root-cause analysis, the resolution backed by evidence.
 
 - **Ops agent** — a 5-minute always-on loop: poll, classify, act, verify. → `dashboard/followup/runner.py`
 - **Failure triage (R1–R6)** — security breaches ping immediately; unknown failure classes fail closed. → `dashboard/followup/classifier.py`
@@ -49,7 +49,7 @@ Most agent failures die quietly and wait for you. These don't: they get classifi
 
 ## Your GPUs, fully loaded — model fleet
 
-You paid for the VRAM. The fleet features make sure it's always holding the model that's needed — and never holding one that isn't.
+Saturation is the standard: models live on VRAM by default, idle gets displaced, and self-starting agents keep every seat working 24/7. Self-healing closes the loop when a seat dies.
 
 - **Seat liveness** — every model seat probed; a dead seat is a finding, not a mystery. → `dashboard/vram_registry.json`
 - **VRAM manager** — models live on VRAM by default; demand displaces idle, pressure evicts. → `dashboard/vram_manager.py`
@@ -59,7 +59,7 @@ You paid for the VRAM. The fleet features make sure it's always holding the mode
 
 ## Trust the output — quality machinery
 
-"Done" is a claim. These are the mechanisms that turn it into evidence.
+Autonomy without evidence is just guessing. The gauntlet and promotion gate turn "done" into verified, evidence-backed fact — 5/5 or it doesn't ship.
 
 - **Gauntlet** — a 5-layer acceptance harness (units, adversarial stress, backtest, day-in-the-life, live smoke). 5/5 or no release. → `dashboard/gauntlet.py`
 - **Chaos virtual days** — a week of failures validated in minutes, deterministically. → `dashboard/chaos.py`
@@ -69,7 +69,7 @@ You paid for the VRAM. The fleet features make sure it's always holding the mode
 
 ## Plug into your world — integration
 
-Agents that only see what you paste at them are half agents. These pipes bring the outside in — and surface opportunities you didn't ask for.
+This is where proactive agents earn the name: discovering sources, finding opportunities, and filing them for review — work nobody prompted.
 
 - **Scrape ingest bridge** — external intel flows into the board. → `dashboard/scrape_intel.py`
 - **Listening pipeline** — degree-expansion source discovery plus a SWOT cadence that files evidence-backed opportunities into the exception queue. → `gateway/secondbrain/`

@@ -22,7 +22,7 @@ No — defaults work out of the box. The profile exists to customize a real depl
 3.10+. No third-party runtime dependencies for the core services.
 
 **Is Aerial an agent framework?**
-No. It's the operations layer *over* your agents — supervision, failure triage, cost accounting, fleet management. See [COMPARISON.md](COMPARISON.md).
+No. It's the control tower *over* your agents — autonomous supervision, failure triage to fix, cost accounting, and fleet saturation. See [FEATURES.md](FEATURES.md).
 
 **Can Aerial run my scheduling?**
 Yes. A crontab-backed job runner with re-trigger support, plus a shadow scheduler that observes new behavior under a promotion gate before it goes live.
