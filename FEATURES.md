@@ -61,23 +61,21 @@ The unglamorous layer that makes everything above survive a reboot, a rename, an
 
 ## How it compares
 
-Against **DeepSeek Harness (DSH)** — the strongest execution harness in the category. The emoji marks who owns each row.
+Against **DeepSeek Harness (DSH)** — the strongest execution harness in the category. The emoji marks the stronger product on each row.
 
 | | 🛩️ DSH | 🗼 Aerial |
 |---|---|---|
-| Raw execution | **wins** | |
-| Plugin ecosystem | **wins** | |
-| 3am failures | | **wins** |
-| GPU saturation | | **wins** |
-| Evidence trail | | **wins** |
-| Cost accounting | | **wins** |
-| Privacy | | **wins** |
-| Self-healing | | **wins** |
-| Runs on your harness | | **wins*** |
-| Open source | ✅ | ✅ |
+| Interactive execution | ✈️ Conversational, with file previews and Creator mode | Capable through its agents |
+| Plugin ecosystem | ✈️ Marketplace plus plugins built from chat | Extends via governed jobs and the hub API |
+| Overnight failures | | 🗼 Classified, ticketed, safe-fixed, and verified by the ops agent |
+| GPU utilization | | 🗼 Models resident on VRAM; demand displaces idle; a broker fills empty seats |
+| Evidence trail | | 🗼 Every claim on a hub ticket; releases gated by the 5-layer gauntlet |
+| Cost accounting | | 🗼 Per-call and per-seat tokens, latency, tok/s — 15-minute reports |
+| Privacy | | 🗼 Entirely local: hub, console, runners, and models; no telemetry |
+| Self-healing | | 🗼 Dead seats detect, eject, relaunch, and verify autonomously |
+| Runs on your harness | | 🗼 Supervision layer speaks HTTP and files; other harnesses need a small adapter |
+| Open source | ✅ | ✅ MIT |
 
 DSH is the aircraft — polished, fast, a genuine pleasure for interactive work. Aerial is the control tower. They compose: DSH executes, Aerial operates.
 
 *\*The supervision layer speaks HTTP + files. Ships Hermes-native; other harnesses are a small adapter away.*
-
-For the full story — the six moments behind these rows — see [COMPARISON history](https://github.com/rl-ai/aerial/commits/main/COMPARISON.md) or ask us.
