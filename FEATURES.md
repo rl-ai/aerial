@@ -8,15 +8,16 @@ Aerial is pilot-less operations for autonomous agents — agents fly solo, Aeria
 
 | Feature | DSH | Aerial |
 |---|---|---|
-| **Privacy and control, first** — you choose the models, the storage locations, and the accounts to connect | Decisions default to the vendor's cloud | 🚀 Every placement is yours: local or cloud models, local storage, your accounts — nothing phones home |
-| **Autonomous, self-starting agents** — they find work and opportunities on their own, not just execute prompts | Reactive: acts on prompts and schedules you set | 🚀 Proactive: discovers opportunities through its listening pipeline, self-assigns backlog work, and acts without being asked |
-| **Bring your own model** — load models onto or from any resource, local or cloud | Locked to DeepSeek's cloud models | 🚀 Any model, any placement: local VRAM seats, self-hosted endpoints, or cloud APIs |
-| **Self-healing and self-maintenance** — failures triage to fixes, and the infrastructure recovers on its own | Leaves you a trace to read and a mystery to solve | 🚀 Failures classified → ticketed → governed safe-fix → verified; dead seats eject, relaunch, and recover autonomously |
-| **Context management** — every action carries its evidence | Conversation history is the only record | 🚀 Every claim on a hub ticket with evidence labels; the full chain survives beyond the chat |
-| **Transparency and reporting** — see what the work actually costs | Buried in conversation logs | 🚀 Tokens, tok/s, concurrency per seat — a 15-minute report, not an archaeology dig |
-| **Runs on your harness** | Is a harness | 🚀 Supervision layer speaks HTTP + files; ships Hermes-native, others are a small adapter |
-| **Interactive execution** | 🚀 Conversational work with file previews, Creator mode | Capable through its agents |
-| **Plugin ecosystem** | 🚀 Marketplace plus plugins built from chat | Extends via governed jobs and the hub API |
+| **Model choice** | DeepSeek cloud models only | 🚀 Any model — local VRAM, self-hosted endpoints, or cloud APIs; you choose the placement |
+| **Privacy & data control** | Work rides the vendor's cloud by default | 🚀 Everything local — models, storage, and accounts are yours; nothing phones home |
+| **Autonomy** | Reactive: executes the prompts and schedules you set | 🚀 Self-starting agents discover opportunities and self-assign work |
+| **Failure handling** | Leaves a trace; you triage | 🚀 Triage → ticket → governed fix → verified; infrastructure recovers on its own |
+| **Context & evidence** | Conversation history is the record | 🚀 Ticket-based evidence trail — every claim carries its proof beyond the chat |
+| **Transparency & reporting** | Cost buried in conversation logs | 🚀 Per-call and per-seat tokens, tok/s, concurrency — 15-minute reports |
+| **Hardware utilization** | One model, one machine, one user | 🚀 Full fleet saturated 24/7 — demand displacement, seat-swap, idle-work broker |
+| **Harness compatibility** | Is a harness | 🚀 Runs over your harness; ships Hermes-native, others are a small adapter |
+| **Interactive experience** | 🚀 Polished chat, file previews, Creator mode | Operational console built for oversight, not conversation |
+| **Extensibility** | 🚀 Plugin marketplace + Creator mode | Governed jobs and the hub API |
 | **Open source** | ✅ | ✅ MIT |
 
 DSH is the aircraft — polished, fast, a genuine pleasure for interactive work. Aerial is the control tower. They compose: DSH executes, Aerial operates.
