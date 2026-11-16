@@ -57,3 +57,27 @@ The unglamorous layer that makes everything above survive a reboot, a rename, an
 - **Token scoping** — actor×family×action hub tokens, deny-by-default; console writes need a token distinct from reads. → `dashboard/console/actions.py`
 - **Boot-persistent services** — systemd units for console, ops agent, scheduler. → [GETTING-STARTED.md](GETTING-STARTED.md)
 - **Cold-start sandbox** — the whole stack boots in a dockerized systemd container, first-boot assertions included. *(internal deployment)*
+
+
+## How it compares
+
+Against **DeepSeek Harness (DSH)** — the strongest execution harness in the category. The emoji marks who owns each row.
+
+| | 🛩️ DSH | 🗼 Aerial |
+|---|---|---|
+| Raw execution | **wins** | |
+| Plugin ecosystem | **wins** | |
+| 3am failures | | **wins** |
+| GPU saturation | | **wins** |
+| Evidence trail | | **wins** |
+| Cost accounting | | **wins** |
+| Privacy | | **wins** |
+| Self-healing | | **wins** |
+| Runs on your harness | | **wins*** |
+| Open source | ✅ | ✅ |
+
+DSH is the aircraft — polished, fast, a genuine pleasure for interactive work. Aerial is the control tower. They compose: DSH executes, Aerial operates.
+
+*\*The supervision layer speaks HTTP + files. Ships Hermes-native; other harnesses are a small adapter away.*
+
+For the full story — the six moments behind these rows — see [COMPARISON history](https://github.com/rl-ai/aerial/commits/main/COMPARISON.md) or ask us.
