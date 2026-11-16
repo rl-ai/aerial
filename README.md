@@ -1,5 +1,8 @@
 # Aerial
 
+> **Pilot-less, automated agent ops. Agents fly solo — always hunting opportunities for you.**
+
+
 Aerial is an always-on operations platform for a small local AI cluster:
 a ticket hub, an ops agent that polls → classifies → acts → verifies,
 an operator console, a daily exec report, and an integration harness
@@ -36,7 +39,7 @@ zero-to-running walkthrough. In short:
 
 Requires Python 3.10+ (no third-party runtime dependencies). Nothing
 phones home; the hub, console, and seats are all services you run
-yourself. Feature tour: [FEATURES.md](FEATURES.md).
+yourself. Feature tour: [FEATURES.md](FEATURES.md) · [Comparison vs DeepSeek Harness](COMPARISON.md).
 
 ## Deployment profile
 

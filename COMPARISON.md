@@ -1,5 +1,7 @@
 # Aerial vs. DeepSeek Harness
 
+**Agents fly solo — always hunting opportunities for you.**
+
 **TL;DR:** DeepSeek Harness (DSH) is an excellent **agent execution harness** — one user, one chat surface, one cloud model, a polished plugin ecosystem. Aerial is the **operations layer around agent work**: a multi-model fleet, evidence-backed supervision, failure triage that ends in fixes, cost accounting, and hardware that never idles. If you are evaluating DSH, the honest question is not "which is better" — it is "who supervises, triages, and accounts for the work once it leaves the chat window."
 
 ## The gap a harness doesn't close
