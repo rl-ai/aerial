@@ -8,13 +8,13 @@ Aerial is pilot-less operations for autonomous agents — agents fly solo, Aeria
 
 | Feature | DSH | Aerial |
 |---|---|---|
-| **Model choice** | DeepSeek cloud models only | 🚀 Any model — local VRAM, self-hosted endpoints, or cloud APIs; you choose the placement |
-| **Privacy & data control** | Work rides the vendor's cloud by default | 🚀 Everything local — models, storage, and accounts are yours; nothing phones home |
-| **Autonomy** | Reactive: executes the prompts and schedules you set | 🚀 Self-starting agents discover opportunities and self-assign work |
-| **Failure handling** | Leaves a trace; you triage | 🚀 Triage → ticket → governed fix → verified; infrastructure recovers on its own |
-| **Context & evidence** | Conversation history is the record | 🚀 Ticket-based evidence trail — every claim carries its proof beyond the chat |
-| **Transparency & reporting** | Cost buried in conversation logs | 🚀 Per-call and per-seat tokens, tok/s, concurrency — 15-minute reports |
-| **Hardware utilization** | One model, one machine, one user | 🚀 Full fleet saturated 24/7 — demand displacement, seat-swap, idle-work broker |
+| **Model choice** | ✅ DeepSeek cloud models — fast and capable, but locked to one vendor | 🚀 Any model — local VRAM, self-hosted endpoints, or cloud APIs; you choose the placement |
+| **Privacy & data control** | Cloud execution with vendor telemetry defaults — open source lets you re-point it | 🚀 Everything local — models, storage, and accounts are yours; nothing phones home |
+| **Autonomy** | Executes prompts and scheduled tasks (experimental) — reactive rather than self-starting | 🚀 Self-starting agents discover opportunities and self-assign work |
+| **Failure handling** | Execution traces and developer tools for inspection — but triage and the fix are on you | 🚀 Triage → ticket → governed fix → verified; infrastructure recovers on its own |
+| **Context & evidence** | Full conversation history — no evidence trail that survives past the chat | 🚀 Ticket-based evidence trail — every claim carries its proof beyond the chat |
+| **Transparency & reporting** | Token counts in developer tools — but no per-seat cost or fleet reporting | 🚀 Per-call and per-seat tokens, tok/s, concurrency — 15-minute reports |
+| **Hardware utilization** | Runs one model well — the rest of your hardware waits | 🚀 Full fleet saturated 24/7 — demand displacement, seat-swap, idle-work broker |
 | **Harness compatibility** | Is a harness | 🚀 Runs over your harness; ships Hermes-native, others are a small adapter |
 | **Interactive experience** | 🚀 Polished chat, file previews, Creator mode | Operational console built for oversight, not conversation |
 | **Extensibility** | 🚀 Plugin marketplace + Creator mode | Governed jobs and the hub API |
