@@ -18,7 +18,7 @@ Aerial is pilot-less operations for autonomous agents — agents fly solo, Aeria
 | **Privacy & data control** | Open source desktop app, but the models run in DeepSeek's cloud | 🚀 Everything local — models, storage, and accounts are yours. No telemetry: no data ever leaves your machine |
 | **Autonomy** | Executes prompts and scheduled tasks (marked experimental) — reactive rather than self-starting | 🚀 Self-starting agents discover opportunities and execute autonomously — acting on what they find without being asked |
 | **Failure handling** | Execution traces and developer tools for inspection — but triage and the fix are on you | 🚀 Triage → ticket → governed fix → verified; infrastructure recovers on its own |
-| **Context & evidence** | Full conversation history — no evidence trail that survives past the chat | 🚀 Ticket-based evidence trail — every claim carries its proof beyond the chat |
+| **Centralized context management** | Context lives inside one conversation — a second agent starts from zero | 🚀 Tickets are the shared brain: multiple agents and roles work the same ticket, each inheriting the full chain of evidence, decisions, and history |
 | **Transparency & reporting** | Developer tools show execution traces — durations, turns, tool calls — but no per-seat cost or fleet reporting | 🚀 Per-call and per-seat tokens, tok/s, concurrency — 15-minute reports |
 | **Hardware utilization** | Single-user desktop focus — the rest of your hardware waits | 🚀 Full fleet saturated 24/7 — demand displacement, seat-swap, idle-work broker |
 | **Harness compatibility** | Is a harness | 🚀 Runs over your harness; ships Hermes-native, others are a small adapter |
