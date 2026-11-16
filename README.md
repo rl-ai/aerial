@@ -48,7 +48,7 @@ zero-to-running walkthrough. In short:
 
 Requires Python 3.10+ (no third-party runtime dependencies). Nothing
 phones home; the hub, console, and seats are all services you run
-yourself. Feature tour: [FEATURES.md](FEATURES.md) · [Comparison vs DeepSeek Harness](COMPARISON.md).
+yourself. Feature tour — including the head-to-head vs DeepSeek Harness: [FEATURES.md](FEATURES.md).
 
 ## Deployment profile
 
