@@ -20,7 +20,7 @@ Aerial is pilot-less operations for autonomous agents — agents fly solo, Aeria
 | **Self-maintenance** | 🚀 **Automated.** Self-healing and self-upgrading — the system recovers from failures and upgrades itself, no human in the loop | Execution traces and developer tools — recovery and upgrades are on you |
 | **Centralized context management** | 🚀 **Centralized context.** Multi-agent workflows on a single task, enabled via tickets as the centralized context unit — every agent inherits the chain of evidence, decisions, and history | Context lives inside one conversation; a second agent starts from zero |
 | **Reporting** | 🚀 **Built in.** Usage, kanban, and project management — daily board, exec report, per-seat usage on a 15-minute cadence | Developer tools show durations, turns, and tool calls |
-| **Deployment model** | **A standalone app** — the harness and its surface are one product | **An extension** — an operations layer over the harness you already run; ships Hermes-native, other OSS harnesses are a small adapter |
+| **Deployment model** | 🚀 **An extension, not a standalone app.** An operations layer over the harness you already run; ships Hermes-native, other OSS harnesses are a small adapter | **A standalone app** — the harness and its surface are one product |
 
 > **DSH executes. Aerial operates.** DSH is the aircraft — polished, fast, a genuine pleasure for interactive work. Aerial is the control tower around it.
 
