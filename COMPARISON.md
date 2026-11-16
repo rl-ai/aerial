@@ -18,18 +18,21 @@ DSH is the aircraft: fast, capable, flies anywhere you point it. Aerial is the a
 
 **6. The audience.** With DSH, your work rides a cloud model by default. With Aerial, the whole stack — hub, console, runners, and the models themselves — runs on hardware you own. Nothing phones home.
 
-## The short version
+## The head to head
 
-| | DeepSeek Harness | Aerial |
+🛩️ **DeepSeek Harness** — the aircraft.  🗼 **Aerial** — the control tower. The emoji marks who owns each moment:
+
+| The moment | 🛩️ DSH | 🗼 Aerial |
 |---|---|---|
-| It is | The aircraft | The airline |
-| Execution | ✅ Its best day | ✅ Through its agents |
-| When work fails | You triage | It triages — then fixes, then verifies |
-| Your GPUs | One model, one machine | Full fleet, saturated 24/7 |
-| Trust | You are the gate | Evidence labels, gauntlet, promotion gate |
-| Cost | Per conversation | Every call, on a 15-minute report |
-| Privacy | Cloud by default | Local by design |
-| Open source | ✅ | ✅ MIT |
+| ✈️ **The flight** — raw execution | **Wins.** Polished, conversational, its best day | Runs through its agents — execution isn't our differentiator |
+| 🌙 **The 3am failure** | It waits in your queue; you triage | **Wins.** Classified, ticketed, safe-fixed, verified before sunrise |
+| 🏭 **The dark hangar** — your GPUs | One model, one machine, one user | **Wins.** Full fleet: demand displaces idle, broker fills the gaps, 24/7 |
+| 📜 **The black box** — trust | You are the gate | **Wins.** Evidence labels, 5-layer gauntlet, promotion gate |
+| 💸 **The receipt** — cost | Per conversation, if you dig | **Wins.** Every call: tokens, tok/s, concurrency — 15-min reports |
+| 🔒 **The hangar doors** — privacy | ⚠️ Cloud model by default | **Wins.** Everything local, nothing phones home |
+| 🔧 **The maintenance crew** — self-healing | Out of scope | **Wins.** Dead seats detect, eject, relaunch, verify on their own |
+| 🧩 **Your harness** | IS a harness | **Wins (with an asterisk).** Ships Hermes-native; the supervision layer speaks HTTP + files, so other harnesses need a small adapter, not a port |
+| 🏁 **Open source** | ✅ | ✅ MIT |
 
 Use DSH for the interactive work — it's genuinely excellent. Aerial is what makes the work *survive contact with production*.
 
@@ -45,7 +48,7 @@ Use DSH for the interactive work — it's genuinely excellent. Aerial is what ma
 
 **"Do I need a GPU cluster?"** No. One machine is fine; fleet features wake up when local seats exist.
 
-**"Is this another agent framework?"** No. No agent loop of its own — it manages whatever you run.
+**"Can it sit on top of *my* harness?"** The supervision layer is deliberately harness-agnostic — hub, console, ledger, and gauntlet all speak HTTP and files. Today the dispatch path ships Hermes-native; pointing it at another harness (including DSH) means writing a small dispatch adapter, not a port. That adapter is on the roadmap as a first-class extension.
 
 **"What does it cost?"** MIT, on hardware you own. The better question: what does your agent work cost *today*? Aerial measures it.
 
