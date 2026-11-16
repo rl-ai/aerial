@@ -64,7 +64,7 @@ Key settings:
 - [`docs/testing-service.md`](docs/testing-service.md) — the testing service and how suites map to it
 - [`docs/pipeline-checkpoints.md`](docs/pipeline-checkpoints.md) — PC-1..PC-7 conformance checkpoints
 - [`docs/decision-points.md`](docs/decision-points.md) — recorded decision points
-- [`docs/BUGLIST.md`](docs/BUGLIST.md) — known issues
+- [`docs/BUGLIST.md`](docs/BUGLIST.md) — running fix log (resolved and open items)
 
 See also [PRIVACY.md](PRIVACY.md), [SECURITY.md](SECURITY.md),
 [TECHNICAL.md](TECHNICAL.md), [CONTRIBUTING.md](CONTRIBUTING.md),

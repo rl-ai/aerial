@@ -21,7 +21,7 @@ The always-on ops agent: **poll → classify → act → verify → dedupe**.
   seat liveness (seats loaded from `dashboard/vram_registry.json`).
 - Classifies each finding (R1–R6) via `followup/classifier.py`.
 - Acts per severity: sev-incident/security ping immediately and run a
-  mandate-scoped fix session (Hermes one-shot in a per-incident
+  mandate-scoped fix session (a governed one-shot model call in a per-incident
   workspace with TASK.md, evidence, and a fix playbook).
 - Verifies the exact symptom after auto-fix; verified fixes close
   silently, failures escalate.
