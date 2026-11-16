@@ -8,14 +8,12 @@ Aerial is pilot-less operations for autonomous agents — agents fly solo, Aeria
 
 | Feature | DSH | Aerial |
 |---|---|---|
+| **Privacy and control, first** — you choose the models, the storage locations, and the accounts to connect | Decisions default to the vendor's cloud | 🚀 Every placement is yours: local or cloud models, local storage, your accounts — nothing phones home |
 | **Autonomous, self-starting agents** — they find work and opportunities on their own, not just execute prompts | Reactive: acts on prompts and schedules you set | 🚀 Proactive: discovers opportunities through its listening pipeline, self-assigns backlog work, and acts without being asked |
-| **Fleet-wide operations, 24/7** — an ops agent that polls, classifies, fixes, and verifies without you | Manual monitoring of a single session | 🚀 Always-on: every failed run and dead seat triaged while you sleep |
-| **Every GPU working** — models resident on VRAM, demand displaces idle | One model loaded on one machine at a time; the rest of your VRAM sits cold | 🚀 Demand-displacement, seat-swap, and a broker that fills empty seats with backlog work |
-| **Failure triage that ends in a fix** | Leaves you a trace to read and a mystery to solve | 🚀 Classified → ticketed → governed safe-fix → re-verified against the exact symptom |
-| **Evidence-backed audit trail** | Conversation history | 🚀 Every claim on a hub ticket with evidence labels; releases gated 5/5 by the gauntlet |
-| **Cost per call and per seat** | Buried in conversation logs | 🚀 Tokens, tok/s, concurrency per seat — a 15-minute report, not an archaeology dig |
-| **Self-healing seats** | Out of scope | 🚀 Dead seats detect, eject GPU holders, relaunch, and verify autonomously |
-| **Fully local** | Cloud model by default | 🚀 Hub, console, runners, and models on your hardware — zero telemetry |
+| **Bring your own model** — load models onto or from any resource, local or cloud | Locked to DeepSeek's cloud models | 🚀 Any model, any placement: local VRAM seats, self-hosted endpoints, or cloud APIs |
+| **Self-healing and self-maintenance** — failures triage to fixes, and the infrastructure recovers on its own | Leaves you a trace to read and a mystery to solve | 🚀 Failures classified → ticketed → governed safe-fix → verified; dead seats eject, relaunch, and recover autonomously |
+| **Context management** — every action carries its evidence | Conversation history is the only record | 🚀 Every claim on a hub ticket with evidence labels; the full chain survives beyond the chat |
+| **Transparency and reporting** — see what the work actually costs | Buried in conversation logs | 🚀 Tokens, tok/s, concurrency per seat — a 15-minute report, not an archaeology dig |
 | **Runs on your harness** | Is a harness | 🚀 Supervision layer speaks HTTP + files; ships Hermes-native, others are a small adapter |
 | **Interactive execution** | 🚀 Conversational work with file previews, Creator mode | Capable through its agents |
 | **Plugin ecosystem** | 🚀 Marketplace plus plugins built from chat | Extends via governed jobs and the hub API |
