@@ -1,0 +1,95 @@
+{
+  "_meta": "Best-practices source entries in the listening-pipeline scrape format (listening-pipeline.md §1). Merge these into the live sources.json (new_sources.json at ~/workspaces/build/scrape-subs/ on the build host). Shared invariants: id = <kind>.<slug>; match = list of term-groups (item matches if ALL terms of ANY one group appear); every_h = scrape cadence; added_via = seed provenance.",
+  "sources": [
+    {
+      "id": "web_doc.aws-well-architected",
+      "kind": "web_doc",
+      "topic": "best-practices",
+      "target": "https://docs.aws.amazon.com/wellarchitected/latest/framework/welcome.html",
+      "every_h": 168,
+      "watch": ["pages"],
+      "match": [["reliability", "failure"], ["security", "least privilege"], ["cost", "capacity"], ["operational", "operations"]],
+      "relation": "reference",
+      "added_via": "seed"
+    },
+    {
+      "id": "web_doc.google-sre-workbook",
+      "kind": "web_doc",
+      "topic": "best-practices",
+      "target": "https://sre.google/workbook/",
+      "every_h": 168,
+      "watch": ["pages"],
+      "match": [["alert", "symptom"], ["postmortem", "blameless"], ["error budget"], ["slo", "service level"]],
+      "relation": "reference",
+      "added_via": "seed"
+    },
+    {
+      "id": "web_doc.azure-caf",
+      "kind": "web_doc",
+      "topic": "best-practices",
+      "target": "https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/",
+      "every_h": 168,
+      "watch": ["pages"],
+      "match": [["governance", "policy"], ["landing zone"], ["operations", "monitoring"]],
+      "relation": "reference",
+      "added_via": "seed"
+    },
+    {
+      "id": "web_doc.cis-benchmarks",
+      "kind": "web_doc",
+      "topic": "best-practices",
+      "target": "https://www.cisecurity.org/cis-benchmarks",
+      "every_h": 168,
+      "watch": ["pages"],
+      "match": [["benchmark", "hardening"], ["baseline", "configuration"], ["control"]],
+      "relation": "reference",
+      "added_via": "seed"
+    },
+    {
+      "id": "web_doc.owasp",
+      "kind": "web_doc",
+      "topic": "best-practices",
+      "target": "https://owasp.org/",
+      "every_h": 168,
+      "watch": ["pages"],
+      "match": [["top ten", "vulnerability"], ["injection", "security"], ["prompt injection"]],
+      "relation": "reference",
+      "added_via": "seed"
+    },
+    {
+      "id": "web_doc.nist-csf",
+      "kind": "web_doc",
+      "topic": "best-practices",
+      "target": "https://www.nist.gov/cyberframework",
+      "every_h": 168,
+      "watch": ["pages"],
+      "match": [["identify", "protect"], ["detect", "respond"], ["recovery", "framework"]],
+      "relation": "reference",
+      "added_via": "seed"
+    },
+    {
+      "id": "web_doc.aws-attack-findings",
+      "kind": "web_doc",
+      "topic": "best-practices",
+      "target": "file:~/workspaces/worker/attack-swarm/findings.md",
+      "every_h": 24,
+      "watch": ["pages"],
+      "match": [["attack", "finding"], ["sandbox", "adversarial"], ["swarm"]],
+      "relation": "own",
+      "added_via": "seed",
+      "_note": "Aerial's own attack-swarm findings: internal but external-derived (DS generates from frontier knowledge). Sensitivity labeled public at ingestion because content is external-derived and sanitized."
+    },
+    {
+      "id": "web_doc.tier-d-frontier",
+      "kind": "web_doc",
+      "topic": "best-practices",
+      "target": "file:~/workspaces/worker/tier-d-signals/kimi-practices.md",
+      "every_h": 24,
+      "watch": ["pages"],
+      "match": [["practice", "claude"], ["codex", "agent"], ["frontier", "signal"]],
+      "relation": "own",
+      "added_via": "seed",
+      "_note": "Tier D frontier signals (Claude/Codex practices) — already flowing via kimi-practices.md; registered here so the BP pipeline samples it on the same cadence."
+    }
+  ]
+}

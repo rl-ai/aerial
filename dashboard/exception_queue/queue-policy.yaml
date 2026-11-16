@@ -1,0 +1,35 @@
+# Exception-queue owning config (operator-dashboard spec §2, rev2 finding #6).
+# Classes align with urgency impact classes. Editable by the hub operator;
+# queue.py loads this file at import-time via load_policy().
+
+scoring:
+  weights:            # score = w_a*A + w_u*U + w_g*min(age_hours/aging_cap_hours, 1.0)
+    admission: 0.5
+    urgency: 0.3
+    aging: 0.2
+  aging_cap_hours: 48
+
+urgency:              # U mapped 0-1 from impact class
+  routine: 0.2
+  degraded: 0.5
+  blocking: 1.0
+
+# admission_threshold: minimum normalized Eval-gate admission score (0-1) for a
+# finding to enter the queue. Findings below it, or failing the Eval gate
+# (eval_passed=false), never surface.
+classes:
+  blocking:
+    description: "Blocking incident, failed prod action"
+    sla_breach_hours: 4      # one ping at breach (never re-pinged)
+    expiry_hours: 48         # past this: removed from queue, brief only, no ping
+    admission_threshold: 0.5
+  degraded:
+    description: "Quality regression, cost drift"
+    sla_breach_hours: 24
+    expiry_hours: 168        # 7 days
+    admission_threshold: 0.4
+  routine:
+    description: "Cleanup, non-urgent ask"
+    sla_breach_hours: 72
+    expiry_hours: 336        # 14 days
+    admission_threshold: 0.3

@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+*.egg-info/
+.venv/
+venv/
+
+# Local state and data
+*.db
+*.db-wal
+*.db-shm
+*.sqlite*
+logs/
+*.log
+
+# Deployment profile — real values never get committed.
+config/deployment.yaml
+
+# OS
+.DS_Store

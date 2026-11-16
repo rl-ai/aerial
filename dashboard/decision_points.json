@@ -1,0 +1,34 @@
+{
+  "_meta": "Aerial's runtime decision points (D1-D12) as understood from the dashboard build (docs/decision-points.md lives in the dashboard repo on the build host, not in this sandbox). Each entry: the decision point, the rule summary, and the BP-KB check ids that measure compliance. Unknown-rule entries are status 'pending' until wired against the authoritative decision-points.md.",
+  "decision_points": {
+    "D1": {
+      "name": "failure followup classification",
+      "rule": "Failures are classified R1-R6 by the followup classifier and routed per class; nothing fails silently.",
+      "checks": ["bp.failure.classified", "bp.failure.autorecovery"]
+    },
+    "D2": {
+      "name": "model placement: tier policy only",
+      "rule": "VRAM manager owns displacement/reload; the agent decides only tier policy (Tier A governed, Tier B burst, Tier C attacker). Demand-load failure is a capacity signal, not an agent error — escalate, never hand-stop services.",
+      "checks": ["bp.capacity.demand_model", "bp.fault.no_handstop"]
+    },
+    "D3": {
+      "name": "failure flow / mandate state machine",
+      "rule": "MandateFlow owns scoped failure state transitions per D3; transitions are auditable.",
+      "checks": ["bp.failure.classified", "bp.change.auditable"]
+    },
+    "D4": {
+      "name": "pending — authoritative rule lives in decision-points.md",
+      "rule": "Wire this entry from the dashboard repo's docs/decision-points.md on next build-host access.",
+      "checks": [],
+      "status": "pending"
+    },
+    "D5": { "name": "pending", "rule": "Wire from decision-points.md.", "checks": [], "status": "pending" },
+    "D6": { "name": "pending", "rule": "Wire from decision-points.md.", "checks": [], "status": "pending" },
+    "D7": { "name": "pending", "rule": "Wire from decision-points.md.", "checks": [], "status": "pending" },
+    "D8": { "name": "pending", "rule": "Wire from decision-points.md.", "checks": [], "status": "pending" },
+    "D9": { "name": "pending", "rule": "Wire from decision-points.md.", "checks": [], "status": "pending" },
+    "D10": { "name": "pending", "rule": "Wire from decision-points.md.", "checks": [], "status": "pending" },
+    "D11": { "name": "pending", "rule": "Wire from decision-points.md.", "checks": [], "status": "pending" },
+    "D12": { "name": "pending", "rule": "Wire from decision-points.md.", "checks": [], "status": "pending" }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "glm": {
+    "vram_gib": 0.0,
+    "resident": false,
+    "last_request_ts": 0.0,
+    "inflight": false,
+    "displaced_at": null
+  },
+  "kimi": {
+    "vram_gib": 0.0,
+    "resident": false,
+    "last_request_ts": 1794782101.9105246,
+    "inflight": false,
+    "displaced_at": null
+  },
+  "qwen": {
+    "vram_gib": 0.0,
+    "resident": false,
+    "last_request_ts": 0.0,
+    "inflight": false,
+    "displaced_at": null
+  },
+  "ds": {
+    "vram_gib": 0.0,
+    "resident": true,
+    "last_request_ts": 1794782401.172127,
+    "inflight": true,
+    "displaced_at": null
+  }
+}

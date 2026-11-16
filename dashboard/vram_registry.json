@@ -1,0 +1,50 @@
+{
+  "pressure_floor_gib": 8.0,
+  "seats": [
+    {
+      "name": "glm",
+      "port": 18110,
+      "reload_class": "SLOW",
+      "tier": "A",
+      "never_displace": true,
+      "service_unit": "morpheus-glm-forward-18083.service",
+      "load_cmd": "systemctl --user start morpheus-glm-forward-18083.service",
+      "vram_gib": 0.0,
+      "total_layers": 0
+    },
+    {
+      "name": "kimi",
+      "port": 18102,
+      "reload_class": "FAST",
+      "tier": "A",
+      "never_displace": false,
+      "service_unit": "morpheus-kimi-k31-pro.service",
+      "load_cmd": "systemctl --user start morpheus-kimi-k31-pro.service",
+      "vram_gib": 0.0,
+      "total_layers": 120,
+      "full_gib": 662.0
+    },
+    {
+      "name": "qwen",
+      "port": 18084,
+      "reload_class": "SLOW",
+      "tier": "B",
+      "never_displace": false,
+      "service_unit": "morpheus-qwen-fp4.service",
+      "load_cmd": "systemctl --user start morpheus-qwen-fp4.service",
+      "vram_gib": 0.0,
+      "total_layers": 0
+    },
+    {
+      "name": "ds",
+      "port": 18095,
+      "reload_class": "FAST",
+      "tier": "C",
+      "never_displace": false,
+      "service_unit": "morpheus-ds1017-reviewer.service",
+      "load_cmd": "systemctl --user start morpheus-ds1017-reviewer.service",
+      "vram_gib": 0.0,
+      "total_layers": 80
+    }
+  ]
+}

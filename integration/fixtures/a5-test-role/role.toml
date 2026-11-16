@@ -1,0 +1,21 @@
+# A5 qualification fixture: the synthetic a5-test role (DESIGN.md A5 guardrail 1).
+# One echo duty, worker tier, read/draft authority only. Holds no vault profile
+# and no real employee's data; nothing here is a credential.
+[role]
+name = "a5-test"
+version = "0.1.0"
+tier = "worker"
+job = "A5 qualification only: watch the test epic for the synthetic failed job marker, echo one recommendation as a ticket comment, draft only, never act."
+evidence = ["hub ticket events on the a5-qualification epic"]
+authority = ["read", "draft"]
+useful_output = "one recommendation comment per synthetic failed job"
+
+[budget]
+worker = { max_tokens = 40000, max_turns = 8 }
+
+[[duties]]
+name = "echo"
+schedule = "every 5m"
+mode = "single"
+instructions = "Read the tickets tagged a5-qualification. When the synthetic failed job marker is present on the test epic, post exactly one recommendation as a ticket comment through Tickets and attach the evidence summary with labels; draft only, never act."
+fingerprint = ["test_job.marker"]

@@ -1,0 +1,48 @@
+# Aerial deployment profile — copy to config/deployment.yaml and edit.
+# config/deployment.yaml is gitignored; never commit a real profile.
+# Every value can also be overridden with an environment variable:
+#   AERIAL_<SECTION>__<KEY>  (double underscore = nesting), e.g.
+#   AERIAL_EMAIL__RECIPIENT_EMAIL=ops@example.com
+# The values below are the generic OSS defaults: localhost, empty
+# recipients (email disabled), and repo-relative paths.
+
+email:
+  # Empty recipient = email delivery disabled (send_* become no-ops).
+  recipient_email:
+  smtp_host: smtp.gmail.com
+  smtp_port: 587
+  # Directory containing business.user / business.pass app-password files.
+  secrets_dir: ~/.aerial/secrets/gmail
+
+paths:
+  # Git repos scanned for the daily "what was DONE" commit digest.
+  # label -> path; empty or missing repos are skipped.
+  # repo_paths:
+  #   product: /srv/aerial/product
+  #   gateway: /srv/aerial/gateway
+  repo_paths: {}
+  python_bin: python3
+  # Empty = derived from the repo root (integration/, bin/job_run.py).
+  integration_dir:
+  exception_queue_fallback:
+  data_layer_fallback:
+  job_run_script:
+  scrapes_db: ~/.aerial/data/scrapes.db
+  gateway_v1:
+  sources_path:
+  stress_dir:
+  sre_state: ~/.aerial/state/sre-health-state.json
+  console_workdir: ~/.aerial/backtest/gauntlet
+
+cluster:
+  node_name: aerial
+  provider: custom:aerial-local
+  model: local-model
+  kimi_service_unit: aerial-kimi.service
+  kimi_model_path:
+  qwen_container: aerial-qwen
+  hub_url: http://127.0.0.1:8020
+  hub_token_file: ~/.aerial/secrets/hub-token
+  # Parent ticket for scheduled-job tickets; empty = skip parenting.
+  epic_id:
+  hermes_bin: hermes

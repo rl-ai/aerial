@@ -1,0 +1,119 @@
+{
+  "_meta": "Initial seed: the 10 practices from AWS Well-Architected + Google SRE most relevant to Aerial (an agent-ops platform). status/evidence are filled by the gap analysis (gap.run_gap_analysis) against the decision-point checks.",
+  "practices": [
+    {
+      "id": "bp.aws-wa.rel-1",
+      "source": "web_doc.aws-well-architected",
+      "pillar": "reliability",
+      "statement": "Recover automatically from failures: detect, respond, and recover without human intervention wherever possible.",
+      "status": "compliant",
+      "evidence": "check bp.failure.autorecovery: failure-flow state machine (D3) drives scoped recovery",
+      "decision_point": "D3",
+      "links": [],
+      "check": "bp.failure.autorecovery"
+    },
+    {
+      "id": "bp.aws-wa.rel-2",
+      "source": "web_doc.aws-well-architected",
+      "pillar": "reliability",
+      "statement": "No single point of failure: a component's failure must degrade, not take the platform down.",
+      "status": "gap",
+      "evidence": "check bp.failure.autorecovery on fallback placement: GLM depends on one host (Ariel); no documented failover seat",
+      "decision_point": "D2",
+      "links": [],
+      "check": "bp.reliability.no_spof"
+    },
+    {
+      "id": "bp.aws-wa.opex-1",
+      "source": "web_doc.aws-well-architected",
+      "pillar": "operational-excellence",
+      "statement": "Perform operations as code: all operational decisions executed through reviewed, versioned scripts and config.",
+      "status": "compliant",
+      "evidence": "check bp.change.auditable: ops run through governed scripts; every model call logged",
+      "decision_point": "D3",
+      "links": [],
+      "check": "bp.change.auditable"
+    },
+    {
+      "id": "bp.aws-wa.opex-2",
+      "source": "web_doc.aws-well-architected",
+      "pillar": "operational-excellence",
+      "statement": "Anticipate failure: run game days / adversarial exercises against the live design.",
+      "status": "compliant",
+      "evidence": "check bp.failure.classified plus attack-swarm: sandboxed parallel adversarial runs (attack_run.py) with findings routed through the followup classifier",
+      "decision_point": "D1",
+      "links": [
+        "finding:attack-swarm"
+      ],
+      "check": "bp.failure.classified"
+    },
+    {
+      "id": "bp.aws-wa.cost-1",
+      "source": "web_doc.aws-well-architected",
+      "pillar": "cost",
+      "statement": "Attribute and budget consumption per unit of work; enforce budgets, do not just observe them.",
+      "status": "compliant",
+      "evidence": "check bp.cost.budgeted: per-call token budgets with need = input + max_tokens + 5% margin",
+      "decision_point": "D2",
+      "links": [],
+      "check": "bp.cost.budgeted"
+    },
+    {
+      "id": "bp.aws-wa.sec-1",
+      "source": "web_doc.aws-well-architected",
+      "pillar": "security",
+      "statement": "Apply least privilege: separate identities for agent vs. human operations; agents never handle raw credentials.",
+      "status": "compliant",
+      "evidence": "check bp.security.least_privilege: agents run as ai-eva; ray/admin kept separate; credential handling forbidden",
+      "decision_point": "D1",
+      "links": [],
+      "check": "bp.security.least_privilege"
+    },
+    {
+      "id": "bp.aws-wa.sec-2",
+      "source": "web_doc.aws-well-architected",
+      "pillar": "security",
+      "statement": "Enable traceability: log and audit every action that changes state.",
+      "status": "compliant",
+      "evidence": "check bp.change.auditable: model-call log (role, server, tokens, timings, verdict) + kanban event log",
+      "decision_point": "D3",
+      "links": [],
+      "check": "bp.change.auditable"
+    },
+    {
+      "id": "bp.sre.alert-1",
+      "source": "web_doc.google-sre-workbook",
+      "pillar": "sre",
+      "statement": "Alert on symptoms, not causes: the operator sees user-visible degradation, not internal metric noise.",
+      "status": "compliant",
+      "evidence": "check bp.alert.symptoms: daily exec report surfaces agent actions, failures, and gaps — no live-watch panes",
+      "decision_point": "D1",
+      "links": [],
+      "check": "bp.alert.symptoms"
+    },
+    {
+      "id": "bp.sre.postmortem-1",
+      "source": "web_doc.google-sre-workbook",
+      "pillar": "sre",
+      "statement": "Blameless postmortems: every incident produces a written finding with root cause and followup actions.",
+      "status": "gap",
+      "evidence": "check bp.failure.classified: failures are classified R1-R6 and routed, but no written postmortem artifact per incident",
+      "decision_point": "D1",
+      "links": [
+        "finding:followup-r1-r6"
+      ],
+      "check": "bp.postmortem.written"
+    },
+    {
+      "id": "bp.sre.slo-1",
+      "source": "web_doc.google-sre-workbook",
+      "pillar": "sre",
+      "statement": "Define service-level objectives and error budgets before taking reliability risks.",
+      "status": "na",
+      "evidence": "check bp.alert.symptoms: no SLOs defined for agent-ops surfaces yet — wire from decision-points.md (D4-D12 pending)",
+      "decision_point": "none",
+      "links": [],
+      "check": "bp.sre.slo"
+    }
+  ]
+}

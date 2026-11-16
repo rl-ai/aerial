@@ -1,0 +1,4 @@
+#!/bin/sh
+# vram-ctl — thin shim to the VRAM manager CLI.
+# Install: cp vram-ctl /usr/local/bin/ && chmod +x /usr/local/bin/vram-ctl
+exec python3 "$(dirname "$0")/vram_manager.py" "$@"
