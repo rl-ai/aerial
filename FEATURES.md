@@ -14,38 +14,14 @@ Aerial is pilot-less operations for autonomous agents — agents fly solo, Aeria
 
 | Feature | Aerial | DSH |
 |---|---|---|
-| **Privacy & data control** — you choose the models, storage locations, and accounts to connect | Open source desktop app, but the models run in DeepSeek's cloud | 🚀 Everything local — models, storage, and accounts are yours. No telemetry: no data ever leaves your machine |
-| **Autonomous, self-starting agents** — they find work and opportunities on their own | Executes prompts and scheduled tasks (marked experimental) — reactive rather than self-starting | 🚀 Self-starting agents discover opportunities and execute autonomously — acting on what they find without being asked |
-| **Model choice** — BYOM, local or cloud | Runs DeepSeek's models (V4.1-Flash) — model breadth beyond the DeepSeek family isn't part of the product today | 🚀 Any model — local VRAM, self-hosted endpoints, or cloud APIs; you choose the placement |
-| **Self-healing operations** — from failure to verified fix, without a human in the loop | Execution traces and developer tools for inspection — but triage and the fix are on you | 🚀 Failures classified → ticketed → governed safe-fix → re-verified; dead seats eject, relaunch, and recover on their own |
-| **Centralized context management** — multi-agent workflows on a single task | Context lives inside one conversation — a second agent starts from zero | 🚀 Ticket-based tasks let multiple agents and roles work the same task, each inheriting the full chain of evidence, decisions, and history |
-| **Built-in reporting** — usage, kanban, and project management out of the box | Developer tools show execution traces — durations, turns, tool calls | 🚀 Daily board, exec report, kanban queue, and per-seat usage — on a 15-minute cadence |
-| **An extension of your OSS harness** — an operations layer over the harness you already run | Is a harness | 🚀 Supervision layer speaks HTTP + files; ships Hermes-native, other OSS harnesses are a small adapter |
-| **Interactive experience** | 🚀 Polished chat, file previews, Creator mode | Operational console built for oversight, not conversation |mated agent ops. Agents fly solo — always finding opportunities for you.**
-
-Aerial is the control tower for autonomous agent fleets. Below: the head-to-head against the strongest execution harness in the category, then everything in the box.
-
-*(A few components live in the internal deployment and are noted where so.)*
-
----
-
-## Head to head — Aerial vs DeepSeek Harness
-
-Aerial is pilot-less operations for autonomous agents — agents fly solo, Aerial runs the control tower. Compared feature-for-feature with **DeepSeek Harness (DSH)**:
-
-| Feature | Aerial | DSH |
-|---|---|---|
-| **Model choice** | 🚀 Any model — local VRAM, self-hosted endpoints, or cloud APIs; you choose the placement | Runs DeepSeek's models (V4.1-Flash) — model breadth beyond the DeepSeek family isn't part of the product today |
-| **Privacy & data control** | 🚀 Everything local — models, storage, and accounts are yours. No telemetry: no data ever leaves your machine | Open source desktop app, but the models run in DeepSeek's cloud |
-| **Autonomy** | 🚀 Self-starting agents discover opportunities and execute autonomously — acting on what they find without being asked | Executes prompts and scheduled tasks (marked experimental) — reactive rather than self-starting |
-| **Failure handling** | 🚀 Triage → ticket → governed fix → verified; infrastructure recovers on its own | Execution traces and developer tools for inspection — but triage and the fix are on you |
-| **Centralized context management** | 🚀 Ticket-based tasks allow multi-agent workflows on a single task — every agent inherits the full chain of evidence, decisions, and history | Context lives inside one conversation — a second agent starts from zero |
-| **Transparency & reporting** | 🚀 Per-call and per-seat tokens, tok/s, concurrency — 15-minute reports | Developer tools show execution traces — durations, turns, tool calls — but no per-seat cost or fleet reporting |
-| **Hardware utilization** | 🚀 Full fleet saturated 24/7 — demand displacement, seat-swap, idle-work broker | Single-user desktop focus — the rest of your hardware waits |
-| **Harness compatibility** | 🚀 Runs over your harness; ships Hermes-native, others are a small adapter | Is a harness |
-| **Interactive experience** | Operational console built for oversight, not conversation | 🚀 Polished chat, file previews, Creator mode |
-| **Extensibility** | Governed jobs and the hub API | 🚀 Plugin marketplace + Creator mode |
-| **Open source** | ✅ MIT | ✅ |
+| **Privacy & data control** | 🚀 **Yours.** Models, storage, and accounts — you choose. No telemetry: no data ever leaves your machine | Open source desktop app, but the models run in DeepSeek's cloud |
+| **Autonomous agents** | 🚀 **Self-starting.** They find opportunities and execute autonomously — no prompt required | **Reactive.** Executes prompts and scheduled tasks (experimental); not self-starting |
+| **Model choice** | 🚀 **BYOM.** Any model — local VRAM, self-hosted endpoints, or cloud APIs | DeepSeek's models (V4.1-Flash); breadth beyond the DeepSeek family isn't in the product today |
+| **Self-healing operations** | 🚀 **Failure to verified fix, no human in the loop.** Classified → ticketed → governed safe-fix → re-verified; dead seats recover on their own | Execution traces and developer tools — triage and the fix are on you |
+| **Centralized context management** | 🚀 **Ticket-based tasks.** Multi-agent workflows on a single task — every agent inherits the chain of evidence, decisions, and history | Context lives inside one conversation; a second agent starts from zero |
+| **Built-in reporting** | 🚀 **Usage, kanban, project management.** Daily board, exec report, per-seat usage — 15-minute cadence | Developer tools show durations, turns, and tool calls |
+| **OSS harness extension** | 🚀 **An operations layer over the harness you run.** Ships Hermes-native; other OSS harnesses are a small adapter | Is a harness |
+| **Interactive experience** | Operational console built for oversight | 🚀 **Polished chat.** File previews, Creator mode |
 
 > **DSH executes. Aerial operates.** DSH is the aircraft — polished, fast, a genuine pleasure for interactive work. Aerial is the control tower around it.
 
