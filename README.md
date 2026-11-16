@@ -1,6 +1,6 @@
 # Aerial
 
-> **Pilot-less, automated agent ops. Agents fly solo — always hunting opportunities for you.**
+> **Pilot-less, automated agent ops. Agents fly solo — always finding opportunities for you.**
 
 
 Aerial is an always-on operations platform for a small local AI cluster:
