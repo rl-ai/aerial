@@ -6,15 +6,15 @@
 
 | | 🛩️ DSH | 🗼 Aerial |
 |---|---|---|
-| ✈️ Raw execution | **wins** | |
-| 🌙 3am failures | | **wins** |
-| 🏭 GPU saturation | | **wins** |
-| 📜 Evidence trail | | **wins** |
-| 💸 Cost accounting | | **wins** |
-| 🔒 Privacy | | **wins** |
-| 🔧 Self-healing | | **wins** |
-| 🧩 Runs on your harness | | **wins*** |
-| 🏁 Open source | ✅ | ✅ |
+| Raw execution | **wins** | |
+| 3am failures | | **wins** |
+| GPU saturation | | **wins** |
+| Evidence trail | | **wins** |
+| Cost accounting | | **wins** |
+| Privacy | | **wins** |
+| Self-healing | | **wins** |
+| Runs on your harness | | **wins*** |
+| Open source | ✅ | ✅ |
 
 *Use DSH for interactive work — it's excellent. Aerial makes the work survive production.*
 
