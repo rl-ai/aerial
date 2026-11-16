@@ -17,12 +17,12 @@ Aerial is the control tower for your autonomous agent fleet — self-starting ag
 | **15 min** | between fleet reports — tokens, tok/s, saturation |
 | **0** | bytes of telemetry |
 
-This is the open-source split of an internal deployment. Everything
-runs with **generic defaults** out of the box: `localhost` URLs, no
-email recipient (delivery disabled), and runtime state under
-`~/.aerial/`. Deployment-specific values (node names, recipients,
-host paths, service units) live in a gitignored profile — see
-[Deployment profile](#deployment-profile).
+Autonomous, self-starting agents fly solo — finding opportunities,
+running 24/7, and self-healing when infrastructure fails. Aerial is
+the control tower: every action carries evidence, every failure gets
+triaged to a fix, every call is costed, and every GPU stays saturated.
+MIT, self-hosted, zero telemetry. Deployment-specific values live in a
+gitignored profile — see [Deployment profile](#deployment-profile).
 
 ## Layout
 
