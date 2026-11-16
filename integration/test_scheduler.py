@@ -19,7 +19,7 @@ import scheduler
 @pytest.fixture
 def env(tmp_path, monkeypatch):
     """Point all scheduler paths at tmp_path; reset injectables per test."""
-    shadow = tmp_path / "a5-harness" / "shadow"
+    shadow = tmp_path / "test-harness" / "shadow"
     monkeypatch.setenv("SHADOW_DIR", str(shadow))
     monkeypatch.delenv("HUB_URL", raising=False)
     monkeypatch.delenv("HUB_TOKEN", raising=False)

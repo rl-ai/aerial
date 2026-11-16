@@ -64,7 +64,7 @@
       "pillar": "security",
       "statement": "Apply least privilege: separate identities for agent vs. human operations; agents never handle raw credentials.",
       "status": "compliant",
-      "evidence": "check bp.security.least_privilege: agents run as ai-eva; ray/admin kept separate; credential handling forbidden",
+      "evidence": "check bp.security.least_privilege: agents run as service users; ray/admin kept separate; credential handling forbidden",
       "decision_point": "D1",
       "links": [],
       "check": "bp.security.least_privilege"

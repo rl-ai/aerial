@@ -285,7 +285,7 @@ def main(argv=None):
                          {"title": f"Shadow report: {job['job_id']}",
                           "body": brief or "(no brief produced)",
                           "tags": ["a5-qualification", "shadow"],
-                          "actor": "a5-harness"})
+                          "actor": "test-harness"})
         ticket_id = resp.get("id", resp.get("ticket_id"))
         print(f"Report posted: {ticket_id}")
     except Exception as exc:

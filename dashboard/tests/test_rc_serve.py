@@ -9,6 +9,7 @@ suite against the real modules. Run from the workspace root:
 
 from __future__ import annotations
 
+from pathlib import Path
 import io
 import json
 import os
@@ -41,8 +42,8 @@ def _real_ctx(tmp_db=True):
 
     sqlite conns are created with check_same_thread=False so the wsgiref
     server thread (real-socket e2e) may serve them."""
-    if "/home/ai-eva/workspaces/build/dashboard" not in sys.path:
-        sys.path.insert(0, "/home/ai-eva/workspaces/build/dashboard")
+    if "dashboard" not in sys.path:
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
     import sqlite3 as _sq
     _orig_connect = _sq.connect
     _sq.connect = lambda *a, **k: _orig_connect(

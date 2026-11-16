@@ -817,7 +817,7 @@ class Harness:
         emp = employees[0]
         if emp.state == "registered":
             registry.transition(emp.employee_id, "sandbox",
-                                actor="a5-harness", reason="preflight done")
+                                actor="test-harness", reason="preflight done")
         checks.append(self._check("employee-hired", True,
                                   {"employee_id": emp.employee_id,
                                    "state": emp.state}))
@@ -931,7 +931,7 @@ class Harness:
             dep.tickets_hub.record(record)
 
         from rlai_runtime.runs import Emitter
-        emitter = Emitter(dep.runtime, "runtime@a5-harness", sink)
+        emitter = Emitter(dep.runtime, "runtime@test-harness", sink)
         emitted: list = []
         try:
             emitted.append(emitter.emit(run.run_id, "run_started"))
@@ -1136,7 +1136,7 @@ class Harness:
         emp = employees[0]
         if emp.state == "registered":
             registry.transition(emp.employee_id, "sandbox",
-                                actor="a5-harness", reason="stage 3 stop tests")
+                                actor="test-harness", reason="stage 3 stop tests")
         checks.append(self._check("employee-hired", True,
                                   {"employee_id": emp.employee_id,
                                    "state": emp.state}))
@@ -1272,7 +1272,7 @@ class Harness:
         for report in pre:
             if not report.verified_stopped:
                 dep.runtime.resolve(report.run_id, "abandon",
-                                    actor="a5-harness")
+                                    actor="test-harness")
         dep.runtime.unfence(emp.employee_id)
         self._plan_note(f"pre-clean stop_employee swept {len(pre)} stray "
                         "active run(s)")
@@ -1591,7 +1591,7 @@ class Harness:
         emp = employees[0]
         if emp.state == "registered":
             registry.transition(emp.employee_id, "sandbox",
-                                actor="a5-harness",
+                                actor="test-harness",
                                 reason="stage 4 bypass tests")
         checks.append(self._check("employee-hired", True,
                                   {"employee_id": emp.employee_id,
@@ -2295,7 +2295,7 @@ def _stage6_fixture(dep, emp, pkg):
     run = dep.runtime.admit(c1)
     dep.runtime.start(run.run_id)
     stamp = _utc_stamp(dep.now())
-    base = {"version": "1.1.0", "producer": "runtime@a5-harness",
+    base = {"version": "1.1.0", "producer": "runtime@test-harness",
             "sent_at": stamp, "run_id": run.run_id,
             "ticket_id": task.ticket_id, "employee_id": emp.employee_id,
             "ts": stamp}
@@ -2947,7 +2947,7 @@ def _build_live_deployment(args) -> Deployment:
               # attempt as a C2 record through the real Tickets store
               # (the stage-2 pattern); the harness itself never emits
         from rlai_runtime.runs import Emitter
-        emitter = Emitter(dep.runtime, "runtime@a5-harness",
+        emitter = Emitter(dep.runtime, "runtime@test-harness",
                           lambda c2: dep.tickets_hub.record(c2))
 
         def _bypass_c2_sink(record: dict) -> None:
@@ -2962,7 +2962,7 @@ def _build_live_deployment(args) -> Deployment:
                 c2["ticket_id"], "checkpoint",
                 {"kind": "a5-bypass-attempt", **record},
                 actor="claude")  # the hub's act_as patterns admit claude*;
-                                 # "a5-harness" is not a hub actor (403)
+                                 # "test-harness" is not a hub actor (403)
 
         dep.bypass_c2_sink = _bypass_c2_sink
     return dep

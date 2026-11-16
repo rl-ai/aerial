@@ -1,8 +1,8 @@
 # RC1 Console — Verification Report (v0.9-rc1)
 
 **Card:** t_9e849c3b (RC1 lane 6: integrate + acceptance suite + e2e queue loop + verdict)
-**Date:** 2026-11-12 · **Built tree:** `/home/ai-eva/workspaces/build/dashboard` (mirrored to `/home/ai-eva/workspaces/rc1/integration/build/dashboard`)
-**Full suite:** `pytest build/dashboard/tests/ -q` → **89 passed, exit 0** (analyst venv, from `/home/ai-eva/workspaces/build`), of which 15 are the cross-module V1–V13 acceptance suite `tests/test_rc_acceptance.py`.
+**Date:** 2026-11-12 · **Built tree:** `<workdir>/dashboard` (mirrored to `<workdir>/rc1/integration/build/dashboard`)
+**Full suite:** `pytest build/dashboard/tests/ -q` → **89 passed, exit 0** (analyst venv, from `<workdir>`), of which 15 are the cross-module V1–V13 acceptance suite `tests/test_rc_acceptance.py`.
 
 ## 1. Integrated deliverables
 

@@ -47,7 +47,7 @@ def _fake_cmdline_reader(cmd_by_pid):
 
 def test_parse_ss_and_probe_seats():
     cmd_by_pid = {
-        1111: ("llama-server --alias kimi-k3.1-pro-q2 --model /srv/ai/hf/models"
+        1111: ("llama-server --alias kimi-k3.1-pro-q2 --model <models-dir>"
                "/kimi-k3.1-pro-karlex/KLX-IQ2_XXS/x.gguf -ngl 0 -c 32768 "
                "--parallel 1"),
         2222: "llama-server --alias deepseek --model /m/ds.gguf -ngl 60 -c 393216",

@@ -333,12 +333,12 @@ def test_retrigger_carries_cron_payload():
     cron = ("*/20 * * * * $HOME/ai-ops/bin/job_run.py run --node morpheus "
             "--job morpheus:curator-poll --skip-exit 75 "
             "--ticket TK-9 -- '/usr/bin/flock -n -E 75 /tmp/x.lock "
-            "/usr/bin/python3 /srv/ai/curator/curator_poll.py' "
-            ">> /srv/ai/curator/poll.log 2>&1  # curator-poll")
+            "/usr/bin/python3 <install-dir>/curator_poll.py' "
+            ">> <install-dir>/poll.log 2>&1  # curator-poll")
     entries = rn.parse_crontab(cron)
     assert len(entries) == 1
     assert entries[0].cmd == ("/usr/bin/flock -n -E 75 /tmp/x.lock "
-                              "/usr/bin/python3 /srv/ai/curator/curator_poll.py")
+                              "/usr/bin/python3 <install-dir>/curator_poll.py")
     cmd = rn.retrigger_command("morpheus:curator-poll", "TK-9", entries[0].cmd)
     assert cmd[-2] == "--"
     assert cmd[-1] == entries[0].cmd

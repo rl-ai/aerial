@@ -1672,7 +1672,7 @@ def _stage6_stores(env):
     run = dep.runtime.admit(c1)
     dep.runtime.start(run.run_id)
     stamp = qr._utc_stamp(dep.now())
-    base = {"version": "1.1.0", "producer": "runtime@a5-harness",
+    base = {"version": "1.1.0", "producer": "runtime@test-harness",
             "sent_at": stamp, "run_id": run.run_id,
             "ticket_id": task.ticket_id, "employee_id": emp.employee_id,
             "ts": stamp}
@@ -1854,7 +1854,7 @@ def test_stage6_hand_computation_reads_the_stores_fresh(env, tmp_path):
 
     stamp = qr._utc_stamp(dep.now())
     dep.tickets_hub.record(dict(
-        version="1.1.0", producer="runtime@a5-harness", sent_at=stamp,
+        version="1.1.0", producer="runtime@test-harness", sent_at=stamp,
         run_id=run.run_id, ticket_id=task.ticket_id,
         employee_id=emp.employee_id, ts=stamp,
         message_id=qr._fresh_message_id(), seq=4, event_type="tool_call",

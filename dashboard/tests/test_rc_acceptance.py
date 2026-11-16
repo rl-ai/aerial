@@ -14,6 +14,7 @@ except-class identity matches the real backend.
 """
 from __future__ import annotations
 
+from pathlib import Path
 import io
 import json
 import os
@@ -29,8 +30,8 @@ from wsgiref.simple_server import make_server
 
 import pytest
 
-WORKSPACES = "/home/ai-eva/workspaces"
-BUILD_DASH = "/home/ai-eva/workspaces/build/dashboard"
+WORKSPACES = str(Path(__file__).resolve().parents[3])
+BUILD_DASH = str(Path(__file__).resolve().parents[1])
 for _p in (WORKSPACES, BUILD_DASH):
     if _p not in sys.path:
         sys.path.insert(0, _p)

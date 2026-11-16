@@ -1,6 +1,7 @@
 """RC1 lane 2 acceptance tests — console-rc-ui.md §8 V4–V7 against the REAL
 mandate_flow / queue backend (no faked transport on the happy path)."""
 
+from pathlib import Path
 import os
 import sys
 
@@ -9,7 +10,7 @@ import pytest
 HERE = os.path.dirname(os.path.abspath(__file__))
 # The REAL backend lives in the built tree (canonical import target); the
 # local workspace copy of console/ is what we test.
-BUILD_DASH = "/home/ai-eva/workspaces/build/dashboard"
+BUILD_DASH = str(Path(__file__).resolve().parents[1])
 sys.path.insert(0, BUILD_DASH)          # .../build/dashboard (exception_queue)
 LOCAL_DASH = os.path.abspath(os.path.join(HERE, ".."))   # local console copy
 sys.path.insert(0, LOCAL_DASH)

@@ -1,6 +1,6 @@
 """Lane D self-test: notification engine against spec §4 ACs N1–N7.
 
-Run: cd /home/ai-eva/workspaces/build && python3 -m dashboard.notifications.selftest_lane_d
+Run: cd <workdir> && python3 -m dashboard.notifications.selftest_lane_d
 Exits 0 only if every check passes. Imports real Lane A (Queue) modules.
 """
 
