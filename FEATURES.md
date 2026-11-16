@@ -12,19 +12,19 @@ Aerial is the control tower for autonomous agent fleets. Below: the head-to-head
 
 Aerial is pilot-less operations for autonomous agents — agents fly solo, Aerial runs the control tower. Compared feature-for-feature with **DeepSeek Harness (DSH)**:
 
-| Feature | DSH | Aerial |
+| Feature | Aerial | DSH |
 |---|---|---|
-| **Model choice** | Runs DeepSeek's models (V4.1-Flash) — model breadth beyond the DeepSeek family isn't part of the product today | 🚀 Any model — local VRAM, self-hosted endpoints, or cloud APIs; you choose the placement |
-| **Privacy & data control** | Open source desktop app, but the models run in DeepSeek's cloud | 🚀 Everything local — models, storage, and accounts are yours. No telemetry: no data ever leaves your machine |
-| **Autonomy** | Executes prompts and scheduled tasks (marked experimental) — reactive rather than self-starting | 🚀 Self-starting agents discover opportunities and execute autonomously — acting on what they find without being asked |
-| **Failure handling** | Execution traces and developer tools for inspection — but triage and the fix are on you | 🚀 Triage → ticket → governed fix → verified; infrastructure recovers on its own |
-| **Centralized context management** | Context lives inside one conversation — a second agent starts from zero | 🚀 Tasks are the shared brain: multiple agents and roles work the same task, each inheriting the full chain of evidence, decisions, and history |
-| **Transparency & reporting** | Developer tools show execution traces — durations, turns, tool calls — but no per-seat cost or fleet reporting | 🚀 Per-call and per-seat tokens, tok/s, concurrency — 15-minute reports |
-| **Hardware utilization** | Single-user desktop focus — the rest of your hardware waits | 🚀 Full fleet saturated 24/7 — demand displacement, seat-swap, idle-work broker |
-| **Harness compatibility** | Is a harness | 🚀 Runs over your harness; ships Hermes-native, others are a small adapter |
-| **Interactive experience** | 🚀 Polished chat, file previews, Creator mode | Operational console built for oversight, not conversation |
-| **Extensibility** | 🚀 Plugin marketplace + Creator mode | Governed jobs and the hub API |
-| **Open source** | ✅ | ✅ MIT |
+| **Model choice** | 🚀 Any model — local VRAM, self-hosted endpoints, or cloud APIs; you choose the placement | Runs DeepSeek's models (V4.1-Flash) — model breadth beyond the DeepSeek family isn't part of the product today |
+| **Privacy & data control** | 🚀 Everything local — models, storage, and accounts are yours. No telemetry: no data ever leaves your machine | Open source desktop app, but the models run in DeepSeek's cloud |
+| **Autonomy** | 🚀 Self-starting agents discover opportunities and execute autonomously — acting on what they find without being asked | Executes prompts and scheduled tasks (marked experimental) — reactive rather than self-starting |
+| **Failure handling** | 🚀 Triage → ticket → governed fix → verified; infrastructure recovers on its own | Execution traces and developer tools for inspection — but triage and the fix are on you |
+| **Centralized context management** | 🚀 Ticket-based tasks allow multi-agent workflows on a single task — every agent inherits the full chain of evidence, decisions, and history | Context lives inside one conversation — a second agent starts from zero |
+| **Transparency & reporting** | 🚀 Per-call and per-seat tokens, tok/s, concurrency — 15-minute reports | Developer tools show execution traces — durations, turns, tool calls — but no per-seat cost or fleet reporting |
+| **Hardware utilization** | 🚀 Full fleet saturated 24/7 — demand displacement, seat-swap, idle-work broker | Single-user desktop focus — the rest of your hardware waits |
+| **Harness compatibility** | 🚀 Runs over your harness; ships Hermes-native, others are a small adapter | Is a harness |
+| **Interactive experience** | Operational console built for oversight, not conversation | 🚀 Polished chat, file previews, Creator mode |
+| **Extensibility** | Governed jobs and the hub API | 🚀 Plugin marketplace + Creator mode |
+| **Open source** | ✅ MIT | ✅ |
 
 > **DSH executes. Aerial operates.** DSH is the aircraft — polished, fast, a genuine pleasure for interactive work. Aerial is the control tower around it.
 
