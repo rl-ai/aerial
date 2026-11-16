@@ -16,7 +16,7 @@ Aerial is pilot-less operations for autonomous agents — agents fly solo, Aeria
 |---|---|---|
 | **Model choice** | Runs DeepSeek's models (V4.1-Flash) — model breadth beyond the DeepSeek family isn't part of the product today | 🚀 Any model — local VRAM, self-hosted endpoints, or cloud APIs; you choose the placement |
 | **Privacy & data control** | Open source desktop app, but the models run in DeepSeek's cloud | 🚀 Everything local — models, storage, and accounts are yours. No telemetry: no data ever leaves your machine |
-| **Autonomy** | Executes prompts and scheduled tasks (marked experimental) — reactive rather than self-starting | 🚀 Self-starting agents discover opportunities and self-assign work |
+| **Autonomy** | Executes prompts and scheduled tasks (marked experimental) — reactive rather than self-starting | 🚀 Self-starting agents discover opportunities and execute autonomously — acting on what they find without being asked |
 | **Failure handling** | Execution traces and developer tools for inspection — but triage and the fix are on you | 🚀 Triage → ticket → governed fix → verified; infrastructure recovers on its own |
 | **Context & evidence** | Full conversation history — no evidence trail that survives past the chat | 🚀 Ticket-based evidence trail — every claim carries its proof beyond the chat |
 | **Transparency & reporting** | Developer tools show execution traces — durations, turns, tool calls — but no per-seat cost or fleet reporting | 🚀 Per-call and per-seat tokens, tok/s, concurrency — 15-minute reports |
