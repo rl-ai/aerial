@@ -6,18 +6,18 @@ What Aerial does, by area. *(A few components live in the internal deployment an
 
 Aerial is an operations layer, not another chat surface. Compared feature-for-feature with **DeepSeek Harness (DSH)** — the strongest execution harness in the category:
 
-| Feature | 🛩️ DSH | 🗼 Aerial |
+| Feature | DSH | Aerial |
 |---|---|---|
-| **Fleet-wide operations, 24/7** — an ops agent that polls, classifies, fixes, and verifies without you | | ✅ |
-| **Every GPU working** — models resident on VRAM, demand displaces idle, empty seats take backlog work | | ✅ |
-| **Failure triage that ends in a fix** — not a trace to read, but a verified resolution | | ✅ |
-| **Evidence-backed audit trail** — every claim on a ticket, releases gated 5/5 by the gauntlet | | ✅ |
-| **Cost per call and per seat** — tokens, tok/s, concurrency, on a 15-minute report | | ✅ |
-| **Self-healing seats** — dead seats detect, eject, relaunch, verify autonomously | | ✅ |
-| **Fully local** — hub, console, runners, and models on your hardware; zero telemetry | | ✅ |
-| **Runs on your harness** — supervision layer speaks HTTP + files; ships Hermes-native, other harnesses are a small adapter | | ✅* |
-| **Interactive execution** — conversational work with file previews | ✅ | capable via agents |
-| **Plugin ecosystem** — marketplace plus plugins built from chat (Creator mode) | ✅ | extends via governed jobs |
+| **Fleet-wide operations, 24/7** — an ops agent that polls, classifies, fixes, and verifies without you | Manual monitoring of a single session | 🚀 Always-on: every failed run and dead seat triaged while you sleep |
+| **Every GPU working** — models resident on VRAM, demand displaces idle | One model loaded on one machine at a time; the rest of your VRAM sits cold | 🚀 Demand-displacement, seat-swap, and a broker that fills empty seats with backlog work |
+| **Failure triage that ends in a fix** | Leaves you a trace to read and a mystery to solve | 🚀 Classified → ticketed → governed safe-fix → re-verified against the exact symptom |
+| **Evidence-backed audit trail** | Conversation history | 🚀 Every claim on a hub ticket with evidence labels; releases gated 5/5 by the gauntlet |
+| **Cost per call and per seat** | Buried in conversation logs | 🚀 Tokens, tok/s, concurrency per seat — a 15-minute report, not an archaeology dig |
+| **Self-healing seats** | Out of scope | 🚀 Dead seats detect, eject GPU holders, relaunch, and verify autonomously |
+| **Fully local** | Cloud model by default | 🚀 Hub, console, runners, and models on your hardware — zero telemetry |
+| **Runs on your harness** | Is a harness | 🚀 Supervision layer speaks HTTP + files; ships Hermes-native, others are a small adapter |
+| **Interactive execution** | 🚀 Conversational work with file previews, Creator mode | Capable through its agents |
+| **Plugin ecosystem** | 🚀 Marketplace plus plugins built from chat | Extends via governed jobs and the hub API |
 | **Open source** | ✅ | ✅ MIT |
 
 DSH is the aircraft — polished, fast, a genuine pleasure for interactive work. Aerial is the control tower. They compose: DSH executes, Aerial operates.
