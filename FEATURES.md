@@ -16,8 +16,8 @@ Aerial is pilot-less operations for autonomous agents — agents fly solo, Aeria
 |---|---|---|
 | **Privacy & data control** | 🚀 <b>Full Control.</b> Your models, storage, and accounts. No telemetry: data does not leave your machine with local AI | Open source desktop app, but the models run in DeepSeek's cloud |
 | **Autonomous agents** | 🚀 **Self-starting.** Agents find opportunities and execute autonomously — no prompt required | **Reactive.** Executes prompts and scheduled tasks (experimental); not self-starting |
-| **Model choice** | 🚀 **BYOM.** Any model — local VRAM, self-hosted endpoints, or cloud APIs | DeepSeek's models (V4.1-Flash); breadth beyond the DeepSeek family isn't in the product today |
-| **Self-healing operations** | 🚀 **Failure to verified fix, no human in the loop.** Classified → ticketed → governed safe-fix → re-verified; dead seats recover on their own | Execution traces and developer tools — triage and the fix are on you |
+| **Model choice** | 🚀 **BYOM.** Bring your own model — local VRAM, self-hosted endpoints, or cloud APIs | DeepSeek's models (V4.1-Flash); breadth beyond the DeepSeek family isn't in the product today |
+| **Self-healing operations** | 🚀 **Self-maintenance.** The ops agent detects failures, applies governed fixes, and verifies the exact symptom — and the infrastructure itself recovers when a seat dies | Execution traces and developer tools — triage and the fix are on you |
 | **Centralized context management** | 🚀 **Ticket-based tasks.** Multi-agent workflows on a single task — every agent inherits the chain of evidence, decisions, and history | Context lives inside one conversation; a second agent starts from zero |
 | **Built-in reporting** | 🚀 **Usage, kanban, project management.** Daily board, exec report, per-seat usage — 15-minute cadence | Developer tools show durations, turns, and tool calls |
 | **OSS harness extension** | 🚀 **An operations layer over the harness you run.** Ships Hermes-native; other OSS harnesses are a small adapter | Is a harness |
