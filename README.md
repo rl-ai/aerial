@@ -2,7 +2,7 @@
 
 > **Pilot-less, automated agent ops. Agents fly solo — always finding opportunities for you.**
 
-Aerial is the control tower for your agent fleet — the operations layer that supervises, triages, and accounts for agent work on your own hardware.
+Aerial is the control tower for your autonomous agent fleet — self-starting agents that find their own work, with the operations layer that supervises, triages, and accounts for all of it on your own hardware.
 
 ![Operator console](docs/console-hero.png)
 

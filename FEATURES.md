@@ -8,6 +8,7 @@ Aerial is an operations layer, not another chat surface. Compared feature-for-fe
 
 | Feature | DSH | Aerial |
 |---|---|---|
+| **Autonomous, self-starting agents** — they find work and opportunities on their own, not just execute prompts | Reactive: acts on prompts and schedules you set | 🚀 Proactive: discovers opportunities through its listening pipeline, self-assigns backlog work, and acts without being asked |
 | **Fleet-wide operations, 24/7** — an ops agent that polls, classifies, fixes, and verifies without you | Manual monitoring of a single session | 🚀 Always-on: every failed run and dead seat triaged while you sleep |
 | **Every GPU working** — models resident on VRAM, demand displaces idle | One model loaded on one machine at a time; the rest of your VRAM sits cold | 🚀 Demand-displacement, seat-swap, and a broker that fills empty seats with backlog work |
 | **Failure triage that ends in a fix** | Leaves you a trace to read and a mystery to solve | 🚀 Classified → ticketed → governed safe-fix → re-verified against the exact symptom |
