@@ -14,8 +14,6 @@ Aerial is pilot-less operations for autonomous agents — agents fly solo, Aeria
 
 | Feature | Aerial | DSH |
 |---|---|---|
-| **Time to first value** | 🚀 **Download and go.** An app, not a project — first conversation in minutes | Clone, configure, connect a hub — an afternoon, not minutes |
-| **Frontier model out of the box** | 🚀 **Frontier cloud model included.** DeepSeek-V4.1-Flash, tuned and served for you | Bring your own — the model is only as good as what you point it at |
 | **Privacy & data control** | 🚀 <b>Full Control.</b> Your models, storage, and accounts. No telemetry: data does not leave your machine with local AI | Open source desktop app, but the models run in DeepSeek's cloud |
 | **Autonomous agents** | 🚀 **Self-starting.** Agents find opportunities and execute autonomously — no prompt required | **Reactive.** Executes prompts and scheduled tasks (experimental); not self-starting |
 | **Model choice** | 🚀 **BYOM.** Bring your own model — local VRAM, self-hosted endpoints, or cloud APIs | DeepSeek's models (V4.1-Flash); breadth beyond the DeepSeek family isn't in the product today |
