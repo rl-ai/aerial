@@ -89,3 +89,5 @@ The unglamorous layer that makes everything above survive a reboot, a rename, an
 - **Cold-start sandbox** — the whole stack boots in a dockerized systemd container, first-boot assertions included. *(internal deployment)*
 
 
+
+🚀 marks the stronger product on each row — and some rows genuinely go to DSH. A fair fight is the point: Aerial isn't trying to out-chat a chat product.
