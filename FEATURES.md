@@ -19,8 +19,8 @@ Aerial is pilot-less operations for autonomous agents — agents fly solo, Aeria
 | **Model choice** | 🚀 **BYOM.** Bring your own model — local VRAM, self-hosted endpoints, or cloud APIs | DeepSeek's models (V4.1-Flash); breadth beyond the DeepSeek family isn't in the product today |
 | **Self-healing operations** | 🚀 **Self-maintenance.** The ops agent detects failures, applies governed fixes, and verifies the exact symptom — and the infrastructure itself recovers when a seat dies | Execution traces and developer tools — triage and the fix are on you |
 | **Centralized context management** | 🚀 **Centralized context.** Multi-agent workflows on a single task, enabled via tickets as the centralized context unit — every agent inherits the chain of evidence, decisions, and history | Context lives inside one conversation; a second agent starts from zero |
-| **Built-in reporting** | 🚀 **Usage, kanban, project management.** Daily board, exec report, per-seat usage — 15-minute cadence | Developer tools show durations, turns, and tool calls |
-| **OSS harness extension** | 🚀 **An operations layer over the harness you run.** Ships Hermes-native; other OSS harnesses are a small adapter | Is a harness |
+| **Reporting** | 🚀 **Built in.** Usage, kanban, and project management — daily board, exec report, per-seat usage on a 15-minute cadence | Developer tools show durations, turns, and tool calls |
+| **Deployment model** | 🚀 **An extension, not a standalone app.** An operations layer over the harness you already run — ships Hermes-native; other OSS harnesses are a small adapter | A standalone app — the harness and its surface are one product |
 
 > **DSH executes. Aerial operates.** DSH is the aircraft — polished, fast, a genuine pleasure for interactive work. Aerial is the control tower around it.
 
