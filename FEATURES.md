@@ -1,10 +1,16 @@
 # Features
 
-What Aerial does, by area. *(A few components live in the internal deployment and are noted where so.)*
+**Pilot-less, automated agent ops. Agents fly solo — always finding opportunities for you.**
 
-## Why Aerial over DeepSeek Harness
+Aerial is the control tower for autonomous agent fleets. Below: the head-to-head against the strongest execution harness in the category, then everything in the box.
 
-Aerial is pilot-less operations for autonomous agents — agents fly solo, Aerial runs the control tower. Compared feature-for-feature with **DeepSeek Harness (DSH)**, the strongest execution harness in the category:
+*(A few components live in the internal deployment and are noted where so.)*
+
+---
+
+## Head to head — Aerial vs DeepSeek Harness
+
+Aerial is pilot-less operations for autonomous agents — agents fly solo, Aerial runs the control tower. Compared feature-for-feature with **DeepSeek Harness (DSH)**:
 
 | Feature | DSH | Aerial |
 |---|---|---|
@@ -20,14 +26,15 @@ Aerial is pilot-less operations for autonomous agents — agents fly solo, Aeria
 | **Extensibility** | 🚀 Plugin marketplace + Creator mode | Governed jobs and the hub API |
 | **Open source** | ✅ | ✅ MIT |
 
-DSH is the aircraft — polished, fast, a genuine pleasure for interactive work. Aerial is the control tower. They compose: DSH executes, Aerial operates.
+> **DSH executes. Aerial operates.** DSH is the aircraft — polished, fast, a genuine pleasure for interactive work. Aerial is the control tower around it.
 
-*\*The supervision layer speaks HTTP + files. Ships Hermes-native; other harnesses are a small adapter away.*
+> *\*The supervision layer speaks HTTP + files. Ships Hermes-native; other harnesses are a small adapter away.*
 
 ---
 
+## The box — what's inside
 
-## See everything — operator surface
+### See everything — operator surface
 
 You shouldn't have to open six terminals to know how your fleet slept. One board, one inbox, one queue.
 
@@ -37,7 +44,7 @@ You shouldn't have to open six terminals to know how your fleet slept. One board
 - **Email delivery** — the report in your inbox, daily. Off until you set a recipient. → `dashboard/email_delivery.py`
 - **Exception queue** — anything risky waits for a human: approve, dismiss, escalate — with evidence attached. → `dashboard/exception_queue/`
 
-## Never wake up to a surprise — automation
+### Never wake up to a surprise — automation
 
 Autonomous triage: failures get classified, filed, fixed, and verified — the fix backed by root-cause analysis, the resolution backed by evidence.
 
@@ -46,7 +53,7 @@ Autonomous triage: failures get classified, filed, fixed, and verified — the f
 - **Safe fixes** — reversible findings get a governed fix attempt, verified against the exact symptom. Verified fixes close silently; failures escalate. → `dashboard/followup/flow.py`
 - **Shadow scheduler** — new behavior observes before it goes live, chained curator → lead → exec sessions over real failures. → `integration/scheduler.py`
 
-## Your GPUs, fully loaded — model fleet
+### Your GPUs, fully loaded — model fleet
 
 Saturation is the standard: models live on VRAM by default, idle gets displaced, and self-starting agents keep every seat working 24/7. Self-healing closes the loop when a seat dies.
 
@@ -56,7 +63,7 @@ Saturation is the standard: models live on VRAM by default, idle gets displaced,
 - **Idle-work broker** — measured-idle seats pull from a pre-approved backlog. No plane sits idle. *(internal deployment)*
 - **Usage telemetry** — per-seat and per-call tokens, tok/s, concurrency — on a 15-minute report. → `dashboard/data_layer/model_calls_tailer.py`
 
-## Trust the output — quality machinery
+### Trust the output — quality machinery
 
 Autonomy without evidence is just guessing. The gauntlet and promotion gate turn "done" into verified, evidence-backed fact — 5/5 or it doesn't ship.
 
@@ -66,7 +73,7 @@ Autonomy without evidence is just guessing. The gauntlet and promotion gate turn
 - **Best-practice knowledge base** — curated operational practices with gap detection. → `dashboard/bpkb/`
 - **Adversarial stress harness** — attack scenarios with ground-truth scoring for agent honesty and cause-finding. *(internal deployment)*
 
-## Plug into your world — integration
+### Plug into your world — integration
 
 This is where proactive agents earn the name: discovering sources, finding opportunities, and filing them for review — work nobody prompted.
 
@@ -74,7 +81,7 @@ This is where proactive agents earn the name: discovering sources, finding oppor
 - **Listening pipeline** — degree-expansion source discovery plus a SWOT cadence that files evidence-backed opportunities into the exception queue. → `gateway/secondbrain/`
 - **Gateway MCP + version snapshots** — the second-brain vault over MCP, with pinned, replayable versions. → `gateway/secondbrain_mcp/`
 
-## Boring where it counts — ops
+### Boring where it counts — ops
 
 The unglamorous layer that makes everything above survive a reboot, a rename, and a second operator.
 
