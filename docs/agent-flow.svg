@@ -1,57 +1,55 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700">
-<style>
-body{margin:0;background:#0d1117;color:#e6edf3;font:13px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
-.wrap{max-width:1240px;margin:0 auto;padding:28px 20px 48px}
-h1{font-size:20px;font-weight:600;margin:0 0 4px}
-.sub{color:#8b949e;font-size:13px;margin-bottom:26px}
-.legend{display:flex;gap:18px;margin:0 0 20px;font-size:12px;color:#8b949e;flex-wrap:wrap}
-.legend span{display:inline-flex;align-items:center;gap:6px}
-.sw{width:12px;height:12px;border-radius:3px;display:inline-block}
-svg{display:block;max-width:100%;height:auto}
-.box{stroke:#30363d;stroke-width:1}
-.box.agent{stroke:#f97316}
-.box.store{stroke:#94a3b8}
-.box.out{stroke:#58a6ff}
-.t{fill:#e6edf3;font-size:12.5px;font-weight:600}
-.t.small{font-size:11px;font-weight:400;fill:#8b949e}
-.t.h{fill:#8b949e;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:600}
-.t.orange{fill:#f97316}
-.t.blue{fill:#58a6ff}
-path.flow{fill:none;stroke:#8b949e;stroke-width:1.4;marker-end:url(#arrow)}
-path.flow.gray{stroke:#8b949e;marker-end:url(#arrowg)}
-path.flow.blue{stroke:#f97316;marker-end:url(#arrow)}
-path.flow.loop{stroke:#8b949e;stroke-dasharray:6 4;marker-end:url(#arrow)}
-text.lbl{fill:#8b949e;font-size:10.5px;font-style:italic}
-text.lbl2{fill:#f97316;font-size:11px;font-weight:600}
-</style>
-
 <defs>
 <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-<path d="M0,0 L8,4 L0,8 z" fill="#8b949e"/>
+<path d="M0,0 L8,4 L0,8 z" fill="rgba(235,235,245,0.6)"/>
 </marker>
 <marker id="arrowg" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-<path d="M0,0 L8,4 L0,8 z" fill="#8b949e"/>
+<path d="M0,0 L8,4 L0,8 z" fill="rgba(235,235,245,0.6)"/>
 </marker>
 <marker id="arrowb" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-<path d="M0,0 L8,4 L0,8 z" fill="#8b949e"/>
+<path d="M0,0 L8,4 L0,8 z" fill="rgba(235,235,245,0.6)"/>
 </marker>
 </defs>
 
-<rect x="30" y="8" width="12" height="12" fill="#f97316"/>
-<text class="t small" x="48" y="18">Agent</text>
-<rect x="160" y="8" width="12" height="12" fill="#94a3b8"/>
-<text class="t small" x="178" y="18">Local storage</text>
-<rect x="290" y="8" width="12" height="12" fill="#58a6ff"/>
-<text class="t small" x="308" y="18">Output</text>
+<style>
+:root{ }
+svg{background:#000000;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+/* Apple HIG dark tokens:
+   canvas #000000 · elevated surface #1C1C1E · raised #2C2C2E
+   systemBlue #0A84FF · systemOrange #FF9F0A · systemGray #8E8E93
+   label primary #FFFFFF · secondary rgba(235,235,245,0.6)
+   separator rgba(84,84,88,0.6) */
+.box{fill:#1C1C1E;stroke:rgba(84,84,88,0.6);stroke-width:1}
+.box.agent{stroke:#FF9F0A;stroke-width:1.5}
+.box.out{stroke:#0A84FF;stroke-width:1.5}
+.t{fill:#FFFFFF;font-size:12.5px;font-weight:600}
+.t.small{fill:rgba(235,235,245,0.6);font-size:11px;font-weight:400}
+.t.h{fill:rgba(235,235,245,0.6);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:600}
+.t.orange{fill:#FF9F0A;font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:600}
+.t.blue{fill:#0A84FF;font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:600}
+path.flow{fill:none;stroke:rgba(235,235,245,0.6);stroke-width:1.4;marker-end:url(#arrow)}
+path.flow.gray{stroke:rgba(235,235,245,0.6);marker-end:url(#arrowg)}
+path.flow.blue{stroke:#0A84FF;marker-end:url(#arrow)}
+path.flow.loop{stroke:rgba(235,235,245,0.6);stroke-dasharray:6 4;marker-end:url(#arrow)}
+text.lbl{fill:rgba(235,235,245,0.6);font-size:10.5px;font-style:italic}
+text.lbl2{fill:#0A84FF;font-size:11px;font-weight:600}
+</style>
 
-<text class="t h" x="30" y="30">1 · Data sources</text>
-<text class="t h" x="240" y="30">2 · Local storage</text>
-<text class="t h" x="470" y="30">3 · Curation</text>
-<text class="t h" x="680" y="30">4 · Orchestration</text>
-<text class="t h" x="950" y="30">5 · Reporting</text>
+<!-- legend -->
+<rect x="30" y="8" width="12" height="12" rx="3" fill="#FF9F0A"/>
+<text class="t small" x="48" y="18" style="fill:#FFFFFF">Agent</text>
+<rect x="160" y="8" width="12" height="12" rx="3" fill="#8E8E93"/>
+<text class="t small" x="178" y="18" style="fill:#FFFFFF">Local storage</text>
+<rect x="290" y="8" width="12" height="12" rx="3" fill="#0A84FF"/>
+<text class="t small" x="308" y="18" style="fill:#FFFFFF">Output</text>
 
+<text class="t h" x="30" y="32">1 · Data sources</text>
+<text class="t h" x="240" y="32">2 · Local storage</text>
+<text class="t h" x="470" y="32">3 · Curation</text>
+<text class="t h" x="680" y="32">4 · Orchestration</text>
+<text class="t h" x="950" y="32">5 · Reporting</text>
 
-<!-- COL 1: data sources -->
+<!-- flows -->
 <path class="flow" d="M690,160 C 640,90 600,90 560,140"/>
 <path class="flow" d="M200,88 L240,140"/>
 <path class="flow" d="M200,156 L240,170"/>
@@ -62,55 +60,58 @@ text.lbl2{fill:#f97316;font-size:11px;font-weight:600}
 <path class="flow" d="M780,230 L780,330"/>
 <path class="flow" d="M870,185 L950,185"/>
 <path class="flow" d="M1040,230 L1040,340"/>
-<rect class="box" x="30" y="60" width="170" height="56"/>
+
+<!-- COL 1: data sources -->
+<rect class="box" x="30" y="60" width="170" height="56" rx="10"/>
 <text class="t" x="44" y="82">Web pages</text>
 <text class="t small" x="44" y="99">fetched on demand</text>
 
-<rect class="box" x="30" y="128" width="170" height="56"/>
+<rect class="box" x="30" y="128" width="170" height="56" rx="10"/>
 <text class="t" x="44" y="150">Docs &amp; slides</text>
 <text class="t small" x="44" y="167">Brief.docx · Data.xlsx</text>
 
-<rect class="box" x="30" y="196" width="170" height="56"/>
+<rect class="box" x="30" y="196" width="170" height="56" rx="10"/>
 <text class="t" x="44" y="218">Forums &amp; releases</text>
 <text class="t small" x="44" y="235">GitHub · Hugging Face</text>
 
-<rect class="box" x="30" y="264" width="170" height="56"/>
+<rect class="box" x="30" y="264" width="170" height="56" rx="10"/>
 <text class="t" x="44" y="286">App data</text>
 <text class="t small" x="44" y="303">spreadsheets · PDFs · code</text>
 
-<!-- COL 2: local storage — mac studio + dgx spark icons -->
-<rect class="box store" x="240" y="120" width="200" height="180" fill="#94a3b8"/>
-<!-- mac studio icon: wide flat box -->
-<rect x="258" y="150" width="70" height="26" rx="4" fill="#1e293b" stroke="#94a3b8"/>
-<circle cx="270" cy="163" r="4" fill="#94a3b8"/>
-<text class="t small" x="258" y="192">Mac Studio</text>
-<!-- dgx spark icon: square box with grille -->
-<rect x="345" y="140" width="52" height="44" rx="4" fill="#1e293b" stroke="#94a3b8"/>
-<line x1="352" y1="150" x2="390" y2="150" stroke="#475569"/>
-<line x1="352" y1="158" x2="390" y2="158" stroke="#475569"/>
-<line x1="352" y1="166" x2="390" y2="166" stroke="#475569"/>
-<circle cx="386" cy="176" r="3" fill="#475569"/>
-<text class="t small" x="345" y="200">DGX Spark</text>
+<!-- COL 2: local storage -->
+<rect class="box store" x="240" y="120" width="200" height="180" rx="10" fill="#2C2C2E" stroke="#8E8E93"/>
+<!-- mac studio icon -->
+<rect x="258" y="150" width="70" height="26" rx="4" fill="#000000" stroke="#8E8E93"/>
+<circle cx="270" cy="163" r="4" fill="#30D158"/>
+<text class="t small" x="258" y="192" style="fill:#FFFFFF">Mac Studio</text>
+<!-- dgx spark icon -->
+<rect x="345" y="140" width="52" height="44" rx="4" fill="#000000" stroke="#8E8E93"/>
+<line x1="352" y1="150" x2="390" y2="150" stroke="rgba(84,84,88,0.6)"/>
+<line x1="352" y1="158" x2="390" y2="158" stroke="rgba(84,84,88,0.6)"/>
+<line x1="352" y1="166" x2="390" y2="166" stroke="rgba(84,84,88,0.6)"/>
+<circle cx="386" cy="176" r="3" fill="#30D158"/>
+<text class="t small" x="345" y="200" style="fill:#FFFFFF">DGX Spark</text>
 <text class="t small" x="258" y="230" style="font-style:italic">stored locally — one machine</text>
 <text class="t small" x="258" y="248">workspace · files · session state</text>
 
-<!-- COL 3: curator -->
-<rect class="box" x="470" y="140" width="180" height="90" stroke="#58a6ff" fill="#f97316"/>
-<text class="t blue" x="490" y="166" style="font-size:14px">Curator</text>
+<!-- COL 3: curator (AGENT overline above box) -->
+<text class="t orange" x="490" y="132">Agent</text>
+<rect class="box agent" x="470" y="140" width="180" height="90" rx="10"/>
+<text class="t" x="490" y="166" style="font-size:14px">Curator</text>
 <text class="t small" x="490" y="186">organize · analyze · label</text>
 <text class="t small" x="490" y="201">what matters, what's stale</text>
 
-<!-- gap analysis arrow label sits on the connector -->
 <!-- COL 4: team lead -->
-<rect class="box" x="690" y="140" width="180" height="90" stroke="#58a6ff" fill="#f97316"/>
-<text class="t blue" x="710" y="166" style="font-size:14px">Team Lead</text>
+<text class="t orange" x="710" y="132">Agent</text>
+<rect class="box agent" x="690" y="140" width="180" height="90" rx="10"/>
+<text class="t" x="710" y="166" style="font-size:14px">Team Lead</text>
 <text class="t small" x="710" y="186">routes the work · decides</text>
 <text class="t small" x="710" y="201">what runs next</text>
 
-<!-- action endpoints (fan-out right of lead) -->
-<text class="t small" x="600" y="445" style="fill:#58a6ff;font-weight:600">Agent Outputs</text>
-<rect class="box out" x="690" y="330" width="180" height="230" fill="#58a6ff"/>
-<text class="t h" x="704" y="354" style="fill:#58a6ff">Agent actions</text>
+<!-- action endpoints -->
+<text class="t small" x="600" y="445" style="fill:#0A84FF;font-weight:600">Agent Outputs</text>
+<rect class="box out" x="690" y="330" width="180" height="230" rx="10"/>
+<text class="t blue" x="704" y="354">Agent actions</text>
 <text class="t" x="704" y="378" style="font-weight:400">Coding</text>
 <text class="t small" x="704" y="394">fix bugs · build features</text>
 <text class="t" x="704" y="418" style="font-weight:400">Docs &amp; slides</text>
@@ -121,35 +122,31 @@ text.lbl2{fill:#f97316;font-size:11px;font-weight:600}
 <text class="t small" x="704" y="514">recurring · background</text>
 
 <!-- COL 5: exec + report -->
-<rect class="box" x="950" y="140" width="180" height="90" stroke="#58a6ff" fill="#f97316"/>
-<text class="t blue" x="970" y="166" style="font-size:14px">Exec / Chief of Staff</text>
+<text class="t orange" x="970" y="132">Agent</text>
+<rect class="box agent" x="950" y="140" width="180" height="90" rx="10"/>
+<text class="t" x="970" y="166" style="font-size:14px">Exec / Chief of Staff</text>
 <text class="t small" x="970" y="186">distills everything into</text>
 <text class="t small" x="970" y="201">what you need to know</text>
 
-<rect class="box out" x="950" y="340" width="180" height="110" fill="#58a6ff"/>
+<rect class="box out" x="950" y="340" width="180" height="110" rx="10"/>
 <text class="t blue" x="970" y="364">Exec report</text>
 <text class="t small" x="970" y="384">— todo list</text>
 <text class="t small" x="970" y="401">— dashboard</text>
 <text class="t small" x="970" y="418">— weekly summary</text>
 <text class="t small" x="970" y="435">— what changed &amp; why</text>
 
-<!-- FLOWS -->
-<!-- sources → storage -->
-<!-- storage → curator -->
+<!-- connector labels -->
 <text class="lbl" x="443" y="172">context</text>
-<!-- curator → lead : gap analysis -->
 <text class="lbl" x="655" y="172">gap analysis</text>
-<!-- lead → action endpoints -->
-<!-- lead → exec -->
 <text class="lbl" x="880" y="172">briefs · results</text>
-<!-- exec → report -->
-<!-- feedback loop: lead → curator (what to look for) -->
 <text class="lbl" x="545" y="88">what to look for next</text>
 
 <!-- bottom note -->
-<rect x="30" y="590" width="1100" height="70" rx="10" fill="#161b22" stroke="#30363d"/>
+<rect x="30" y="590" width="1100" height="70" rx="10" fill="#1C1C1E" stroke="rgba(84,84,88,0.6)"/>
 <text class="t small" x="50" y="618">Everything runs on one machine, for one user. The curator, lead, and exec share a single conversation's</text>
 <text class="t small" x="50" y="636">context — there is no shared task store between agents, no evidence trail beyond the chat, and no</text>
 <text class="t small" x="50" y="654">fleet management: the harness and its surface are one app.</text>
-<line x1="660" y1="300" x2="1150" y2="300" stroke="#8b949e" stroke-width="1" stroke-dasharray="5 5" opacity="0.6"/>
+
+<!-- hairline separator -->
+<line x1="660" y1="300" x2="1150" y2="300" stroke="rgba(84,84,88,0.6)" stroke-width="1" stroke-dasharray="5 5"/>
 </svg>
