@@ -4,7 +4,56 @@
 
 Aerial is the control tower for your autonomous agent fleet — self-starting agents that find their own work, with the operations layer that supervises, triages, and accounts for all of it on your own hardware.
 
-![Operator console](docs/console-hero.png)
+```mermaid
+flowchart LR
+    subgraph SRC["Data sources"]
+        S1["Scrape sources"]
+        S2["Upstream listeners
+GitHub · HF · forums"]
+        S3["Scheduled jobs"]
+        S4["Seat telemetry"]
+    end
+    subgraph ING["Ingest & discovery"]
+        B["Ingest bridge"]
+        D["Listening discovery"]
+        O["Ops agent — 5-min loop"]
+        HG["Human gate"]
+    end
+    subgraph HUB["Ticket hub — the spine"]
+        H["Tasks as shared context
+evidence · mandates ·
+token scoping · audit"]
+    end
+    subgraph AG["Agents"]
+        CH["Curator → Lead → Exec"]
+        SF["Governed safe-fix"]
+        F["Model-seat fleet
+BYOM · self-healing"]
+    end
+    subgraph DEC["Decisions & outputs"]
+        PG["Promotion gate"]
+        EQ["Exception queue"]
+        DB["Daily board & exec report"]
+        FR["Fleet report — 15 min"]
+    end
+    S1 --> B
+    S2 --> D
+    B --> H
+    D --> HG
+    HG --> D
+    S3 --> H
+    S4 -.-> H
+    H --> CH
+    H --> SF
+    SF -->|"verified fix"| H
+    CH --> PG
+    H --> EQ
+    EQ --> H
+    F <-.-> H
+    H --> FR
+    PG --> DB
+    DB -.->|"feeds the next cycle"| O
+```
 
 
 **Set up in an afternoon. Runs around the clock.**
