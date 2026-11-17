@@ -47,11 +47,16 @@ from typing import Any, Callable, Dict, List, Optional
 
 try:  # Lane F imports (package-relative)
     from . import classifier as clf
+    from . import remediation as remd
     from .classifier import CuratorFinding
     from .flow import FollowupFlow
     from .. import clock
 except ImportError:  # running as a top-level module / script
     import classifier as clf                     # type: ignore
+    try:
+        import remediation as remd               # type: ignore
+    except ImportError:
+        remd = None                              # type: ignore
     from classifier import CuratorFinding        # type: ignore
     from flow import FollowupFlow                # type: ignore
     import sys as _sys
@@ -1004,8 +1009,68 @@ class OpsRunner:
 
     # -- one finding -------------------------------------------------------
 
+    def _remediation_path(self, rem, finding: OpsFinding) -> dict:
+        """A registered remediation matched this finding: run the
+        remediation contract (probe → fix → re-probe → prove) instead of a
+        generic fix session. The finding closes ONLY on proved=True;
+        unproved → stays OPEN with an escalation note carrying the before/
+        after outputs. requires_human remediations are never executed —
+        a prepared copy-paste block is produced and Ray is pinged; the
+        proof happens on the FOLLOWING poll's probe."""
+        fid = finding.finding_id
+        if not rem.requires_human and self.dedupe.hit(fid, rem.max_attempts):
+            self.flow._transition(fid, "submit", "classified",
+                                  detail=f"remediation:{rem.id}")
+            self.flow._set_class(fid, clf.MANDATE)
+            self.flow._escalate(finding, "remediation dedupe: unproved "
+                                        "fix repeated within 24h — daily "
+                                        "aggregate")
+            return {"finding_id": fid, "state": "escalated",
+                    "remediation": rem.id, "reason": "dedupe-24h"}
+        self.flow._transition(fid, "submit", "classified",
+                              detail=f"remediation:{rem.id}")
+        self.flow._set_class(fid, clf.MANDATE)
+        if remd is None:                      # pragma: no cover (import fallback)
+            raise RuntimeError("remediation module unavailable")
+        try:
+            res = remd.run_remediation(rem, finding)
+        except Exception as exc:
+            self.flow._transition(fid, "fail-fix", "fix-failed",
+                                  detail=repr(exc))
+            self.flow._escalate(finding, f"remediation failed: {exc!r}")
+            return {"finding_id": fid, "state": "escalated",
+                    "remediation": rem.id, "error": repr(exc)}
+        self.flow._transition(fid, "attempt", "fix-attempted", detail=rem.id)
+        if res.proved:
+            self.dedupe.record_fix(fid)
+            self.flow._transition(fid, "verify", "verified",
+                                  detail=json.dumps(res.after, default=str))
+            self.flow._transition(fid, "close", "closed", expect="verified")
+            log.info("remediation %s PROVED %s (after: %s)", rem.id, fid,
+                     res.after.get("detail"))
+            return {"finding_id": fid, "state": "closed",
+                    "remediation": rem.id, "proved": True,
+                    "result": res.to_dict()}
+        # Unproved: finding stays OPEN — escalation with both outputs.
+        self.dedupe.record_fix(fid)
+        if res.prepared:
+            self.notify(clf.MANDATE, finding)      # ping Ray with the block
+        self.flow._escalate(finding, res.escalation or
+                            "remediation not proved")
+        log.warning("remediation %s NOT proved %s: before=%r after=%r",
+                    rem.id, fid, res.before, res.after)
+        return {"finding_id": fid, "state": "escalated",
+                "remediation": rem.id, "proved": False,
+                "prepared": res.prepared, "result": res.to_dict()}
+
     def handle(self, finding: OpsFinding) -> dict:
         fid = finding.finding_id
+        # Registered remediation first: probe → fix → re-probe → prove.
+        # (Runs BEFORE dedupe: a requires_human remediation must re-probe
+        # every poll so the next poll can prove the human-applied fix.)
+        rem = remd.find_remediation(finding) if remd is not None else None
+        if rem is not None:
+            return self._remediation_path(rem, finding)
         # e. dedupe: never auto-fix the same finding twice in 24 h.
         if self.dedupe.hit(fid, getattr(finding, "max_fixes", 1)):
             cls = clf.classify(finding)

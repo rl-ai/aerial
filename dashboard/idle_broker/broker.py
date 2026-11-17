@@ -69,8 +69,24 @@ def usage_db_path():
 
 def latest_samples(db_path, lookback_s=SAMPLE_INTERVAL_S * 4 + 60):
     """{seat: [most-recent, ..., oldest]} of reachable samples within lookback."""
+    # cold-boot bug class (first exposed by the gauntlet's FRESH layer,
+    # 2026-11-17): stores are created on demand but their PARENT
+    # directories are not — a pristine machine has no ~/.aerial/data yet.
+    parent = os.path.dirname(os.path.abspath(db_path))
+    if parent:
+        os.makedirs(parent, exist_ok=True)
     con = sqlite3.connect(db_path)
     try:
+        # cold-boot bug class #2 (FRESH layer, 2026-11-17): on a pristine
+        # machine the sampler has never run — the seat_usage table does not
+        # exist yet. Create it (same schema as the sampler) instead of
+        # crashing the broker inside the ops-agent poll.
+        con.execute(
+            "CREATE TABLE IF NOT EXISTS seat_usage("
+            " ts REAL, seat TEXT, tokens_in REAL, tokens_out REAL,"
+            " prompt_s REAL, gen_s REAL, requests REAL, reachable INT,"
+            " running REAL, waiting REAL, cache_pct REAL, busy_slots REAL)")
+        con.commit()
         since = time.time() - lookback_s
         rows = con.execute(
             "SELECT ts, seat, running, waiting FROM seat_usage"

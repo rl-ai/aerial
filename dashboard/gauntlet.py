@@ -87,6 +87,9 @@ LAYER_NAMES = {
     3: "Layer 3 Backtest",
     4: "Layer 4 Day-in-the-life",
     5: "Layer 5 Live smoke",
+    6: "Layer 6 Soak (time-compressed durability)",
+    7: "Layer 7 Fresh (cold machine + doc accuracy)",
+    8: "Layer 8 Reboot (resilience)",
 }
 
 LAYER_SCOPES = {
@@ -106,6 +109,25 @@ LAYER_SCOPES = {
         "gauntlet workdir; production stores are read-only here."),
     5: ("Live smoke: console HTTP 200, email_delivery.send_report test to "
         "the profile recipient, model seats 200, sre monitor last run ok."),
+    6: ("Soak (time-compressed durability): amplify synthetic traffic "
+        "(hub writes, console GETs, ops-agent polls, seat probes) against "
+        "an isolated stack — AERIAL_SOAK_REQUESTS per simulated day — and "
+        "fail on any sustained per-request resource slope (fds, RSS, disk, "
+        "sqlite WAL) beyond the config thresholds. Mutation-validated: a "
+        "deliberate fd-leak double must be caught."),
+    7: ("Fresh (cold machine + doc accuracy): hermetic cold-start sandbox "
+        "(copied tree, disposable tokens, no host systemd/bindings), then "
+        "GETTING-STARTED.md's commands executed verbatim with every "
+        "documented expected output asserted (health ok:true, bearer 200, "
+        "no-bearer 401) + the first-boot assertion checklist, under the "
+        "environment matrix (clean vs pre-existing state, py3.12 when "
+        "available)."),
+    8: ("Reboot (resilience): stop ALL services on the isolated stack, "
+        "restart via the doc commands, assert full recovery (health, "
+        "state dir intact: tickets/job_runs + ledger + findings, crontab "
+        "intact, tokens valid). Mutation-validated: seeded faults from the "
+        "2026-11-15 reboot cascade (dead unit, lost cron entry, hidden "
+        "token) must each be DETECTED."),
 }
 
 
@@ -150,7 +172,7 @@ def create_run_tickets(date_str: str) -> dict:
     })
     pid = parent.get("id") or parent.get("ticket_id")
     layers: Dict[int, str] = {}
-    for n in (1, 2, 3, 4, 5):
+    for n in (1, 2, 3, 4, 5, 6, 7, 8):
         t = _hub("/tickets", "POST", {
             "title": LAYER_NAMES[n],
             "body": f"Gauntlet layer for run {date_str}.\n\nScope: {LAYER_SCOPES[n]}",
@@ -394,11 +416,48 @@ def layer4_ditl(workdir: str) -> LayerResult:
         res.lines.append("- exec report headlines:")
         res.lines += ["    " + h for h in headlines]
     res.ok = hier_ok and board_ok
+
+    # (f) Layer-4 extension: recurring-miss day-type through the remediation
+    # contract — schedule:* misses must close via verified fix OR escalate.
+    try:
+        from dashboard import recurring_miss
+        rm = recurring_miss.scenario(str(wd))
+        res.lines.append("- recurring-miss day-type (remediation contract): "
+                         f"{'PASS' if rm['ok'] else 'FAIL'}")
+        res.lines += ["  " + l for l in rm["lines"]]
+        rm_ok = rm["ok"]
+    except Exception as exc:
+        rm_ok = False
+        res.lines.append(f"- recurring-miss scenario raised {type(exc).__name__}: {exc}")
+
+    # (g) Layer 4b: real-user UI walk — parallel Playwright sessions against
+    # a hermetic stack (load /dashboard, scroll, hover queue, click a view).
+    ui_ok, ui_lines = _ui_walk_section(str(wd))
+    res.lines.append("- Layer 4b real-user UI walk: "
+                     f"{'PASS' if ui_ok else 'FAIL'}")
+    res.lines += ["  " + l for l in ui_lines]
+
+    res.ok = res.ok and rm_ok and ui_ok
     res.data = {"raw": len(raw_items), "ingested": ingested,
                 "proposed": len(proposed), "hierarchy_ok": hier_ok,
                 "board_ok": board_ok, "headlines": headlines,
                 "workdir": str(wd)}
     return res
+
+
+def _ui_walk_section(workdir: str) -> tuple[bool, List[str]]:
+    """Boot a hermetic hub+console in a sandbox, then run parallel real-user
+    sessions (playwright) against it."""
+    from dashboard import fresh, ui_walk
+    sb = fresh.Sandbox(workdir, name="uiwalk")
+    try:
+        boot_ok, _ = fresh.boot_stack(sb, ("hub", "console"))
+        if not boot_ok:
+            return False, ["- hermetic stack did not come up for the UI walk"]
+        out = ui_walk.run_walk(sb.console_url, sb.token)
+        return out["ok"], out["lines"]
+    finally:
+        sb.stop()
 
 
 def _console_token() -> str:
@@ -481,11 +540,35 @@ def layer5_smoke() -> LayerResult:
     return res
 
 
+def layer6_soak(workdir: str) -> LayerResult:
+    from dashboard import soak
+    out = soak.run_soak(workdir)
+    return LayerResult(6, ok=out["ok"], lines=out["lines"], data=out["data"])
+
+
+def layer7_fresh(workdir: str) -> LayerResult:
+    from dashboard import fresh
+    out = fresh.run_fresh(workdir)
+    return LayerResult(7, ok=out["ok"], lines=out["lines"], data=out["data"])
+
+
+def layer8_reboot(workdir: str) -> LayerResult:
+    from dashboard import reboot
+    out = reboot.run_reboot(workdir)
+    return LayerResult(8, ok=out["ok"], lines=out["lines"], data=out["data"])
+
+
 # resolved per call (module attribute lookup) so tests can patch the
 # layer functions and so a redefinition always takes effect.
 LAYER_RUNNERS = {n: name for n, name in enumerate(
     [None, "layer1_units", "layer2_stress", "layer3_backtest",
-     "layer4_ditl", "layer5_smoke"]) if name}
+     "layer4_ditl", "layer5_smoke", "layer6_soak", "layer7_fresh",
+     "layer8_reboot"]) if name}
+
+
+ALL_LAYERS = (1, 2, 3, 4, 5, 6, 7, 8)
+#: layers that receive the workdir argument
+WORKDIR_LAYERS = (4, 6, 7, 8)
 
 
 # ------------------------------------------------------------------- escalation
@@ -517,7 +600,7 @@ def escalate(result: LayerResult) -> Optional[str]:
 # ------------------------------------------------------------------- the run
 
 def run_gauntlet(workdir: str = DEFAULT_WORKDIR,
-                 layers: tuple = (1, 2, 3, 4, 5),
+                 layers: tuple = ALL_LAYERS,
                  post_tickets: bool = True) -> dict:
     """Run the selected layers sequentially (a failure never stops the rest),
     post results to the layer child tickets, verdict to the parent."""
@@ -526,14 +609,14 @@ def run_gauntlet(workdir: str = DEFAULT_WORKDIR,
     if post_tickets:
         tickets = create_run_tickets(date_str)
     results: List[LayerResult] = []
-    for n in (1, 2, 3, 4, 5):
+    for n in ALL_LAYERS:
         if n not in layers:
             continue
         t0 = time.time()
         print(f"== gauntlet: {LAYER_NAMES[n]} ==", flush=True)
         try:
             fn = getattr(sys.modules[__name__], LAYER_RUNNERS[n])
-            r = fn(workdir) if n == 4 else fn()
+            r = fn(workdir) if n in WORKDIR_LAYERS else fn()
         except Exception as exc:  # fail-closed: a crashed layer reports FAIL
             r = LayerResult(n, ok=False,
                             lines=[f"- layer raised {type(exc).__name__}: {exc}"])
@@ -584,7 +667,7 @@ def main() -> int:
                     help="do not create/post hub tickets (testing)")
     args = ap.parse_args()
     layers = tuple(int(x) for x in args.only.split(",")) if args.only \
-        else (1, 2, 3, 4, 5)
+        else ALL_LAYERS
     out = run_gauntlet(workdir=args.workdir, layers=layers,
                        post_tickets=not args.no_tickets)
     print(json.dumps({k: v for k, v in out.items() if k != "layers"},

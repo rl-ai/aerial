@@ -29,7 +29,8 @@ from typing import Any, Dict, List, Optional
 
 from dashboard import clock
 
-DAY_TYPES = ("quiet", "failure-storm", "mixed", "recovery", "anomalous")
+DAY_TYPES = ("quiet", "failure-storm", "mixed", "recovery", "anomalous",
+             "recurring-miss")
 
 #: Default 7-day sequence: every day type at least once, failure-storm late
 #: enough for the trend math to have a 3-day baseline, ending green.
@@ -72,6 +73,11 @@ def day_profile(day_type: str) -> Dict[str, int]:
         "mixed":         {"runs": 14, "failed": 5,  "calls": 26,  "seats_dead": 0},
         "recovery":      {"runs": 10, "failed": 1,  "calls": 22,  "seats_dead": 0},
         "anomalous":     {"runs": 44, "failed": 9,  "calls": 210, "seats_dead": 0},
+        # recurring-miss: a scheduled job that misses REPEATEDLY across the
+        # virtual day at cron-shaped intervals (the weakest fix path —
+        # schedule:* findings must be closed via verified fix or escalated,
+        # never silently closed).
+        "recurring-miss": {"runs": 8, "failed": 6, "calls": 20, "seats_dead": 0},
     }[day_type]
 
 
@@ -228,9 +234,43 @@ def inject_day(day: int, *, seed: int = 20261112,
         f.write(json.dumps({"day": day, "day_type": dtype,
                             "role": "curator", "actions": shadow}) + "\n")
 
+    # --- recurring-miss: cron-shaped repeated misses of one scheduled job ---
+    misses: List[Dict[str, Any]] = []
+    if dtype == "recurring-miss":
+        job = "chaos-recurring-demo"
+        n_misses = 6
+        rows = []
+        sched_extra: List[str] = []
+        for i in range(n_misses):
+            ts = day0 + (i + 1) * 300.0   # cron-shaped: every 5 virtual minutes
+            dur = round(rng.uniform(1.0, 5.0), 1)
+            rows.append((f"chaos-d{day}-miss-{i:02d}", job, "chaos-node",
+                         _iso(ts), _iso(ts + dur), "failed", 1, dur,
+                         "[chaos:recurring-miss] scheduled job missed again",
+                         "exit=1 error=schedule-miss", "{}", None))
+            sched_extra.append(_scheduler_line(ts, "started", job))
+            sched_extra.append(_scheduler_line(
+                ts + dur, "finished",
+                "exit=1 error=schedule-miss (recurring miss)"))
+        con = sqlite3.connect(hub_db)
+        try:
+            con.executemany(
+                "INSERT OR REPLACE INTO job_runs (run_id, job_id, node,"
+                " started_at, ended_at, status, exit_code, duration_s,"
+                " summary, log_tail, meta, pid) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+                rows)
+            con.commit()
+        finally:
+            con.close()
+        with open(scheduler_log, "a") as f:
+            f.write("\n".join(sched_extra) + "\n")
+        misses = [{"job": job, "misses": n_misses,
+                   "interval_s": 300, "ts": [r[3] for r in rows]}]
+
     return {"day": day, "day_type": dtype, "job_runs": len(rows),
             "failed": sum(1 for r in rows if r[5] == "failed"),
             "scheduler_lines": len(sched), "ledger_lines": len(ledger_lines),
+            "recurring_misses": misses,
             "flags": flags, "shadow_actions": len(shadow)}
 
 

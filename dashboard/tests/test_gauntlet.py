@@ -48,16 +48,16 @@ def fake_hub(monkeypatch):
     return hub
 
 
-def test_ticket_structure_parent_plus_five_children(fake_hub):
+def test_ticket_structure_parent_plus_layer_children(fake_hub):
     t = g.create_run_tickets("2026-11-14")
-    assert len(fake_hub.tickets) == 6
+    assert len(fake_hub.tickets) == 9
     parent = fake_hub.tickets[0]
     assert parent["title"] == "Gauntlet run 2026-11-14"
     assert "gauntlet" in parent["tags"]
     assert parent["parent_id"] == g.EPIC
     children = fake_hub.tickets[1:]
     assert [c["title"] for c in children] == \
-        [g.LAYER_NAMES[n] for n in (1, 2, 3, 4, 5)]
+        [g.LAYER_NAMES[n] for n in (1, 2, 3, 4, 5, 6, 7, 8)]
     # each child is parented to the run ticket and carries its scope
     for c in children:
         assert c["parent_id"] == t["parent"]
@@ -79,13 +79,17 @@ def test_all_layers_run_even_after_failure_sequenced(monkeypatch, fake_hub):
     monkeypatch.setattr(g, "layer3_backtest", mk(3, False))
     monkeypatch.setattr(g, "layer4_ditl", mk(4, True))
     monkeypatch.setattr(g, "layer5_smoke", mk(5, True))
+    monkeypatch.setattr(g, "layer6_soak", mk(6, True))
+    monkeypatch.setattr(g, "layer7_fresh", mk(7, True))
+    monkeypatch.setattr(g, "layer8_reboot", mk(8, True))
     monkeypatch.setattr(g, "escalate", lambda r: None)
     out = g.run_gauntlet(workdir="/tmp/gauntlet-test", post_tickets=True)
-    # sequential order, all five ran despite failures at 2 and 3
-    assert calls == [1, 2, 3, 4, 5]
+    # sequential order, all layers ran despite failures at 2 and 3
+    assert calls == [1, 2, 3, 4, 5, 6, 7, 8]
     assert out["verdict"] == "FAIL"
     assert {n: r["ok"] for n, r in out["layers"].items()} == \
-        {1: True, 2: False, 3: False, 4: True, 5: True}
+        {1: True, 2: False, 3: False, 4: True, 5: True, 6: True, 7: True,
+         8: True}
     # fail-closed reporting: every layer's result posted to its child ticket
     layer_ids = {t["title"]: t["id"] for t in fake_hub.tickets[1:]}
     commented = {tid for tid, _ in fake_hub.comments}
