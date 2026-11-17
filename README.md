@@ -56,16 +56,6 @@ BYOM · self-healing"]
 ```
 
 
-**Set up in an afternoon. Runs around the clock.**
-
-| | |
-|---|---|
-| **5 min** | clone to running console |
-| **435** | tests green on every release |
-| **5/5** | gauntlet layers, or it doesn't ship |
-| **15 min** | between fleet reports — tokens, tok/s, saturation |
-| **0** | bytes of telemetry |
-
 Autonomous, self-starting agents fly solo — finding opportunities,
 running 24/7, and self-healing when infrastructure fails. Aerial is
 the control tower: every action carries evidence, every failure gets
