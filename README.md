@@ -5,7 +5,7 @@ record), an ops agent that detects failures and applies governed fixes,
 an operator console, and a fleet manager for local model seats. MIT
 licensed, self-hosted, no telemetry.
 
-**Status: early preview (v1.0-mvp).** The core is tested (435 + 671
+**Status: pilot release (beta).** The core is tested (435 + 671
 automated checks) and runs in production daily, but packaging, first-run
 onboarding, and model-selection UX are still in progress — see
 [ROADMAP.md](ROADMAP.md) and the running fix log in

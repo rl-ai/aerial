@@ -1,6 +1,8 @@
 # Roadmap
 
-Aerial is an early preview. What works, what's rough, and what's next.
+Aerial is a **pilot release (beta)** — production-tested daily on the
+team's own fleet, but not yet packaged for general distribution. What
+works, what's rough, and what's next.
 
 ## Working now (v1.0-mvp)
 
