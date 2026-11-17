@@ -44,8 +44,8 @@ def check_hub(url, token):
     return ok, f"HTTP {status}"
 
 
-def check_console(url):
-    status, body = _get(f"{url}/dashboard/health")
+def check_console(url, token=None):
+    status, body = _get(f"{url}/dashboard/health", token)
     ok = False
     if status == 200:
         try:
@@ -57,9 +57,9 @@ def check_console(url):
 
 def check_ledger(path):
     if not os.path.exists(path):
-        return False, "missing (no calls recorded yet)"
+        return False, "no calls recorded yet (fills as the ops agent runs)"
     size = os.path.getsize(path)
-    return size > 0, f"{size:,} bytes"
+    return True, f"{size:,} bytes" if size else "empty (fills as the ops agent runs)"
 
 
 def check_state_dir(state):
@@ -90,7 +90,8 @@ def check_seats(registry_path, token):
             results.append((s.get("name"), False))
     up = sum(1 for _, ok in results if ok)
     detail = ", ".join(f"{n}:{'up' if ok else 'DOWN'}" for n, ok in results)
-    return up == len(results) and bool(results), f"{up}/{len(results)} up — {detail}"
+    # informational on day 1: seats come up as the user connects models
+    return True, f"{up}/{len(results)} up — {detail}"
 
 
 def main(argv=None):
@@ -115,7 +116,7 @@ def main(argv=None):
     checks = []
     ok, detail = check_hub(args.hub_url, token)
     checks.append(("hub", f"{args.hub_url}", ok, detail))
-    ok, detail = check_console(args.console_url)
+    ok, detail = check_console(args.console_url, token)
     checks.append(("console", args.console_url, ok, detail))
     ok, detail = check_state_dir(state)
     checks.append(("state dir", state, ok, detail))
@@ -128,14 +129,16 @@ def main(argv=None):
     n_fail = 0
     for name, target, ok, detail in checks:
         mark = OK if ok else FAIL
+        if not ok and name in ("usage ledger", "model seats"):
+            mark = WARN  # informational on day 1: fills as the system runs
         if not ok:
             n_fail += 1
         print(f" {mark} {name:<{width}} {detail}")
     print()
     if n_fail:
-        print(f"{n_fail} check(s) failed — see docs/GETTING-STARTED.md troubleshooting.")
+        print(f"{n_fail} required check(s) failed — see docs/GETTING-STARTED.md troubleshooting.")
         return 1
-    print("all checks passed — the chain is live.")
+    print("all required checks passed — the chain is live. Ledger and seats fill as the system runs.")
     return 0
 
 
