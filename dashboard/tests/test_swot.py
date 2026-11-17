@@ -223,11 +223,11 @@ def test_validate_job_entry_rejects_bad_shapes():
     with pytest.raises(ValueError):
         S.validate_job_entry("not a cron line")
     with pytest.raises(ValueError, match="dow=1"):
-        S.validate_job_entry("0 6 * * 2 ai-eva x -- run something")
+        S.validate_job_entry("0 6 * * 2 aerial x -- run something")
     with pytest.raises(ValueError, match="job_run.py"):
-        S.validate_job_entry("0 6 * * 1 ai-eva plain-cmd -- run")
+        S.validate_job_entry("0 6 * * 1 aerial plain-cmd -- run")
     with pytest.raises(ValueError, match="empty payload"):
-        S.validate_job_entry("0 6 * * 1 ai-eva job_run.py --job n:x -- >> log")
+        S.validate_job_entry("0 6 * * 1 aerial job_run.py --job n:x -- >> log")
 
 
 def test_job_entry_parses_with_followup_runner_convention():
