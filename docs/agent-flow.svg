@@ -50,7 +50,7 @@ text.lbl2{fill:#0A84FF;font-size:11px;font-weight:600}
 <text class="t h" x="950" y="32">5 · Reporting</text>
 
 <!-- flows -->
-<path class="flow" d="M690,160 C 640,90 600,90 560,140"/>
+<path class="flow" d="M740,140 C 700,80 610,80 560,140"/>
 <path class="flow" d="M200,88 L240,140"/>
 <path class="flow" d="M200,156 L240,170"/>
 <path class="flow" d="M200,224 L240,190"/>
