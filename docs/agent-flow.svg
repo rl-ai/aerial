@@ -1,41 +1,30 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700">
 <style>
-body{margin:0;background:#0d1117;color:#e6edf3;font:13px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
-.wrap{max-width:1240px;margin:0 auto;padding:28px 20px 48px}
-h1{font-size:20px;font-weight:600;margin:0 0 4px}
-.sub{color:#8b949e;font-size:13px;margin-bottom:26px}
-.legend{display:flex;gap:18px;margin:0 0 20px;font-size:12px;color:#8b949e;flex-wrap:wrap}
-.legend span{display:inline-flex;align-items:center;gap:6px}
-.sw{width:12px;height:12px;border-radius:3px;display:inline-block}
-svg{display:block;max-width:100%;height:auto}
-.box{fill:#161b22;stroke:#30363d;stroke-width:1}
-.box.agent{stroke:#f97316}
-.box.store{stroke:#94a3b8}
-.box.out{stroke:#58a6ff}
-.t{fill:#e6edf3;font-size:12.5px;font-weight:600}
-.t.small{font-size:11px;font-weight:400;fill:#8b949e}
+.box{stroke:#30363d;stroke-width:1}
+.t{fill:#0d1117;font-size:12.5px;font-weight:600}
+.t.small{font-size:11px;font-weight:400;fill:#0d1117;opacity:.75}
 .t.h{fill:#8b949e;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:600}
-.t.orange{fill:#f97316}
-.t.blue{fill:#58a6ff}
+.t.agent{fill:#58a6ff;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:600}
 path.flow{fill:none;stroke:#8b949e;stroke-width:1.4;marker-end:url(#arrow)}
-path.flow.gray{stroke:#8b949e;marker-end:url(#arrowg)}
-path.flow.blue{stroke:#f97316;marker-end:url(#arrow)}
-path.flow.loop{stroke:#8b949e;stroke-dasharray:6 4;marker-end:url(#arrow)}
+path.flow.loop{stroke:#8b949e;stroke-dasharray:6 4}
 text.lbl{fill:#8b949e;font-size:10.5px;font-style:italic}
-text.lbl2{fill:#f97316;font-size:11px;font-weight:600}
+text.outputs{fill:#58a6ff;font-size:12px;font-weight:600}
 </style>
-
 <defs>
 <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
 <path d="M0,0 L8,4 L0,8 z" fill="#8b949e"/>
 </marker>
-<marker id="arrowg" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-<path d="M0,0 L8,4 L0,8 z" fill="#8b949e"/>
-</marker>
-<marker id="arrowb" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-<path d="M0,0 L8,4 L0,8 z" fill="#8b949e"/>
-</marker>
 </defs>
+
+<!-- legend -->
+<rect x="30" y="52" width="14" height="14" fill="#f97316"/>
+<text x="50" y="63" fill="#8b949e" font-size="11">Agent process</text>
+<rect x="170" y="52" width="14" height="14" fill="#94a3b8"/>
+<text x="190" y="63" fill="#8b949e" font-size="11">Local storage</text>
+<rect x="310" y="52" width="14" height="14" fill="#58a6ff"/>
+<text x="330" y="63" fill="#8b949e" font-size="11">Output</text>
+<line x1="420" y1="59" x2="450" y2="59" stroke="#8b949e" stroke-dasharray="5 4"/>
+<text x="458" y="63" fill="#8b949e" font-size="11">Feedback loop</text>
 
 <text class="t h" x="30" y="30">1 · Data sources</text>
 <text class="t h" x="240" y="30">2 · Local storage</text>
@@ -44,106 +33,100 @@ text.lbl2{fill:#f97316;font-size:11px;font-weight:600}
 <text class="t h" x="950" y="30">5 · Reporting</text>
 
 <!-- COL 1: data sources -->
-<rect class="box" x="30" y="60" width="170" height="56"/>
-<text class="t" x="44" y="82">Web pages</text>
-<text class="t small" x="44" y="99">fetched on demand</text>
+<rect class="box" x="30" y="80" width="170" height="56" fill="#161b22"/>
+<text class="t" x="44" y="102" style="fill:#e6edf3">Web pages</text>
+<text x="44" y="119" fill="#8b949e" font-size="11">fetched on demand</text>
 
-<rect class="box" x="30" y="128" width="170" height="56"/>
-<text class="t" x="44" y="150">Docs &amp; slides</text>
-<text class="t small" x="44" y="167">Brief.docx · Data.xlsx</text>
+<rect class="box" x="30" y="148" width="170" height="56" fill="#161b22"/>
+<text class="t" x="44" y="170" style="fill:#e6edf3">Docs &amp; slides</text>
+<text x="44" y="187" fill="#8b949e" font-size="11">Brief.docx · Data.xlsx</text>
 
-<rect class="box" x="30" y="196" width="170" height="56"/>
-<text class="t" x="44" y="218">Forums &amp; releases</text>
-<text class="t small" x="44" y="235">GitHub · Hugging Face</text>
+<rect class="box" x="30" y="216" width="170" height="56" fill="#161b22"/>
+<text class="t" x="44" y="238" style="fill:#e6edf3">Forums &amp; releases</text>
+<text x="44" y="255" fill="#8b949e" font-size="11">GitHub · Hugging Face</text>
 
-<rect class="box" x="30" y="264" width="170" height="56"/>
-<text class="t" x="44" y="286">App data</text>
-<text class="t small" x="44" y="303">spreadsheets · PDFs · code</text>
+<rect class="box" x="30" y="284" width="170" height="56" fill="#161b22"/>
+<text class="t" x="44" y="306" style="fill:#e6edf3">App data</text>
+<text x="44" y="323" fill="#8b949e" font-size="11">spreadsheets · PDFs · code</text>
 
-<!-- COL 2: local storage — mac studio + dgx spark icons -->
-<rect class="box store" x="240" y="120" width="200" height="180"/>
-<!-- mac studio icon: wide flat box -->
-<rect x="258" y="150" width="70" height="26" rx="4" fill="#1e293b" stroke="#94a3b8"/>
-<circle cx="270" cy="163" r="4" fill="#94a3b8"/>
-<text class="t small" x="258" y="192">Mac Studio</text>
-<!-- dgx spark icon: square box with grille -->
-<rect x="345" y="140" width="52" height="44" rx="4" fill="#1e293b" stroke="#94a3b8"/>
-<line x1="352" y1="150" x2="390" y2="150" stroke="#475569"/>
-<line x1="352" y1="158" x2="390" y2="158" stroke="#475569"/>
-<line x1="352" y1="166" x2="390" y2="166" stroke="#475569"/>
-<circle cx="386" cy="176" r="3" fill="#475569"/>
-<text class="t small" x="345" y="200">DGX Spark</text>
-<text class="t small" x="258" y="230" style="font-style:italic">stored locally — one machine</text>
+<!-- COL 2: local storage (gray fill) -->
+<rect class="box" x="240" y="120" width="200" height="180" fill="#94a3b8"/>
+<rect x="258" y="150" width="70" height="26" rx="4" fill="#0d1117" opacity="0.25"/>
+<circle cx="270" cy="163" r="4" fill="#0d1117"/>
+<text class="t" x="258" y="192">Mac Studio</text>
+<rect x="345" y="140" width="52" height="44" rx="4" fill="#0d1117" opacity="0.25"/>
+<line x1="352" y1="150" x2="390" y2="150" stroke="#0d1117" opacity="0.4"/>
+<line x1="352" y1="158" x2="390" y2="158" stroke="#0d1117" opacity="0.4"/>
+<line x1="352" y1="166" x2="390" y2="166" stroke="#0d1117" opacity="0.4"/>
+<text class="t" x="345" y="200">DGX Spark</text>
+<text class="t small" x="258" y="230">stored locally — one machine</text>
 <text class="t small" x="258" y="248">workspace · files · session state</text>
 
-<!-- COL 3: curator -->
-<rect class="box" x="470" y="140" width="180" height="90" stroke="#58a6ff"/>
-<text class="t h" x="490" y="130">Agent</text>
-<text class="t blue" x="490" y="166" style="font-size:14px">Curator</text>
-<text class="t small" x="490" y="186">organize · analyze · label</text>
-<text class="t small" x="490" y="201">what matters, what's stale</text>
+<!-- dotted separator: extended to the left -->
+<line x1="30" y1="330" x2="1150" y2="330" stroke="#8b949e" stroke-width="1" stroke-dasharray="5 5" opacity="0.6"/>
 
-<!-- gap analysis arrow label sits on the connector -->
-<!-- COL 4: team lead -->
-<rect class="box" x="690" y="140" width="180" height="90" stroke="#58a6ff"/>
-<text class="t h" x="710" y="130">Agent</text>
-<text class="t blue" x="710" y="166" style="font-size:14px">Team Lead</text>
-<text class="t small" x="710" y="186">routes the work · decides</text>
-<text class="t small" x="710" y="201">what runs next</text>
+<!-- COL 3: curator (orange fill) -->
+<text class="t agent" x="470" y="360">Agent</text>
+<rect class="box" x="470" y="370" width="180" height="90" fill="#f97316"/>
+<text class="t" x="490" y="396" style="font-size:14px">Curator</text>
+<text class="t small" x="490" y="416">organize · analyze · label</text>
+<text class="t small" x="490" y="431">what matters, what's stale</text>
 
-<!-- action endpoints (fan-out right of lead) -->
-<rect class="box out" x="690" y="330" width="180" height="230"/>
-<text class="t h" x="704" y="354" style="fill:#58a6ff">Agent actions</text>
-<text class="t" x="704" y="378" style="font-weight:400">Coding</text>
-<text class="t small" x="704" y="394">fix bugs · build features</text>
-<text class="t" x="704" y="418" style="font-weight:400">Docs &amp; slides</text>
-<text class="t small" x="704" y="434">organize · generate</text>
-<text class="t" x="704" y="458" style="font-weight:400">Research</text>
-<text class="t small" x="704" y="474">find facts · cite sources</text>
-<text class="t" x="704" y="498" style="font-weight:400">Scheduled tasks</text>
-<text class="t small" x="704" y="514">recurring · background</text>
+<!-- COL 4: team lead (orange fill) -->
+<text class="t agent" x="690" y="360">Agent</text>
+<rect class="box" x="690" y="370" width="180" height="90" fill="#f97316"/>
+<text class="t" x="710" y="396" style="font-size:14px">Team Lead</text>
+<text class="t small" x="710" y="416">routes the work · decides</text>
+<text class="t small" x="710" y="431">what runs next</text>
 
-<!-- COL 5: exec + report -->
-<rect class="box" x="950" y="140" width="180" height="90" stroke="#58a6ff"/>
-<text class="t h" x="970" y="130">Agent</text>
-<text class="t blue" x="970" y="166" style="font-size:14px">Exec / Chief of Staff</text>
-<text class="t small" x="970" y="186">distills everything into</text>
-<text class="t small" x="970" y="201">what you need to know</text>
+<!-- agent actions (blue fill) + Agent Outputs label -->
+<text class="t outputs" x="600" y="445">Agent Outputs</text>
+<rect class="box" x="690" y="370" width="180" height="230" fill="#58a6ff"/>
+<text x="704" y="394" fill="#0d1117" font-size="10.5" letter-spacing="1" font-weight="600">AGENT ACTIONS</text>
+<text class="t" x="704" y="418" style="font-weight:400">Coding</text>
+<text class="t small" x="704" y="434">fix bugs · build features</text>
+<text class="t" x="704" y="458" style="font-weight:400">Docs &amp; slides</text>
+<text class="t small" x="704" y="474">organize · generate</text>
+<text class="t" x="704" y="498" style="font-weight:400">Research</text>
+<text class="t small" x="704" y="514">find facts · cite sources</text>
+<text class="t" x="704" y="538" style="font-weight:400">Scheduled tasks</text>
+<text class="t small" x="704" y="554">recurring · background</text>
 
-<rect class="box out" x="950" y="340" width="180" height="110"/>
-<text class="t blue" x="970" y="364">Exec report</text>
-<text class="t small" x="970" y="384">— todo list</text>
-<text class="t small" x="970" y="401">— dashboard</text>
-<text class="t small" x="970" y="418">— weekly summary</text>
-<text class="t small" x="970" y="435">— what changed &amp; why</text>
+<!-- COL 5: exec (orange fill) -->
+<text class="t agent" x="950" y="360">Agent</text>
+<rect class="box" x="950" y="370" width="180" height="90" fill="#f97316"/>
+<text class="t" x="970" y="396" style="font-size:14px">Exec / Chief of Staff</text>
+<text class="t small" x="970" y="416">distills everything into</text>
+<text class="t small" x="970" y="431">what you need to know</text>
 
-<!-- FLOWS -->
-<!-- sources → storage -->
-<path class="flow" d="M200,88 L240,140"/>
-<path class="flow" d="M200,156 L240,170"/>
-<path class="flow" d="M200,224 L240,190"/>
-<path class="flow" d="M200,292 L240,215"/>
-<!-- storage → curator -->
-<path class="flow" d="M440,190 L470,185"/>
-<text class="lbl" x="443" y="172">context</text>
-<!-- curator → lead : gap analysis -->
-<path class="flow" d="M650,185 L690,185"/>
-<text class="lbl" x="655" y="172">gap analysis</text>
-<!-- lead → action endpoints -->
-<path class="flow" d="M780,230 L780,330"/>
-<!-- lead → exec -->
-<path class="flow" d="M870,185 L950,185"/>
-<text class="lbl" x="880" y="172">briefs · results</text>
-<!-- exec → report -->
-<path class="flow" d="M1040,230 L1040,340"/>
-<!-- feedback loop: lead → curator (what to look for) -->
-<path class="flow" d="M690,160 C 640,90 600,90 560,140"/>
-<text class="lbl" x="545" y="88">what to look for next</text>
+<!-- exec report (blue fill) -->
+<rect class="box" x="950" y="490" width="180" height="110" fill="#58a6ff"/>
+<text class="t" x="970" y="514">Exec report</text>
+<text class="t small" x="970" y="534">— todo list</text>
+<text class="t small" x="970" y="551">— dashboard</text>
+<text class="t small" x="970" y="568">— weekly summary</text>
+<text class="t small" x="970" y="585">— what changed &amp; why</text>
+
+<!-- FLOWS (all neutral gray) -->
+<path class="flow" d="M200,108 L240,140"/>
+<path class="flow" d="M200,176 L240,170"/>
+<path class="flow" d="M200,244 L240,180"/>
+<path class="flow" d="M200,312 L240,200"/>
+<path class="flow" d="M440,190 L470,190"/>
+<text class="lbl" x="443" y="176">context</text>
+<path class="flow" d="M650,415 L690,415"/>
+<text class="lbl" x="655" y="402">gap analysis</text>
+<path class="flow" d="M780,460 L780,470"/>
+<path class="flow" d="M870,415 L950,415"/>
+<text class="lbl" x="880" y="402">briefs · results</text>
+<path class="flow" d="M1040,460 L1040,490"/>
+<!-- feedback loop: lead → curator -->
+<path class="flow loop" d="M690,380 C 640,320 600,320 560,370"/>
+<text class="lbl" x="545" y="318">what to look for next</text>
 
 <!-- bottom note -->
-<rect x="30" y="590" width="1100" height="70" rx="10" fill="#161b22" stroke="#30363d"/>
-<text class="t small" x="50" y="618">Everything runs on one machine, for one user. The curator, lead, and exec share a single conversation's</text>
-<text class="t small" x="50" y="636">context — there is no shared task store between agents, no evidence trail beyond the chat, and no</text>
-<text class="t small" x="50" y="654">fleet management: the harness and its surface are one app.</text>
-<line x1="660" y1="300" x2="1150" y2="300" stroke="#8b949e" stroke-width="1" stroke-dasharray="5 5" opacity="0.6"/>
+<rect x="30" y="620" width="1100" height="60" rx="10" fill="#161b22" stroke="#30363d"/>
+<text x="50" y="646" fill="#8b949e" font-size="11">Everything runs on one machine, for one user. The curator, lead, and exec share a single conversation's</text>
+<text x="50" y="664" fill="#8b949e" font-size="11">context — there is no shared task store between agents, no evidence trail beyond the chat, and no</text>
+<text x="50" y="676" fill="#8b949e" font-size="11">fleet management: the harness and its surface are one app.</text>
 </svg>
