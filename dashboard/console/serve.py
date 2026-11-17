@@ -40,9 +40,9 @@ __all__ = ["build_app", "write_static_snapshot", "CREDENTIALS_REQUIRED_HTML",
            "READONLY_BANNER_TEXT"]
 
 # §7 banner text (read-only until write token granted). Lane 5 owns the flip;
-# serve.py only guarantees this text is present when no write token is configured.
-READONLY_BANNER_TEXT = ("You're viewing Ray's operator console "
-                        "(read-only until your write token is granted).")
+# serve.py only guarantees this text is present when no write token is
+# configured. Single source of truth: template.py (re-exported here).
+from .template import READONLY_BANNER_TEXT  # noqa: E402,F401
 FALLBACK_NOTICE = "actions disabled — open the hub /dashboard to decide"
 
 CREDENTIALS_REQUIRED_HTML = (

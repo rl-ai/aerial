@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.ticket-hub.server</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>__PYTHON__</string>
+    <string>__API_PY__</string>
+  </array>
+
+  <key>WorkingDirectory</key>
+  <string>__REPO_DIR__</string>
+
+  <key>RunAtLoad</key>
+  <true/>
+
+  <key>KeepAlive</key>
+  <true/>
+
+  <key>StandardOutPath</key>
+  <string>__LOG_DIR__/server.log</string>
+
+  <key>StandardErrorPath</key>
+  <string>__LOG_DIR__/server.err.log</string>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>TICKET_HUB_DB</key>
+    <string>__DB__</string>
+    <key>TICKET_HUB_PORT</key>
+    <string>__PORT__</string>
+    <!-- No secrets here: the server stores no credentials; adapter tokens
+         live in the external runtime config outside the repo (see
+         ticket_hub/adapters/base.py — absent config = adapters stay inert). -->
+  </dict>
+</dict>
+</plist>

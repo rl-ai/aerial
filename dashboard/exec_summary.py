@@ -34,12 +34,22 @@ from dashboard.data_layer.model_calls_tailer import ModelCallsTailer  # noqa: E4
 from dashboard import clock  # noqa: E402
 import scrape_intel  # noqa: E402
 
-from deployment_profile import pvalue as _pv   # noqa: E402
+from deployment_profile import pvalue as _pv, value as _pval   # noqa: E402
 DEFAULT_HUB_DB = str(_pv("hub_db"))
 DEFAULT_LEDGER = str(_pv("model_calls_ledger"))
 DEFAULT_BRIDGE_LOG = str(_pv("bridge_log"))
 DEFAULT_DIGEST = str(_pv("digest_latest"))
 DEFAULT_DOGFOOD_LOG = str(_pv("dogfood_log"))
+# The profile default resolves dogfood_log under the state_dir
+# (~/.aerial/data/dogfood-log.md), but the live dogfood log is the
+# second-brain gateway v1 one (spec: "the real gateway v1 path"). Prefer the
+# gateway v1 log when the state_dir default does not exist on disk.
+_GW1_DOGFOOD = os.path.join(
+    os.path.expanduser(str(_pval("paths.gateway_v1")
+                           or "~/workspaces/build/second-brain-gateway/v1")),
+    "dogfood", "dogfood-log.md")
+if not os.path.exists(DEFAULT_DOGFOOD_LOG) and os.path.exists(_GW1_DOGFOOD):
+    DEFAULT_DOGFOOD_LOG = _GW1_DOGFOOD
 DEFAULT_SCHEDULER_LOG = str(_pv("scheduler_log"))
 DEFAULT_SHADOW_DIR = str(_pv("shadow_dir"))
 DEFAULT_MODEL_CALL = str(_pv("model_call_script")

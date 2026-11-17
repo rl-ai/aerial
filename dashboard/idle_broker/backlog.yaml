@@ -1,0 +1,73 @@
+# idle-broker backlog registry — human-editable.
+# Entries: id, seat_match (seat name or "*"), command ({seat}/{pidfile}
+# placeholders), priority (higher = picked first), max_concurrent,
+# cooldown_h, enabled.
+#
+# POLICY: interactive/production work always preempts this backlog. The
+# broker only dispatches onto measured-idle seats and never while any
+# production gate is active (any waiting>0, AERIAL_SATURATION_PAUSE, or a
+# live pidfile for the entry).
+#
+# Commands pass the seat via the AERIAL_SEAT env var ({seat} placeholder);
+# none of the pre-existing backlog scripts take a --seat flag, so the
+# wrapper does not invent CLI arguments for them.
+#
+# Kimi note: seat (a) (lanes-codebase-review run_batch.py) is already
+# self-driving, so kimi entries ship enabled=false to avoid double-dispatch.
+# Kimi is also SLOW (~2.5 tok/s) — never give it bulk.
+
+entries:
+  # (a) Kimi codebase-review chunks — self-driving; enabled=false here.
+  - id: kimi-codebase-review
+    seat_match: kimi
+    command: AERIAL_SEAT={seat} python3 ~/workspaces/worker/lanes-codebase-review/run_batch.py >> ~/workspaces/worker/lanes-codebase-review/batch.log 2>&1
+    priority: 10
+    max_concurrent: 1
+    cooldown_h: 6
+    enabled: false
+
+  # (b) BP-KB source refresh — glm.
+  - id: bpkb-source-refresh
+    seat_match: glm
+    command: AERIAL_SEAT={seat} bash -c 'cd ~/ai-ops && PYTHONPATH=/home/ai-eva/ai-ops python3 -m dashboard.bpkb.poll' >> ~/.aerial/logs/bpkb-poll.log 2>&1
+    priority: 40
+    max_concurrent: 1
+    cooldown_h: 4
+    enabled: true
+
+  # (c) listening-pipeline refresh — glm or qwen.
+  # DISABLED until P1 lanes land (dashboard/listening/)
+  - id: listening-pipeline-refresh
+    seat_match: "*"
+    command: AERIAL_SEAT={seat} python3 ~/ai-ops/dashboard/listening/refresh.py >> ~/.aerial/logs/listening-refresh.log 2>&1
+    priority: 30
+    max_concurrent: 1
+    cooldown_h: 2
+    enabled: false
+
+  # (d) docs/BUGLIST.md triage — glm (governed model call).
+  - id: buglist-triage
+    seat_match: glm
+    command: AERIAL_SEAT={seat} bash -c 'cd ~/ai-ops && python3 bin/model_call.py --role glm-oneshot --max-tokens 4000 --files docs/BUGLIST.md --ask ~/.aerial/buglist-triage-ask.txt --out ~/.aerial/data/buglist-triage.json' >> ~/.aerial/logs/buglist-triage.log 2>&1
+    priority: 20
+    max_concurrent: 1
+    cooldown_h: 12
+    enabled: true
+
+  # (e) practice extraction (tier D) — qwen.
+  - id: tier-d-practice-extract
+    seat_match: qwen
+    command: AERIAL_SEAT={seat} bash -c 'for s in ~/workspaces/worker/tier-d-signals/*/signal.json; do [ -f "$s" ] && cd ~/ai-ops && python3 dashboard/tier_d/practices_extract.py "$s"; done' >> ~/.aerial/logs/practices-extract.log 2>&1
+    priority: 25
+    max_concurrent: 1
+    cooldown_h: 8
+    enabled: true
+
+  # (f) backtest sweeps (validate_days.py --backtest windows) — ds.
+  - id: backtest-sweep
+    seat_match: ds
+    command: AERIAL_SEAT={seat} python3 ~/ai-ops/dashboard/validate_days.py --backtest >> ~/.aerial/logs/backtest-sweep.log 2>&1
+    priority: 15
+    max_concurrent: 1
+    cooldown_h: 24
+    enabled: true

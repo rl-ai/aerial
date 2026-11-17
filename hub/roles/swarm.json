@@ -1,0 +1,29 @@
+{
+  "interval_s": 300,
+  "workers": [
+    {
+      "name": "builder-1",
+      "role": "execution",
+      "tag": "build",
+      "seat_cmd": "python3 scripts/seat_remote.py utility_worker 4096 execution",
+      "interval_s": 300,
+      "max_parallel": 2
+    },
+    {
+      "name": "measurer-1",
+      "role": "measurement",
+      "tag": "measurement",
+      "seat_cmd": "python3 scripts/seat_remote.py utility_worker 2048 measurement",
+      "interval_s": 600,
+      "max_parallel": 1
+    },
+    {
+      "name": "triage-inbox",
+      "role": "orchestrator",
+      "tag": "triage",
+      "seat_cmd": "python3 scripts/seat_remote.py glm 2048 orchestrator",
+      "interval_s": 900,
+      "max_parallel": 1
+    }
+  ]
+}

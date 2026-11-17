@@ -7,7 +7,8 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from dashboard.console.template import (  # noqa: E402
-    FALLBACK_NOTICE, PANEL_ORDER, STALE_TOOLTIP, render_console_html,
+    FALLBACK_NOTICE, PANEL_ORDER, READONLY_BANNER_TEXT, STALE_TOOLTIP,
+    render_console_html,
 )
 
 NOW = 1794472800.0  # 2026-11-12 10:00 UTC-ish; timestamps are only rendered as HH:MM
@@ -137,6 +138,7 @@ def test_v3_diff_limited_to_buttons_notice_footer():
     assert len(s_lines) == len(h_lines)
     # normalize the three allowed differences, then the renders must be identical
     norm = static.replace(' disabled title="actions disabled"', "")
+    norm = norm.replace(READONLY_BANNER_TEXT + " ", "")
     norm = norm.replace(FALLBACK_NOTICE + " · ", "")
     # the POST helper is wired only when interactive (V13) — strip it from the hub render
     hub_norm = re.sub(r"<script>.*</script>", "", hub)

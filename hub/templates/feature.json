@@ -1,0 +1,20 @@
+{
+  "name": "feature",
+  "description": "Full product workflow for a user-visible feature. Gates run in charter order; every step is a ticket so progress % reflects real completion.",
+  "tags": ["feature"],
+  "priority": "medium",
+  "steps": [
+    {"title": "PMF check: {title}", "role": "pmf", "tags": ["pmf", "gate"],
+     "body": "Name the user and trigger scenario. keep/kill/reshape verdict on this ticket before anything builds."},
+    {"title": "Design pass: {title}", "role": "design", "tags": ["design", "gate"],
+     "body": "Interaction quality pass on the affected surface. Accept/return verdict with actionable fixes."},
+    {"title": "Contract review: {title}", "role": "code-design", "tags": ["code-design", "gate"],
+     "body": "Review the shape: contracts, failure modes, edges. No verdict without a failure-mode list."},
+    {"title": "Build: {title}", "role": "execution", "tags": ["build"],
+     "body": "Implement in a sandbox lane. Completion comment must carry test counts and evidence."},
+    {"title": "Measure: {title}", "role": "measurement", "tags": ["measurement"],
+     "body": "Define and capture the metric that proves it works. Attach evidence to this ticket."},
+    {"title": "Accept: {title}", "role": "product-owner", "tags": ["accept"],
+     "body": "Reviewer != builder. Accept or return with specific gaps. The owner holds final say."}
+  ]
+}

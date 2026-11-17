@@ -1,0 +1,22 @@
+{
+  "name": "forge-cycle",
+  "description": "One rebuild cycle in the forge loop: plan, lanes, integrate, gate, promote. Promotion stays owner-gated.",
+  "tags": ["forge"],
+  "priority": "high",
+  "steps": [
+    {"title": "Cycle plan: {title}", "role": "product-owner", "tags": ["plan"],
+     "body": "GLM-authored plan: scope, lane split, acceptance criteria, freeze list. Critic reviews plan before lanes open."},
+    {"title": "Lane: {title} A", "role": "execution", "tags": ["lane"],
+     "body": "Sandbox lane off the accepted head. Lanes never touch config/models.json or frozen tests."},
+    {"title": "Integrate + board", "role": "execution", "tags": ["integration"],
+     "body": "Merge lanes into integ branch, full board green, clean-clone verify.",
+     "steps": [
+       {"title": "Clean-clone verify", "role": "measurement", "tags": ["verify"],
+        "body": "Fresh clone of the candidate: board must pass without the working tree."}
+     ]},
+    {"title": "GLM gate review", "role": "code-design", "tags": ["gate"],
+     "body": "Reviewer != builder. Verdict-first, terse. PASS/NO-GO with reasons recorded as events."},
+    {"title": "Promote to main (owner)", "role": "product-owner", "tags": ["promote", "owner-run"],
+     "body": "The owner approves. Snapshot banked, changelog written, accepted head updated."}
+  ]
+}

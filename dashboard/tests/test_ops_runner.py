@@ -323,7 +323,9 @@ def test_retrigger_command_shape():
     # Portable since the OSS split: the runner re-triggers with its own
     # interpreter (sys.executable), not a hardcoded /usr/bin/python3.
     assert cmd[0] == sys.executable
-    assert cmd[1] == os.path.expanduser("~/ai-ops/bin/job_run.py")
+    # Shape check: the retrigger uses the profile's job_run script — any
+    # deployment may pin its own path, so assert the script, not the absolute.
+    assert cmd[1].endswith(os.path.join("bin", "job_run.py"))
     assert "run" in cmd and "node-1:x" in cmd and "TK-9" in cmd
 
 

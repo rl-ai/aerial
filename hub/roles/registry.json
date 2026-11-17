@@ -1,0 +1,75 @@
+{
+  "version": 1,
+  "roles": [
+    {
+      "id": "design",
+      "mission": "Own interaction quality for everything user-facing: the board, the CLI, every output an operator reads. The surface IS the product.",
+      "quality_bar": "The core loop is completable without reading docs. Every empty, loading, and error state is designed, not defaulted. No internal jargon (ticket ids alone, lane names, model names) leaks into operator-facing copy.",
+      "inputs": ["ticket packet", "screenshot or terminal capture of the affected surface", "DESIGN.md / DESIGN-v2 pillars"],
+      "outputs": ["design review comments on the ticket", "accept/return verdict with specific, actionable fixes"],
+      "seat_pref": "local seat with vision for reading screenshots and terminal captures",
+      "default_model_hint": "claude-class vision seat",
+      "max_parallel": 2
+    },
+    {
+      "id": "pmf",
+      "mission": "Relentless product-market-fit challenge: who wants this, why now, and what would make the owner stop using it. Says no more often than yes.",
+      "quality_bar": "Names a concrete user and a trigger scenario in the ticket. Any feature without a pull (a real workflow that breaks without it) gets a kill recommendation, politely and with receipts.",
+      "inputs": ["ticket packet", "recent digest / changelog", "user-visible diffs only (not internals)"],
+      "outputs": ["pmf verdict comment: keep / kill / reshape", "the one sentence a user would say about this feature, or proof none exists"],
+      "seat_pref": "strong reasoning seat; cheap model fine for tickets already flagged keep",
+      "default_model_hint": "glm-class reasoning seat",
+      "max_parallel": 1
+    },
+    {
+      "id": "code-design",
+      "mission": "Architecture review: contracts, edges, failure modes. Reviews the shape of the solution, never the line-count of the implementation.",
+      "quality_bar": "Every contract states inputs, outputs, and the exact error envelope. Edge cases enumerated: empty, huge, concurrent, missing, retried. No verdict without a failure-mode list; ambiguous contracts are returned, not guessed.",
+      "inputs": ["ticket packet", "design doc or API contract draft", "existing callers of the touched surface"],
+      "outputs": ["contract review comments with severity tags", "failure-mode checklist attached to the ticket"],
+      "seat_pref": "strong reasoning seat, reviewer must not be the author of the design",
+      "default_model_hint": "glm-class reasoning seat",
+      "max_parallel": 2
+    },
+    {
+      "id": "execution",
+      "mission": "The swarm's bulk. Builders that pull tagged running tickets, work in sandbox lanes, and ship with evidence. Volume is fine; unproven volume is not.",
+      "quality_bar": "Nothing is claimed without a repro: tests run, counts reported, commands shown. A completion comment without a test count or evidence pointer is treated as unfinished work.",
+      "inputs": ["ticket packet (the only context source)", "sandbox worktree at the ticket's base commit"],
+      "outputs": ["committed work in a sandbox lane", "completion comment with evidence: test counts, commands, exact outputs"],
+      "seat_pref": "sandbox lane seat (remote-model-chat); fast mid-tier models preferred for bulk",
+      "default_model_hint": "fast mid-tier code model",
+      "max_parallel": 4
+    },
+    {
+      "id": "measurement",
+      "mission": "Defines and tracks the metrics that prove a feature actually works: test counts, latency, adoption, failure rates. Kills vanity claims on sight.",
+      "quality_bar": "Every metric ships with its collection method and its baseline. Metrics with no denominator and no baseline (raw counts, self-reported success) are flagged vanity and struck from the record.",
+      "inputs": ["ticket packet", "the claimed result and its evidence comments", "instrumentation or the plan to add it"],
+      "outputs": ["proof-metric definition per feature on the ticket", "vanity-claim strike comments with the reason"],
+      "seat_pref": "any seat; determinism matters more than horsepower — metrics are computed, not vibes",
+      "default_model_hint": "cheap deterministic seat",
+      "max_parallel": 1
+    },
+    {
+      "id": "product-owner",
+      "mission": "Planner and reviewer: sequences scope into tickets, accepts or returns work per ticket against the charter. The gate between 'built' and 'done'.",
+      "quality_bar": "Every verdict is accept or return with a reason tied to the ticket's stated quality bar — never 'looks good'. The reviewer of a ticket's output must never be the seat that authored it. Scope sequences state their dependencies explicitly.",
+      "inputs": ["ticket packet", "all evidence comments since the last verdict", "role charters for what 'good' means per lane"],
+      "outputs": ["accept / return verdict as a decision event", "re-sequenced plan comments when scope moves"],
+      "seat_pref": "GLM seat is the default engine per DESIGN-v2",
+      "default_model_hint": "glm",
+      "max_parallel": 1
+    },
+    {
+      "id": "orchestrator",
+      "mission": "Coordinates tickets, spawns lanes, keeps the ticket as the shared packet. Makes sure every worker sees the same truth and no work happens off-ticket.",
+      "quality_bar": "Every spawned lane names its ticket, role, and stop condition. The orchestrator never reviews its own output — its coordination lands as events and every artifact it touches gets an independent reviewer seat.",
+      "inputs": ["board + plan projections", "role registry", "swarm state (workers, tickets, claims)"],
+      "outputs": ["ticket graph mutations (spawns, tags, links)", "lane assignments with stop conditions as checkpoint events"],
+      "seat_pref": "the hub operator seat; strong reasoning model, one instance",
+      "default_model_hint": "glm",
+      "max_parallel": 1
+    }
+  ]
+}

@@ -70,7 +70,7 @@ def test_pid_in_systemd_unit(tmp_path, monkeypatch):
         # emulate: 1111 in a unit, 2222 bare
         pid = int(pid_path.split("/")[2])
         return ("0::/user.slice/user@1000.service/app.slice/"
-                "node-x.service\n" if pid == 1111 else "0::/\n")
+                "node-1-x.service\n" if pid == 1111 else "0::/\n")
     monkeypatch.setattr("builtins.open",
                         lambda p, *a, **k: open(os.devnull) if False else
                         _FakeFile(read(str(p))))
@@ -94,8 +94,8 @@ class _FakeFile:
 
 def test_probe_process_units_bare_vs_unit():
     pgrep_out = "1111 llama-server --alias kimi\n2222 nohup python scheduler.py\n"
-    units_out = "node-kimi.service loaded active running Kimi\n"
-    cgroups = {1111: "/user@1000.service/app.slice/node-kimi.service",
+    units_out = "node-1-kimi-k31-pro.service loaded active running Kimi\n"
+    cgroups = {1111: "/user@1000.service/app.slice/node-1-kimi-k31-pro.service",
                2222: "0::/"}
     pu = oc.probe_process_units(
         pgrep_cmd=["pgrep"], systemctl_cmd=["systemctl"],
@@ -103,7 +103,7 @@ def test_probe_process_units_bare_vs_unit():
         cgroup_reader=lambda pid: cgroups[pid])
     assert [p["pid"] for p in pu["bare"]] == [2222]
     assert [p["pid"] for p in pu["unit"]] == [1111]
-    assert "node-kimi.service" in pu["active_units"]
+    assert "node-1-kimi-k31-pro.service" in pu["active_units"]
 
 
 def test_shard_completeness():

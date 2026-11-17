@@ -97,27 +97,146 @@ DEFAULT_FOLLOWUPS_DB = os.path.join(RUN_DIR, "ops-agent-followups.db")
 LOG_PATH = str(_pv("ops_log"))
 WORKSPACE_ROOT = str(_pv("ops_workspace_root"))
 
-#: Model seats: (name, port). A seat that does not answer GET /v1/models is
-#: a finding — the 2026-11-11 host reboot left Kimi (18102) dead for hours
-#: because nothing monitored model seats.
-MODEL_SEATS = (("kimi", 18102), ("deepseek", 18095), ("glm", 18110))
+#: Model seats: (name, port) or (name, port, recovery_script). A seat that
+#: does not answer GET /v1/models is a finding — the 2026-11-11 host reboot
+#: left Kimi (18102) dead for hours because nothing monitored model seats.
+#:
+#: The optional third element names a node-side RECOVERY DRIVER: the
+#: auto-fix path executes [script] as the deterministic fix (guarded by
+#: os.path.exists + executable + the f8 trust check) instead of dispatching
+#: a generic fix session. The glm seat can be SERVED ON A REMOTE HOST and
+#: is recovered via cluster/bin/ariel_glm_recover.sh (ssh forced-command
+#: ladder + forwarder restarts) — NEVER by local systemctl (2026-11-16 GLM
+#: 3-h outage; see docs/sre-runbook-glm-seat.md).
+#:
+#: f8: the driver path is HARD-RESOLVED from the deployment profile
+#: (cluster.ariel_recovery_script, default cluster/bin/ariel_glm_recover.sh
+#: resolved relative to the repo root) — never from vram_registry.json.
 
-try:  # derive seats from the vram registry (name, port)
+
+def _ariel_recovery_script() -> str:
+    """Trusted recovery-driver path (f8): profile key
+    cluster.ariel_recovery_script, default cluster/bin/ariel_glm_recover.sh,
+    resolved relative to the repo root. Registry-provided paths are NEVER
+    used — whoever can write vram_registry.json must not gain execution."""
+    rel = str(_pv("cluster.ariel_recovery_script")
+              or "cluster/bin/ariel_glm_recover.sh")
+    return os.path.normpath(os.path.join(_ROOT, rel))
+
+
+_ARIEL_RECOVERY_SCRIPT = _ariel_recovery_script()
+
+MODEL_SEATS = (
+    ("kimi", 18102),
+    ("deepseek", 18095),
+    ("glm", 18110, _ARIEL_RECOVERY_SCRIPT),
+)
+
+#: Fallback recovery drivers by seat name — applies when a MODEL_SEATS entry
+#: is a legacy 2-tuple (e.g. derived from a vram registry that predates the
+#: recovery_script field). Values are always the profile-resolved trusted
+#: path; seat_recovery_script() rejects anything else (f8).
+SEAT_RECOVERY_SCRIPTS = {
+    "glm": _ARIEL_RECOVERY_SCRIPT,
+}
+
+
+def seat_recovery_script(seat) -> Optional[str]:
+    """Recovery driver for one MODEL_SEATS entry (2- or 3-tuple), or None.
+
+    f8 trust gate: ONLY the profile-resolved trusted driver path
+    (_ARIEL_RECOVERY_SCRIPT) may ever be returned — a registry-supplied or
+    hand-set 3rd tuple element pointing anywhere else is rejected (logged,
+    returns None → classic playbook). Only a script that exists and is
+    executable counts as a driver (fail-safe: no driver → classic playbook).
+    """
+    script = str(seat[2]) if len(seat) > 2 and seat[2] else \
+        SEAT_RECOVERY_SCRIPTS.get(seat[0])
+    if not script:
+        return None
+    if os.path.realpath(script) != os.path.realpath(_ARIEL_RECOVERY_SCRIPT):
+        log.warning(
+            "rejected recovery path %r — drivers are profile-resolved "
+            "(cluster.ariel_recovery_script), never registry-supplied (f8)",
+            script)
+        return None
+    if os.path.isfile(script) and os.access(script, os.X_OK):
+        return script
+    return None
+
+
+try:  # derive seat names/ports from the vram registry — 2-tuples ONLY (f8)
     import json as _json
     _reg_path = os.path.join(os.path.dirname(os.path.dirname(
         os.path.abspath(__file__))), "vram_registry.json")
     with open(_reg_path, encoding="utf-8") as _fh:
         _reg = _json.load(_fh)
     if _reg.get("seats"):
+        _rejected = [s["recovery_script"] for s in _reg["seats"]
+                     if s.get("recovery_script")]
         MODEL_SEATS = tuple(
-            (s["name"], int(s["port"])) for s in _reg["seats"] if "port" in s)
+            (s["name"], int(s["port"]))
+            for s in _reg["seats"] if "port" in s)
+        if _rejected:
+            log.warning(
+                "vram_registry recovery_script values REJECTED (f8: "
+                "recovery drivers come from the deployment profile, never "
+                "from the registry): %r", _rejected)
 except (OSError, ValueError, KeyError):
     pass  # registry absent/malformed -> keep the fallback tuple
+
+
+def systemctl_user_available() -> bool:
+    """f9: verify `systemctl --user` actually works in THIS execution
+    context (XDG_RUNTIME_DIR set + the user session reachable). A runner
+    started from cron / a system service / a detached worker has no user
+    session, and `systemctl --user` would fail there. Never raises; the
+    result is logged and the caller skips gracefully."""
+    if not os.environ.get("XDG_RUNTIME_DIR"):
+        return False
+    try:
+        proc = subprocess.run(
+            ["systemctl", "--user", "is-system-running"],
+            timeout=10, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+            text=True)
+    except Exception:
+        return False
+    if proc.returncode == 0:
+        return True
+    # "degraded"/"maintenance" (rc 1) still means the user session is
+    # reachable; "offline"/"stopping"/"unknown" do not.
+    return proc.returncode == 1 and proc.stdout.strip() in \
+        ("degraded", "maintenance")
 
 #: Poll window default (seconds) when no checkpoint exists.
 DEFAULT_WINDOW_S = 15 * 60.0
 DEDUPE_WINDOW_S = 24 * 3600.0
 DEFAULT_INTERVAL_S = 300.0
+
+
+def run_idle_broker(script: Optional[str] = None, timeout_s: float = 120.0) -> str:
+    """Invoke the idle-work broker in --once mode as a subprocess.
+
+    The broker lives at dashboard/idle_broker/broker.py (next to this
+    package). It is a leaf of the poll cycle: failures here are logged and
+    swallowed so they can never break ops polling, and the broker itself
+    enforces the production pause gates (any seat waiting>0,
+    AERIAL_SATURATION_PAUSE env, per-entry pidfiles) before dispatching.
+    Returns a short human summary of the pass.
+    """
+    if script is None:
+        script = os.path.join(os.path.dirname(os.path.dirname(
+            os.path.abspath(__file__))), "idle_broker", "broker.py")
+    if not os.path.exists(script):
+        return "skipped (broker script not found)"
+    proc = subprocess.run(
+        [sys.executable, script, "--once"],
+        capture_output=True, text=True, timeout=timeout_s)
+    out = (proc.stdout or "").strip().splitlines()
+    dispatched = [l for l in out if l.startswith("{") and '"dispatch"' in l]
+    if proc.returncode != 0:
+        return f"exit {proc.returncode}: {(proc.stderr or '')[:200]}"
+    return f"{len(dispatched)} dispatched, {len(out)} decision(s)"
 
 HERMES_BIN = os.path.expanduser(
     str(_pv("cluster.hermes_bin") or "~/.local/bin/hermes"))
@@ -136,6 +255,8 @@ SEAT_PLAYBOOK = """
    `GET http://127.0.0.1:<port>/v1/models` with the cluster bearer.
 5. If the restart fails twice, STOP: write what you tried to close-out.md and
    leave the seat for a human — do not loop-restart.
+6. Remote seats (Ariel) are recovered via cluster/bin/ariel_glm_recover.sh,
+   never by local systemctl.
 """
 
 
@@ -202,23 +323,41 @@ def probe_seat(port: int, bearer_path: str = DEFAULT_BEARER,
 
 def seat_findings(clock: Callable[[], float], probe: Callable[..., Optional[int]],
                   bearer_path: str = DEFAULT_BEARER) -> List[OpsFinding]:
-    """One finding per dead model seat (probe fails or non-200)."""
+    """One finding per dead model seat (probe fails or non-200).
+
+    A seat with a recovery driver (3-tuple MODEL_SEATS entry, or a name in
+    SEAT_RECOVERY_SCRIPTS) gets the driver path in its proposed_action and in
+    check['recovery_script'] — the auto-fix path then executes the driver
+    instead of dispatching a generic fix session (remote seats on Ariel are
+    recovered via cluster/bin/ariel_glm_recover.sh, never by local systemctl).
+    """
     day = time.strftime("%Y%m%d", time.gmtime(clock()))
     out = []
-    for name, port in MODEL_SEATS:
+    for seat in MODEL_SEATS:
+        name, port = seat[0], seat[1]
+        script = seat_recovery_script(seat)
         status = probe(port, bearer_path)
         if status == 200:
             continue
+        if script:
+            action = (f"run the recovery driver {script} — remote seat on "
+                      f"Ariel (ssh forced-command recovery + forwarder "
+                      f"restart); verify GET /v1/models returns 200")
+            check = {"kind": "seat", "name": name, "port": port,
+                     "recovery_script": script}
+        else:
+            action = (f"restart the dead {name} model seat per the "
+                      f"runbook; verify GET /v1/models returns 200")
+            check = {"kind": "seat", "name": name, "port": port}
         out.append(OpsFinding(
             finding_id=f"seat:{name}:{day}",
             claim=f"model seat {name} (port {port}) is DOWN "
                   f"(probe status {status!r})",
             reversible=True, scope="internal", covered_by_mandate=False,
             tags=("seat-liveness", name),
-            proposed_action=f"restart the dead {name} model seat per the "
-                            f"runbook; verify GET /v1/models returns 200",
+            proposed_action=action,
             evidence={"port": port, "probe_status": status},
-            check={"kind": "seat", "name": name, "port": port},
+            check=check,
             playbook=SEAT_PLAYBOOK,
             verify=lambda p=port, b=bearer_path: probe(p, b) == 200))
     return out
@@ -823,6 +962,42 @@ class OpsRunner:
                         "output_tail": (proc.stdout or "")[-2000:]}
             except subprocess.TimeoutExpired:
                 return {"exit": None, "timed_out": True, "cmd": cmd}
+        if finding.check.get("kind") == "seat":
+            # Remote seats (Ariel): the recovery driver IS the deterministic
+            # fix — never local systemctl for a seat served on another host
+            # (2026-11-16 GLM 3-h outage). Guards (f8): only when the driver
+            # is the TRUSTED profile-resolved path and exists + executable;
+            # otherwise fall through to the agent session. f9: verify the
+            # systemd user session works here and log the result — a missing
+            # session must never crash the runner.
+            script = finding.check.get("recovery_script") or ""
+            trusted = script and os.path.realpath(script) == \
+                os.path.realpath(_ARIEL_RECOVERY_SCRIPT)
+            if not trusted and script:
+                log.warning("seat fix: rejected non-trusted recovery path "
+                            "%r (f8) — falling back to the agent session",
+                            script)
+            if trusted and os.path.isfile(script) and \
+                    os.access(script, os.X_OK):
+                if not systemctl_user_available():
+                    log.warning(
+                        "systemctl --user is NOT available in this execution "
+                        "context (f9) — the recovery driver will skip its "
+                        "forwarder restart; continuing anyway")
+                cmd = [script]
+                log.info("seat recovery driver (mandate %s): %s",
+                         mandate.get("mandate_id") if mandate else "-", cmd)
+                try:
+                    proc = subprocess.run(cmd, timeout=900,
+                                          stdout=subprocess.PIPE,
+                                          stderr=subprocess.STDOUT, text=True)
+                    return {"exit": proc.returncode, "cmd": cmd,
+                            "output_tail": (proc.stdout or "")[-2000:]}
+                except subprocess.TimeoutExpired:
+                    return {"exit": None, "timed_out": True, "cmd": cmd}
+                except Exception as exc:      # f9: never crash the runner
+                    log.error("seat recovery driver failed: %r", exc)
+                    return {"exit": None, "error": repr(exc), "cmd": cmd}
         if self.fix_executor is not None:
             return self.fix_executor(finding, mandate)
         return dispatch_fix_session(finding, mandate)
@@ -878,6 +1053,16 @@ class OpsRunner:
         since = (checkpoint - self.window_s) if checkpoint else (now - self.window_s)
         findings: List[OpsFinding] = []
         findings += seat_findings(self.clock, self.probe)
+        # IDLE-BROKER: fill measured-idle seats with pre-approved backlog.
+        # Runs as a subprocess AFTER seat liveness so an ops-cycle dispatch
+        # can never delay or break the poll; the broker enforces the same
+        # pause gates itself (waiting>0, AERIAL_SATURATION_PAUSE, pidfiles).
+        try:
+            idle_broker_result = run_idle_broker()
+            if idle_broker_result:
+                log.info("idle-broker: %s", idle_broker_result)
+        except Exception as exc:
+            log.warning("idle-broker invocation failed: %r", exc)
         findings += job_run_findings(self.hub_db, since, now, self.clock)
         findings += health_findings(self.health_path, self.clock)
         # SCHEDULE-RECONCILIATION: every job that was SUPPOSED to run ran.

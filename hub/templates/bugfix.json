@@ -1,0 +1,16 @@
+{
+  "name": "bugfix",
+  "description": "Fast lane for defects: reproduce, fix, verify, accept. No design/pmf gate — the bug report is the spec.",
+  "tags": ["bugfix"],
+  "priority": "high",
+  "steps": [
+    {"title": "Repro + triage: {title}", "role": "execution", "tags": ["triage"],
+     "body": "Minimal repro committed as a failing test before any fix. Severity and blast radius on this ticket."},
+    {"title": "Fix: {title}", "role": "execution", "tags": ["build"],
+     "body": "Fix on a branch off the accepted build. Failing test must go green; no other board movement."},
+    {"title": "Review fix: {title}", "role": "code-design", "tags": ["code-design", "gate"],
+     "body": "Reviewer must not be the fixer. Check regression surface, not style."},
+    {"title": "Verify + close: {title}", "role": "measurement", "tags": ["measurement"],
+     "body": "Reproduce the original scenario against the fix. Attach before/after evidence."}
+  ]
+}

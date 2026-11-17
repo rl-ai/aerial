@@ -1,0 +1,12 @@
+{
+  "name": "project",
+  "description": "Epic-level root: a durable initiative with milestones. Milestones are children; work templates get attached under each milestone as they are planned. Progress % rolls up through the tree.",
+  "tags": ["project"],
+  "priority": "medium",
+  "steps": [
+    {"title": "Charter: {title}", "role": "product-owner", "tags": ["charter"],
+     "body": "Mission, boundaries, definition of done, owner-approval points. This ticket is the contract."},
+    {"title": "Milestone: M1", "role": "product-owner", "tags": ["milestone"],
+     "body": "Plan work under this milestone with hub instantiate feature/bugfix/infra/spike."}
+  ]
+}

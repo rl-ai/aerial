@@ -369,33 +369,69 @@ def scheduler_alive(day_start_ts: float, sched_log: str,
     return False
 
 
+#: Jobs whose failed runs are OBSERVATIONS of other incidents (detectors),
+#: not triage targets. In the 2026-11-09 backtest window these were 55% of
+#: all shadow actions (sre-health-monitor alone: 217 failed check rows) and
+#: 55% of all divergences — a 10-min-interval monitor failing during an
+#: incident ALWAYS "fails again within 24h", so per-run counting turned one
+#: incident into ~114 divergent actions.
+#: Detector jobs are node-scoped (job ids are "<node_name>:<job>"), so the
+#: prefixes derive from the deployment profile's node_name — generic by default.
+from deployment_profile import value as _node_value  # noqa: E402
+_DETECTOR_NODE = str(_node_value("node_name") or "aerial")
+DETECTOR_JOBS = frozenset({
+    f"{_DETECTOR_NODE}:sre-health-monitor",
+    f"{_DETECTOR_NODE}:vram-pager",
+})
+
+
 def build_shadow_comparison(fixture_dir: str, day_start_ts: float,
-                            hub_db: str) -> Dict[str, Any]:
-    """Shadow-vs-actual actions for the day from REAL rows: every failed
-    job run is a would-have-done triage; the live outcome is the run state.
-    Divergence = the SAME job failed again within the following 24h (the
-    auto-fix would have been wrong — the failure recurred), individually
-    labeled; evidence = verified (real logged rows)."""
+                            hub_db: str,
+                            window_end_ts: Optional[float] = None,
+                            ) -> Dict[str, Any]:
+    """Shadow-vs-actual actions for the day from REAL rows.
+
+    FIX (divergence_rate 52.8% vs 20%, gauntlet 2026-11-16) — three changes:
+
+    1. ONE action per failing JOB per day (dedupe), not one per failed RUN.
+       Chronic jobs (ds-writer max_tokens, roles-runner hub 400/401) fail
+       many times a day; per-run counting multiplied one underlying issue
+       into dozens of "divergent" actions.
+    2. Detector jobs (health monitors, pagers) are excluded: their failures
+       observe incidents, they are not would-have-done fixes.
+    3. Right-censoring: if the +24h recurrence window extends past the
+       available data (window_end_ts), the last day's recurrence test cannot
+       be evaluated — treat it as non-divergent instead of silently
+       deflating/inflating the rate.
+
+    Divergence = the job failed again within the following 24h (the
+    auto-fix would not have held), individually labeled.
+    """
     win = (day_start_ts, day_start_ts + 86400.0)
     data = gather_job_runs(hub_db, win)
-    # jobs that failed again in the next 24h → the fix would not have held
     next_win = (day_start_ts + 86400.0, day_start_ts + 2 * 86400.0)
+    evaluable = window_end_ts is None or next_win[1] <= window_end_ts
     recur = {r.get("job_id") for r in
-             (gather_job_runs(hub_db, next_win).get("failures", []) or [])}
+             (gather_job_runs(hub_db, next_win).get("failures", []) or [])} \
+        if evaluable else set()
+    seen: set = set()
     actions = []
     for run in data.get("failures", []) or []:
-        diverged = run.get("job_id") in recur
+        job = run.get("job_id", "job")
+        if job in DETECTOR_JOBS or job in seen:
+            continue
+        seen.add(job)
+        diverged = job in recur
         actions.append({
             "ts": _norm_ts(run.get("started_at")) or day_start_ts,
             "role": "curator",
-            "action": f"triage {run.get('job_id', 'job')} "
-                      f"{run.get('run_id', '')}",
+            "action": f"triage {job} (dedup per job-day)",
             "actual_outcome": f"run {run.get('status')}",
             "evidence_label": "verified",
             "divergence": bool(diverged),
             "divergence_label": "would-have-been-wrong" if diverged else None,
             "draft_mandate_spec": {
-                "scope": f"triage {run.get('job_id', 'job')} failures",
+                "scope": f"triage {job} failures",
                 "expiry": _iso(day_start_ts + 7 * 86400.0)},
         })
     return {"role": "curator", "mode": "record-only-shadow", "actions": actions}

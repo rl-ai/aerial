@@ -1,0 +1,16 @@
+{
+  "name": "spike",
+  "description": "Time-boxed research: answer a question, write it up, decide. Produces a wiki page, not production code.",
+  "tags": ["spike"],
+  "priority": "medium",
+  "steps": [
+    {"title": "Question + exit criteria: {title}", "role": "product-owner", "tags": ["plan"],
+     "body": "One sentence question. What answer would change a decision? Time box stated."},
+    {"title": "Investigate: {title}", "role": "execution", "tags": ["research"],
+     "body": "Findings as evidence events on this ticket. Dead ends recorded too — they are answers."},
+    {"title": "Write-up: {title}", "role": "measurement", "tags": ["wiki"],
+     "body": "Wiki page: findings, confidence, what would falsify. Link from this ticket."},
+    {"title": "Decide: adopt / adapt / drop", "role": "product-owner", "tags": ["decision"],
+     "body": "Decision event on the root with rationale. Converts into a feature ticket if adopt."}
+  ]
+}

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ticket-hub</title>
+<link rel="stylesheet" href="/ui/style.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">◧</div>
+      <div>
+        <div class="brand-name">ticket-hub</div>
+        <div class="brand-sub">context graph</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <button class="nav-item active" data-view="board">
+        <span class="nav-icon">▦</span> Board
+      </button>
+      <button class="nav-item" data-view="graph">
+        <span class="nav-icon">⌬</span> Graph
+      </button>
+      <button class="nav-item" data-view="updates">
+        <span class="nav-icon">✦</span> Updates
+      </button>
+    </nav>
+    <div class="nav-divider"></div>
+    <nav class="nav" id="nav-mission">
+      <button class="nav-item nav-mission" id="nav-wiki" data-view="wiki">
+        <span class="nav-icon">📖</span> Wiki
+      </button>
+      <button class="nav-item nav-mission" id="nav-jobs" data-view="jobs">
+        <span class="nav-icon">⏱</span> Jobs
+      </button>
+      <button class="nav-item nav-mission" id="nav-monitoring" data-view="monitoring">
+        <span class="nav-icon">◉</span> Monitoring
+      </button>
+      <button class="nav-item nav-mission" id="nav-admin" data-view="admin">
+        <span class="nav-icon">⚙</span> Admin
+      </button>
+      <button class="nav-item nav-mission" id="nav-roles" data-view="roles">
+        <span class="nav-icon">👥</span> Roles
+      </button>
+    </nav>
+    <div class="sidebar-foot">
+      <button class="btn btn-primary" id="new-ticket-btn">+ New ticket</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <h1 id="view-title">Board</h1>
+      <div class="topbar-actions">
+        <input id="search" class="search" type="search" placeholder="Search tickets…" autocomplete="off">
+      </div>
+    </header>
+
+    <section id="view-board" class="view">
+      <div class="board-filters" id="board-filters"></div>
+      <div class="board" id="board-columns"></div>
+    </section>
+
+    <section id="view-graph" class="view hidden">
+      <div class="graph-wrap" id="graph-wrap">
+        <svg id="graph-svg"></svg>
+        <div class="graph-empty hidden" id="graph-empty">No tickets yet — create one to see the hierarchy.</div>
+      </div>
+    </section>
+
+    <section id="view-updates" class="view hidden">
+      <div class="updates-toolbar">
+        <label class="field"><span>Project</span>
+          <select id="updates-project"></select>
+        </label>
+        <button class="btn" id="copy-digest-btn">Copy</button>
+      </div>
+      <div id="updates-body" class="updates-body"></div>
+    </section>
+
+    <section id="view-wiki" class="view hidden">
+      <div class="wiki-layout">
+        <aside class="wiki-sidebar">
+          <input id="wiki-search" class="search wiki-search-input" type="search"
+                 placeholder="Search wiki…" autocomplete="off">
+          <div id="wiki-categories" class="wiki-categories"></div>
+        </aside>
+        <div class="wiki-main">
+          <div id="wiki-content" class="wiki-content">
+            <p class="muted">Select a page from the sidebar.</p>
+          </div>
+          <div id="wiki-editor" class="wiki-editor hidden">
+            <label class="field"><span>Title</span>
+              <input id="wiki-edit-title" type="text" maxlength="200">
+            </label>
+            <label class="field"><span>Tags (comma-separated)</span>
+              <input id="wiki-edit-tags" type="text">
+            </label>
+            <label class="field"><span>Body (markdown)</span>
+              <textarea id="wiki-edit-body" rows="16"></textarea>
+            </label>
+            <div class="modal-actions">
+              <button class="btn" id="wiki-edit-cancel">Cancel</button>
+              <button class="btn btn-primary wiki-save-btn" id="wiki-edit-save">Save revision</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-jobs" class="view hidden">
+      <div id="jobs-body"></div>
+    </section>
+
+    <section id="view-monitoring" class="view hidden">
+      <div id="monitoring-body" class="mon-grid"></div>
+      <div class="mon-inbox">
+        <h3 class="mon-inbox-title">Blocked by owner</h3>
+        <div id="blocked-inbox" class="blocked-inbox"></div>
+      </div>
+    </section>
+
+    <section id="view-admin" class="view hidden">
+      <div id="admin-body" class="admin-grid"></div>
+    </section>
+
+    <section id="view-roles" class="view hidden">
+      <div id="roles-body" class="roles-grid"></div>
+    </section>
+  </main>
+
+  <aside id="drawer" class="drawer hidden" aria-label="Ticket details">
+    <div class="drawer-header">
+      <div>
+        <div class="drawer-id" id="drawer-id"></div>
+        <h2 class="drawer-title" id="drawer-title"></h2>
+      </div>
+      <button class="icon-btn" id="drawer-close" title="Close">✕</button>
+    </div>
+    <div class="drawer-body" id="drawer-body"></div>
+  </aside>
+</div>
+
+<div id="modal" class="modal hidden">
+  <div class="modal-card">
+    <h3>New ticket</h3>
+    <form id="new-ticket-form">
+      <label class="field"><span>Title</span><input name="title" required maxlength="200"></label>
+      <label class="field"><span>Body</span><textarea name="body" rows="3"></textarea></label>
+      <div class="field-row">
+        <label class="field"><span>Owner name</span><input name="owner" placeholder="hermes"></label>
+        <label class="field"><span>Family</span><input name="family" placeholder="hermes"></label>
+      </div>
+      <div class="field-row">
+        <label class="field"><span>Priority</span>
+          <select name="priority">
+            <option>low</option><option selected>medium</option><option>high</option><option>urgent</option>
+          </select>
+        </label>
+        <label class="field"><span>Parent (optional)</span><input name="parent" placeholder="TK-…"></label>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn" id="modal-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary">Create</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+<script src="/ui/app.js"></script>
+<script src="/ui/jobs.js"></script>
+</body>
+</html>

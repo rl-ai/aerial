@@ -22,10 +22,10 @@ from wsgiref.simple_server import make_server
 
 import pytest
 
-WORKSPACE_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
-sys.path.insert(0, WORKSPACE_ROOT)
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+sys.path.insert(0, REPO_ROOT)
 
-from build.dashboard.console import serve  # noqa: E402
+from dashboard.console import serve  # noqa: E402
 
 READ_TOKEN = "test-read-token-rc1"
 WRITE_TOKEN = "test-write-token-rc1"

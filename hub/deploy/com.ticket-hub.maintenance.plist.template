@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.ticket-hub.maintenance</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>__MAINTENANCE_SH__</string>
+  </array>
+
+  <!-- Daily at __DAILY_HOUR__:00 local time -->
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key>
+    <integer>__DAILY_HOUR__</integer>
+    <key>Minute</key>
+    <integer>0</integer>
+  </dict>
+
+  <key>RunAtLoad</key>
+  <false/>
+
+  <key>StandardOutPath</key>
+  <string>__LOG_DIR__/maintenance.log</string>
+
+  <key>StandardErrorPath</key>
+  <string>__LOG_DIR__/maintenance.err.log</string>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>TICKET_HUB_DB</key>
+    <string>__DB__</string>
+    <key>TICKET_HUB_URL</key>
+    <string>__HUB_URL__</string>
+    <key>TICKET_HUB_PYTHON</key>
+    <string>__PYTHON__</string>
+    <!-- No secrets: maintenance only backs up, lints and probes; adapter
+         tokens live in the external runtime config outside the repo. -->
+  </dict>
+</dict>
+</plist>

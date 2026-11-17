@@ -1,0 +1,29 @@
+{
+  "comment": "Entities the weekly SWOT cadence analyzes. Each item in the curated digest is matched to an entity by its @entity markers / topic keywords. Entity slugs are stable ids used in the SWOT document and the exception-queue condition_key.",
+  "entities": [
+    {
+      "entity": "local-inference-orchestration",
+      "display_name": "Local inference orchestration",
+      "topic": "local inference orchestration",
+      "keywords": ["vllm", "llama.cpp", "ollama", "inference server", "gpu", "vram",
+                   "quantization", "nvfp4", "serving", "batching", "swap", "bench"],
+      "impact_class": "degraded"
+    },
+    {
+      "entity": "agent-ops-tooling",
+      "display_name": "Agent ops tooling",
+      "topic": "agent operations tooling",
+      "keywords": ["agent", "orchestration", "hub", "scheduler", "ticket", "cron",
+                   "ops", "dashboard", "eval", "guardrail", "queue", "dispatch"],
+      "impact_class": "routine"
+    },
+    {
+      "entity": "second-brain-gateway",
+      "display_name": "Second-brain gateway",
+      "topic": "second brain knowledge gateway",
+      "keywords": ["second brain", "curator", "vault", "ingest", "digest", "mcp",
+                   "knowledge", "note", "listening", "source"],
+      "impact_class": "routine"
+    }
+  ]
+}

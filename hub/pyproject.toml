@@ -1,0 +1,43 @@
+# ticket-hub — flat layout: package dir ticket_hub/ + top-level modules
+# (api, hub_cli, hub_client, hub_gateway, outbound). Listed explicitly so the
+# repo stays importable/runnable in-place without restructuring.
+[project]
+name = "ticket-hub"
+version = "1.0.0"
+description = "Central ticket graph hub for the multi-agent operation: SQLite WAL store, FastAPI board API, CLI, outbound poller."
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+]
+
+[project.optional-dependencies]
+tests = [
+    "httpx",
+    "pytest",
+]
+
+[project.scripts]
+hub = "hub_cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["ticket_hub", "ticket_hub.adapters"]
+py-modules = ["api", "hub_cli", "hub_client", "hub_gateway", "outbound", "rlai_api"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+# Error-focused (pyflakes + pycodestyle error subset): hygiene_check must be
+# actionable on pre-existing code, so style-only families (import sorting,
+# whitespace) are not gated. E402 is ignored on purpose — conftest/tests
+# bootstrap sys.path before importing api.
+select = ["E4", "E7", "E9", "F"]
+ignore = ["E402"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,16 @@
+{
+  "name": "biz-opportunity",
+  "description": "Backlog-to-build funnel: a mined opportunity becomes a sized, specified, gated bet. Kill early and cheaply.",
+  "tags": ["bizdev"],
+  "priority": "low",
+  "steps": [
+    {"title": "Size: {title}", "role": "biz-dev", "tags": ["sizing"],
+     "body": "Market, effort, revenue/leverage estimate with receipts. Enough to decide pursue/hold/kill."},
+    {"title": "PMF challenge: {title}", "role": "pmf", "tags": ["pmf", "gate"],
+     "body": "Concrete user + trigger or kill recommendation. Says no more often than yes."},
+    {"title": "Shape as feature plan: {title}", "role": "product-owner", "tags": ["plan"],
+     "body": "If pursued: instantiate the feature template under this ticket and sequence it."},
+    {"title": "Go / no-go", "role": "product-owner", "tags": ["decision"],
+     "body": "Decision event with rationale on the root. The owner decides bets over one build-week."}
+  ]
+}

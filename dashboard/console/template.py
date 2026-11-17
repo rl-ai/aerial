@@ -41,6 +41,10 @@ PANEL_ORDER = ("exec-summary", "sparkline-strip", "zone-b", "zone-a",
                "themes", "zone-c", "raw-stats")
 STALE_TOOLTIP = "stale snapshot — refresh before deciding"
 FALLBACK_NOTICE = "actions disabled — open the hub /dashboard to decide"
+#: §7 read-only banner: shown whenever the console renders non-interactive
+#: (no write token configured). serve.py re-exports this constant.
+READONLY_BANNER_TEXT = ("You're viewing Ray's operator console "
+                        "(read-only until your write token is granted).")
 EVIDENCE_BADGES = ("verified", "inferred", "stale")
 
 # Fallback SLA-breach thresholds (hours) per impact class; the authoritative
@@ -393,7 +397,8 @@ def render_console_html(board: Dict[str, Any], interactive: bool) -> str:
     gen_str = _hhmm(generated) or _hhmm(time.time())
     chips = " ".join(_chip(z, *_zone_state(board, f"zone_{z.lower()}_state",
                                            f"zone_{z.lower()}")) for z in ("A", "B", "C"))
-    notice = (f"{esc(FALLBACK_NOTICE)} · " if not interactive else "")
+    notice = (f"{READONLY_BANNER_TEXT} {esc(FALLBACK_NOTICE)} · "
+              if not interactive else "")
     script = f"<script>{_POST_HELPER}</script>" if interactive else ""
     footer = (f"served from hub · {RC_VERSION}" if interactive
               else f"static snapshot {gen_str}")

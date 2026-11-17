@@ -30,20 +30,20 @@ from wsgiref.simple_server import make_server
 
 import pytest
 
-WORKSPACES = str(Path(__file__).resolve().parents[3])
+REPO_ROOT = str(Path(__file__).resolve().parents[2])
 BUILD_DASH = str(Path(__file__).resolve().parents[1])
-for _p in (WORKSPACES, BUILD_DASH):
+for _p in (REPO_ROOT, BUILD_DASH):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
 from exception_queue.queue import Queue, Finding          # noqa: E402
 from exception_queue.mandate_flow import (                # noqa: E402
     MandateFlow, NoFreshDecision, WriteAuthError, WriteToken)
-from build.dashboard.console import (                     # noqa: E402
+from dashboard.console import (                     # noqa: E402
     template, actions, sparklines, serve, installer)
-from build.dashboard.console.template import (            # noqa: E402
+from dashboard.console.template import (            # noqa: E402
     render_console_html, FALLBACK_NOTICE, STALE_TOOLTIP, PANEL_ORDER)
-from build.dashboard.daily_board import render as board_render  # noqa: E402
+from dashboard.daily_board import render as board_render  # noqa: E402
 from test_rc_sparklines import _make_snapshot_dir         # noqa: E402
 
 READ_TOKEN = "test-read-token-rc1-acceptance"

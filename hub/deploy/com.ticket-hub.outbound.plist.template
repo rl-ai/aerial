@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.ticket-hub.outbound</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>__PYTHON__</string>
+    <string>__OUTBOUND_PY__</string>
+    <string>--interval</string>
+    <string>__INTERVAL__</string>
+    <string>--config</string>
+    <string>__CONFIG__</string>
+    <string>--state</string>
+    <string>__STATE__</string>
+    <string>--url</string>
+    <string>__HUB_URL__</string>
+  </array>
+
+  <key>WorkingDirectory</key>
+  <string>__REPO_DIR__</string>
+
+  <key>RunAtLoad</key>
+  <true/>
+
+  <key>KeepAlive</key>
+  <true/>
+
+  <key>StandardOutPath</key>
+  <string>__LOG_DIR__/outbound.log</string>
+
+  <key>StandardErrorPath</key>
+  <string>__LOG_DIR__/outbound.err.log</string>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <!-- Optional GLM polish: leave unset for template-only digests.
+         The bearer key lives in the file pointed to by KEY_FILE and is
+         read by the daemon at call time; nothing secret is stored here. -->
+  </dict>
+</dict>
+</plist>

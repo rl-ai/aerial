@@ -1,0 +1,16 @@
+{
+  "name": "infra",
+  "description": "Service/host work: launchd jobs, tunnels, monitors, model seats. Owner-run mutations stay human-gated by design.",
+  "tags": ["infra"],
+  "priority": "medium",
+  "steps": [
+    {"title": "Scope + risk: {title}", "role": "service-manager", "tags": ["triage"],
+     "body": "What runs where, what breaks if it dies, rollback path. Mark host mutations OWNER-RUN (command printed, the owner executes)."},
+    {"title": "Implement: {title}", "role": "service-manager", "tags": ["build"],
+     "body": "Config/scripts committed. Never start/stop services from a tool lane; emit the exact command instead."},
+    {"title": "Monitor it: {title}", "role": "service-manager", "tags": ["monitor"],
+     "body": "Register health check + status file. The estate registry must reflect the new service."},
+    {"title": "Verify running: {title}", "role": "measurement", "tags": ["measurement"],
+     "body": "Health check green twice across a restart. Attach probe output."}
+  ]
+}

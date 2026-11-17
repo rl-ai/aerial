@@ -1,0 +1,22 @@
+{
+  "interval_s": 120,
+  "workers": [
+    {
+      "name": "builder-1",
+      "role": "execution",
+      "tag": "swarm-build",
+      "seat_cmd": "remote-model-chat --model {model} --system-file roles/execution.md",
+      "model": "fast-code-model",
+      "interval_s": 120,
+      "max_parallel": 2
+    },
+    {
+      "name": "pm-check",
+      "role": "pmf",
+      "tag": "swarm-pmf",
+      "seat_cmd": "",
+      "interval_s": 3600,
+      "max_parallel": 1
+    }
+  ]
+}

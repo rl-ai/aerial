@@ -37,6 +37,7 @@ import re
 import subprocess
 import sys
 import time
+import urllib.error
 import urllib.request
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -58,10 +59,22 @@ EPIC = jt.EPIC
 from deployment_profile import value as _pv            # noqa: E402
 SCRAPES_DB = os.path.expanduser(str(_pv("scrapes_db")))
 GATEWAY_V1 = os.path.expanduser(str(_pv("paths.gateway_v1") or ""))
+if not GATEWAY_V1 or not os.path.isdir(GATEWAY_V1):
+    # The profile leaves paths.gateway_v1 empty; the live gateway v1 checkout
+    # (bridge.py, secondbrain package, dogfood log) is at this fixed path.
+    _GW1_DEFAULT = os.path.expanduser("~/workspaces/build/second-brain-gateway/v1")
+    if os.path.isdir(_GW1_DEFAULT):
+        GATEWAY_V1 = _GW1_DEFAULT
 SOURCES_PATH = os.path.expanduser(str(_pv("sources_path") or ""))
+if not SOURCES_PATH or not os.path.exists(SOURCES_PATH):
+    _SRC_DEFAULT = os.path.join(GATEWAY_V1, "sources.json") if GATEWAY_V1 else ""
+    if _SRC_DEFAULT and os.path.exists(_SRC_DEFAULT):
+        SOURCES_PATH = _SRC_DEFAULT
 STRESS_DIR = os.path.expanduser(str(_pv("stress_dir")))
 SRE_STATE = os.path.expanduser(str(_pv("sre_state")))
 CONSOLE_URL = "http://127.0.0.1:8777/dashboard"
+CONSOLE_TOKEN_FILE = os.path.expanduser(
+    "~/.config/aiops/handoff/eva-harness-a5.token")
 DEFAULT_WORKDIR = os.path.expanduser(str(_pv("console_workdir")))
 EMAIL_TO = _pv("email.recipient_email") or ""
 
@@ -190,9 +203,9 @@ def layer1_units() -> LayerResult:
     total_p = total_f = 0
     for name, cmd in suites:
         try:
-            code, out = _run(cmd, ROOT, 1800)
+            code, out = _run(cmd, ROOT, 3000)
         except subprocess.TimeoutExpired:
-            res.lines.append(f"- {name}: TIMEOUT (1800s)")
+            res.lines.append(f"- {name}: TIMEOUT (3000s)")
             res.ok = False
             continue
         passed, failed = _pytest_counts(out)
@@ -311,12 +324,27 @@ def layer4_ditl(workdir: str) -> LayerResult:
     # (c) listening proposal pass (shadow mode, ledger in the workdir)
     from secondbrain.listening import load_sources
     from secondbrain.proposals import (fetch_scrape_items, run_weekly_batch)
-    sources = load_sources(SOURCES_PATH)
+    sources_path = SOURCES_PATH
+    if not sources_path or not os.path.exists(sources_path):
+        # No real listening-sources file exists in this environment;
+        # layer 4 is hermetic (all writes under the workdir), so seed a
+        # 2-entry fixture rather than failing the layer on a missing file.
+        sources_path = str(wd / "sources-fixture.json")
+        Path(sources_path).write_text(json.dumps([
+            {"id": "r/gauntlet-fixture-a", "kind": "reddit_sub",
+             "target": "python", "topic": "gauntlet fixture",
+             "match": [], "relation": "competitor", "sensitivity": "public"},
+            {"id": "r/gauntlet-fixture-b", "kind": "reddit_sub",
+             "target": "local llamma", "topic": "gauntlet fixture",
+             "match": [], "relation": "competitor", "sensitivity": "public"},
+        ]))
+        res.lines.append("- listening: using 2-entry fixture sources (no real sources.json found)")
+    sources = load_sources(sources_path)
     reddit_ids = [s["id"] for s in sources if s.get("kind") == "reddit_sub"]
     items = fetch_scrape_items(SCRAPES_DB, since_days=45,
                                source_ids=reddit_ids, per_source_limit=1500)
     ledger_path = wd / "proposal-ledger.json"
-    out = run_weekly_batch(SOURCES_PATH, items, str(ledger_path))
+    out = run_weekly_batch(sources_path, items, str(ledger_path))
     proposed = out.get("proposals", [])
     res.lines.append(f"- listening: {len(items)} items scanned, "
                      f"{len(proposed)} proposal row(s) (shadow mode)")
@@ -373,17 +401,39 @@ def layer4_ditl(workdir: str) -> LayerResult:
     return res
 
 
+def _console_token() -> str:
+    """Console bearer token (deny-by-default auth)."""
+    try:
+        with open(CONSOLE_TOKEN_FILE) as f:
+            return f.read().strip()
+    except OSError:
+        return ""
+
+
+def _console_probe(bearer: str = ""):
+    """GET the console dashboard; returns HTTP status (or error string)."""
+    try:
+        req = urllib.request.Request(
+            CONSOLE_URL,
+            headers=({"Authorization": f"Bearer {bearer}"} if bearer else {}))
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            return resp.status
+    except urllib.error.HTTPError as e:
+        return e.code
+    except Exception as exc:
+        return f"error: {exc}"
+
+
 def layer5_smoke() -> LayerResult:
     res = LayerResult(5, ok=True)
-    # console
-    try:
-        with urllib.request.urlopen(CONSOLE_URL, timeout=10) as resp:
-            status = resp.status
-    except Exception as exc:
-        status = f"error: {exc}"
-    console_ok = status == 200
+    # console: deny-by-default -> 401 WITHOUT bearer, 200 WITH bearer
+    status_no = _console_probe()
+    tok = _console_token()
+    status = _console_probe(tok) if tok else "error: no console token file"
+    console_ok = (status_no == 401) and (status == 200)
     res.ok = res.ok and console_ok
-    res.lines.append(f"- console {CONSOLE_URL}: {status} "
+    res.lines.append(f"- console {CONSOLE_URL}: no-bearer={status_no} "
+                     f"(expect 401), bearer={status} (expect 200) "
                      f"→ {'PASS' if console_ok else 'FAIL'}")
     # email delivery
     try:

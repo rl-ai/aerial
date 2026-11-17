@@ -7,8 +7,8 @@
       "reload_class": "SLOW",
       "tier": "A",
       "never_displace": true,
-      "service_unit": "<node>-glm-forward.service",
-      "load_cmd": "systemctl --user start <node>-glm-forward.service",
+      "service_unit": "node-glm-forward-18083.service",
+      "load_cmd": "systemctl --user start node-glm-forward-18083.service",
       "vram_gib": 0.0,
       "total_layers": 0
     },
@@ -18,8 +18,8 @@
       "reload_class": "FAST",
       "tier": "A",
       "never_displace": false,
-      "service_unit": "<node>-kimi-k31-pro.service",
-      "load_cmd": "systemctl --user start <node>-kimi-k31-pro.service",
+      "service_unit": "node-kimi-k31-pro.service",
+      "load_cmd": "systemctl --user start node-kimi-k31-pro.service",
       "vram_gib": 0.0,
       "total_layers": 120,
       "full_gib": 662.0
@@ -30,8 +30,8 @@
       "reload_class": "SLOW",
       "tier": "B",
       "never_displace": false,
-      "service_unit": "<node>-qwen-fp4.service",
-      "load_cmd": "systemctl --user start <node>-qwen-fp4.service",
+      "service_unit": "node-qwen-fp4.service",
+      "load_cmd": "systemctl --user start node-qwen-fp4.service",
       "vram_gib": 0.0,
       "total_layers": 0
     },
@@ -41,8 +41,8 @@
       "reload_class": "FAST",
       "tier": "C",
       "never_displace": false,
-      "service_unit": "<node>-ds-reviewer.service",
-      "load_cmd": "systemctl --user start <node>-ds-reviewer.service",
+      "service_unit": "node-ds1017-reviewer.service",
+      "load_cmd": "systemctl --user start node-ds1017-reviewer.service",
       "vram_gib": 0.0,
       "total_layers": 80
     }
