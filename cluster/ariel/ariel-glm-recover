@@ -1,0 +1,129 @@
+#!/usr/bin/env bash
+# ariel-glm-recover — fixed, idempotent recovery for the GLM-5.3-Flash seat
+# on ai-ariel. Runs AS ROOT via sudo, invoked ONLY through the ssh
+# forced-command installed for ai-eva@morpheus (no arbitrary ssh exec).
+#
+# What it does, in order:
+#   1. Atomic claim: flock -n on $LOCK_DIR/ariel-glm-recover.lock BEFORE the
+#      throttle check (f2) — concurrent forced-command invocations serialize
+#      here, not just on Morpheus. Throttle: refuse (exit 3) if a recovery
+#      ATTEMPT started <10 min ago; the last-attempt timestamp is refreshed
+#      ONLY when an actual attempt begins (f2/f3).
+#   2. Readiness: HTTP, not TCP (f6) — GET /v1/models with the cluster
+#      bearer must answer 200. 200 → no-op, exit 0.
+#   3. Eject GPU holders — SCOPED (f1): stop ariel-vllm-qwen36.service
+#      (systemctl stop; kill its exact MainPID only if it lingers) and kill
+#      ONLY PIDs belonging to the glm53-fp4 container (docker top). There is
+#      NO blanket nvidia-smi kill loop — co-tenant GPU jobs are never
+#      touched. SIGTERM, wait, then SIGKILL escalation for survivors.
+#   4. docker start glm53-fp4, or docker restart when it is already running
+#      but not serving (f6 — docker start is a no-op for a running container).
+#   5. Wait up to 240 s for HTTP 200 on /v1/models; on failure print last
+#      container logs.
+#
+# Exit codes (f3): 0 = seat up (was up, or recovered).
+#                  1 = recovery attempted, seat still not up.
+#                  3 = throttled / another recovery in progress.
+# Diagnostics go to stderr (and syslog); stdout stays parseable.
+set -uo pipefail
+
+LOGTAG=ariel-glm-recover
+CONTAINER=${ARIEL_GLM_CONTAINER:-glm53-fp4}
+CRITIC=${ARIEL_GLM_CRITIC_UNIT:-ariel-vllm-qwen36.service}
+BEARER=${ARIEL_GLM_BEARER:-/srv/ai/config/cluster_bearer}
+LOCK_DIR=${ARIEL_GLM_LOCK_DIR:-/run}
+LOCK="$LOCK_DIR/ariel-glm-recover.lock"          # flock target (f2)
+LAST_ATTEMPT="$LOCK_DIR/ariel-glm-recover.last"  # throttle timestamp
+
+log() { logger -t "$LOGTAG" -- "$*" 2>/dev/null || true; echo "[$LOGTAG] $*" >&2; }
+
+# -- readiness: HTTP 200 on /v1/models with the bearer (f6) ------------------
+http_up() {
+  local bearer code
+  bearer=$(cat "$BEARER" 2>/dev/null) || bearer=""
+  [ -n "$bearer" ] || return 1
+  code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 \
+    -H "authorization: Bearer $bearer" \
+    "http://127.0.0.1:18110/v1/models" 2>/dev/null) || code=000
+  [ "$code" = "200" ]
+}
+
+# -- atomic claim BEFORE the throttle check (f2) ------------------------------
+mkdir -p -m 755 "$LOCK_DIR" 2>/dev/null || true
+exec 9>>"$LOCK"
+if ! flock -n 9; then
+  log "another recovery is running (lock $LOCK) — exiting 3"
+  exit 3
+fi
+
+if http_up; then
+  log "glm already serving HTTP 200 on 18110 — no action"
+  exit 0
+fi
+
+if [ -f "$LAST_ATTEMPT" ] && \
+   [ "$(( $(date +%s) - $(stat -c %Y "$LAST_ATTEMPT") ))" -lt 600 ]; then
+  log "throttled: a recovery ATTEMPT ran <10 min ago ($LAST_ATTEMPT)"
+  exit 3
+fi
+touch "$LAST_ATTEMPT"   # refreshed ONLY on an actual attempt (f2/f3)
+
+# -- eject GPU holders, SCOPED to glm53-fp4 + the critic unit (f1) ------------
+log "ejecting GPU holders (scoped: container=$CONTAINER unit=$CRITIC)"
+systemctl stop "$CRITIC" 2>/dev/null || true
+# if the unit's main process lingers despite the stop, kill its exact MainPID
+main_pid=$(systemctl show -p MainPID --value "$CRITIC" 2>/dev/null || true)
+if [ -n "${main_pid:-}" ] && [ "$main_pid" != "0" ]; then
+  log "critic MainPID $main_pid lingered — killing exactly that PID"
+  kill "$main_pid" 2>/dev/null || true
+fi
+# ONLY PIDs inside the glm53-fp4 container (docker top / cgroup membership)
+scoped_pids=()
+while read -r p; do
+  [ -n "$p" ] && scoped_pids+=("$p")
+done < <(docker top "$CONTAINER" -eo pid 2>/dev/null | tail -n +2)
+for p in "${scoped_pids[@]:-}"; do
+  [ -n "$p" ] || continue
+  log "SIGTERM scoped container pid $p"
+  kill "$p" 2>/dev/null || true
+done
+sleep "${ARIEL_GLM_EJECT_WAIT_S:-5}"
+# SIGKILL escalation — same scoped set only, after the grace period
+for p in "${scoped_pids[@]:-}"; do
+  [ -n "$p" ] || continue
+  if kill -0 "$p" 2>/dev/null; then
+    log "SIGKILL scoped container pid $p (survived SIGTERM)"
+    kill -9 "$p" 2>/dev/null || true
+  fi
+done
+
+# -- (re)start the container: restart when running-but-not-serving (f6) -------
+running=$(docker inspect -f '{{.State.Running}}' "$CONTAINER" 2>/dev/null || echo "unknown")
+if [ "$running" = "true" ]; then
+  log "container $CONTAINER is running but NOT serving — docker restart"
+  if ! docker restart "$CONTAINER"; then
+    log "docker restart $CONTAINER FAILED"
+    docker logs --tail 20 "$CONTAINER" 2>&1 || true
+    exit 1
+  fi
+else
+  log "starting container $CONTAINER"
+  if ! docker start "$CONTAINER"; then
+    log "docker start $CONTAINER FAILED"
+    docker logs --tail 20 "$CONTAINER" 2>&1 || true
+    exit 1
+  fi
+fi
+
+# -- wait for HTTP readiness (f6: HTTP, not a bare TCP bind) -------------------
+for i in $(seq 1 48); do
+  if http_up; then
+    log "glm recovered on 18110 (HTTP 200) after ~$((i)) probe cycles"
+    exit 0
+  fi
+  sleep "${ARIEL_GLM_WAIT_S:-5}"
+done
+
+log "glm did NOT reach HTTP 200 on /v1/models within 240s; last container logs:"
+docker logs --tail 20 "$CONTAINER" 2>&1 || true
+exit 1

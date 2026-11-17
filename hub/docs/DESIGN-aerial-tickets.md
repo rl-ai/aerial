@@ -151,14 +151,14 @@ Behind `RLAI_OPERATOR=1`, `create_app` mounts
   that grows.
 - The deploy: the packages bind mount, the three environment variables,
   rebuilding the image and restarting the container. Rollback is
-  `~/workspaces/build/hubp1-cutover/rollback.sh` on Morpheus.
+  `~/workspaces/build/hubp1-cutover/rollback.sh` on the control node.
 
 ## Review notes
 
 Second-model review with `glm-review` (served by DeepSeek 1017 on
 2026-11-10, reasoning effort low): three full rounds, then delta reviews
 until the verdict was **approve** (round 6, on 78ca749). Reviews are kept
-on Morpheus in `~/workspaces/build/hub-rlai/` (`round1/`-`round3/`,
+on the control node in `~/workspaces/build/hub-rlai/` (`round1/`-`round3/`,
 `review-round4..6.json`).
 
 Medium findings fixed:

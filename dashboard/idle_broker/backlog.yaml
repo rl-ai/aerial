@@ -29,7 +29,7 @@ entries:
   # (b) BP-KB source refresh — glm.
   - id: bpkb-source-refresh
     seat_match: glm
-    command: AERIAL_SEAT={seat} bash -c 'cd ~/ai-ops && PYTHONPATH=/home/ai-eva/ai-ops python3 -m dashboard.bpkb.poll' >> ~/.aerial/logs/bpkb-poll.log 2>&1
+    command: AERIAL_SEAT={seat} bash -c 'cd ~/ai-ops && PYTHONPATH=~/ai-ops python3 -m dashboard.bpkb.poll' >> ~/.aerial/logs/bpkb-poll.log 2>&1
     priority: 40
     max_concurrent: 1
     cooldown_h: 4

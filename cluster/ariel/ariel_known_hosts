@@ -1,0 +1,19 @@
+# out2/cluster/ariel/ariel_known_hosts — PINNED host key for the Ariel
+# recovery channel (f12).
+#
+# This file is a PLACEHOLDER: it documents the pin and FAILS CLOSED. The
+# driver (out2/cluster/bin/ariel_glm_recover.sh) refuses to run (exit 2)
+# until the real pinned key line exists and its fingerprint matches.
+#
+# One-time bootstrap by Ray or the operator (on Morpheus):
+#
+#   mkdir -p ~/.local/state/ariel
+#   ssh-keyscan -t ed25519 192.0.2.10 > ~/.local/state/ariel/ariel_known_hosts
+#   ssh-keygen -lf ~/.local/state/ariel/ariel_known_hosts
+#   # MUST print: 256 SHA256:test-only-fake-fingerprint ...
+#   # then point the driver at it: ARIEL_KNOWN_HOSTS=~/.local/state/ariel/ariel_known_hosts
+#
+# Expected fingerprint: SHA256:test-only-fake-fingerprint
+# Expected line format: 192.0.2.10 ssh-ed25519 AAAA... comment
+# No accept-new anywhere; a fingerprint mismatch is investigated, never
+# overwritten blindly.

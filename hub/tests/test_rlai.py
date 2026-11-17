@@ -40,7 +40,7 @@ def _rid(prefix: str) -> str:
 def c5(employee_id=None, **over) -> dict:
     msg = {"version": "1.0.0", "employee_id": employee_id or _rid("EM"),
            "display_name": "A5 Test", "kind": "agent",
-           "token_ref": "/tp-data/tokens/a5-test-01-read.token",
+           "token_ref": "/home/you/.aerial/tokens/a5-test-01-read.token",
            "message_id": _rid("MS"), "producer": "roles@test",
            "sent_at": "2026-11-10T00:00:00Z"}
     msg.update(over)

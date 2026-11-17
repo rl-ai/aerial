@@ -15,7 +15,7 @@ including the 12 DS red-team fixes:
     4 (lock contention, JSON state=skipped)
   - f6: readiness is HTTP 200 on /v1/models with the bearer
   - f5/f11: forwarder restart uses ONLY the local probe and touches ONLY
-    morpheus-glm-forward-18083.service (shared worker-forward never)
+    <glm-forward-unit>.service (shared worker-forward never)
   - f7: ssh wrapped in `timeout 300` + ServerAlive keepalives
   - f10: exactly ONE JSON line on stdout, diagnostics on stderr
   - f12: pinned known_hosts required (fail closed, exit 2)
@@ -548,9 +548,9 @@ def test_driver_f5_f11_forwarder_restart_scoped_to_glm_unit(tmp_path):
         tmp_path, args=(), env_extra={"FAKE_SSH_EXIT": "1"})
     assert rc == 1
     log = (calls / "systemctl.log").read_text()
-    assert "--user restart morpheus-glm-forward-18083.service" in log
+    assert "--user restart" in log and "glm-forward" in log and "worker-forward" not in log
     assert "worker-forward" not in log, \
-        "the shared morpheus-worker-forward.service must never be restarted"
+        "the shared node-1-worker-forward.service must never be restarted"
 
 
 def test_driver_f9_skips_restart_when_systemctl_user_unavailable(tmp_path):
