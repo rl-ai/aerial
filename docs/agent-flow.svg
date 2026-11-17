@@ -38,7 +38,7 @@ text.lbl2{fill:#f97316;font-size:11px;font-weight:600}
 </defs>
 
 <rect x="30" y="8" width="12" height="12" fill="#f97316"/>
-<text class="t small" x="48" y="18">Agent process</text>
+<text class="t small" x="48" y="18">Agent</text>
 <rect x="160" y="8" width="12" height="12" fill="#94a3b8"/>
 <text class="t small" x="178" y="18">Local storage</text>
 <rect x="290" y="8" width="12" height="12" fill="#58a6ff"/>
@@ -87,7 +87,6 @@ text.lbl2{fill:#f97316;font-size:11px;font-weight:600}
 
 <!-- COL 3: curator -->
 <rect class="box" x="470" y="140" width="180" height="90" stroke="#58a6ff" fill="#f97316"/>
-<text class="t h" x="490" y="130">Agent</text>
 <text class="t blue" x="490" y="166" style="font-size:14px">Curator</text>
 <text class="t small" x="490" y="186">organize · analyze · label</text>
 <text class="t small" x="490" y="201">what matters, what's stale</text>
@@ -95,7 +94,6 @@ text.lbl2{fill:#f97316;font-size:11px;font-weight:600}
 <!-- gap analysis arrow label sits on the connector -->
 <!-- COL 4: team lead -->
 <rect class="box" x="690" y="140" width="180" height="90" stroke="#58a6ff" fill="#f97316"/>
-<text class="t h" x="710" y="130">Agent</text>
 <text class="t blue" x="710" y="166" style="font-size:14px">Team Lead</text>
 <text class="t small" x="710" y="186">routes the work · decides</text>
 <text class="t small" x="710" y="201">what runs next</text>
@@ -115,7 +113,6 @@ text.lbl2{fill:#f97316;font-size:11px;font-weight:600}
 
 <!-- COL 5: exec + report -->
 <rect class="box" x="950" y="140" width="180" height="90" stroke="#58a6ff" fill="#f97316"/>
-<text class="t h" x="970" y="130">Agent</text>
 <text class="t blue" x="970" y="166" style="font-size:14px">Exec / Chief of Staff</text>
 <text class="t small" x="970" y="186">distills everything into</text>
 <text class="t small" x="970" y="201">what you need to know</text>
