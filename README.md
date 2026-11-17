@@ -1,70 +1,106 @@
 # Aerial
 
-> **Pilot-less, automated agent ops. Agents fly solo — always finding opportunities for you.**
-
-Aerial is the control tower for your autonomous agent fleet — self-starting agents that find their own work, with the operations layer that supervises, triages, and accounts for all of it on your own hardware.
+An operations layer for autonomous agent fleets: a ticket hub (system of
+record), an ops agent that detects failures and applies governed fixes,
+an operator console, and a fleet manager for local model seats. MIT
+licensed, self-hosted, no telemetry.
 
 ![How data flows](docs/agent-flow.svg)
 
+## How it works
 
+- **Ticket hub** (`hub/`) — FastAPI service on `:8020` backed by SQLite.
+  Tickets are the shared context unit: multiple agents and roles work
+  the same task, each inheriting the chain of evidence, decisions, and
+  history. Token scoping is actor×family×action, deny-by-default.
+- **Ops agent** (`dashboard/followup/runner.py`) — polls every 5 minutes:
+  failed job runs, health anomalies, and seat liveness are classified
+  (R1–R6 — security findings ping immediately, unknown classes fail
+  closed), routed to governed safe-fix sessions, and re-verified against
+  the exact symptom before a finding closes. Registered remediations
+  must prove the fix by re-running the symptom probe; unproved fixes
+  escalate with before/after output attached.
+- **Operator console** (`dashboard/serve_console.py`) — WSGI dashboard
+  on `:8777`: daily board, exec report, sparklines, exception queue with
+  approve/dismiss/escalate. Read token gates GETs; decision writes
+  require a distinct write token (sharing them is rejected).
+- **Scheduler** (`integration/scheduler.py`) — cron-shaped runner that
+  chains curator → lead → exec sessions over failures and posts the
+  brief to the hub. New behavior shadow-runs under a promotion gate
+  (divergence, cost, observation window) before going live.
+- **Fleet manager** (`dashboard/vram_manager.py`,
+  `dashboard/idle_broker/`) — models resident on VRAM by default,
+  demand displaces idle, and measured-idle seats pull from a
+  pre-approved backlog. Seat liveness is probed every cycle; dead seats
+  are findings with registered remediations.
 
-Autonomous, self-starting agents fly solo — finding opportunities,
-running 24/7, and self-healing when infrastructure fails. Aerial is
-the control tower: every action carries evidence, every failure gets
-triaged to a fix, every call is costed, and every GPU stays saturated.
-MIT, self-hosted, zero telemetry. Deployment-specific values live in a
-gitignored profile — see [Deployment profile](#deployment-profile).
+Verification: `python3 bin/aerial_verify.py` — checks hub, console,
+state dir, ledger, and model seats; prints a pass/fail table.
 
 ## Layout
 
 | Path | What it is |
 | --- | --- |
-| `dashboard/` | Daily board, exec report, operator console, followup/ops-agent loop, gauntlet, VRAM manager |
+| `hub/` | Ticket hub: FastAPI app, store (per-thread SQLite connections), token scoping, tests |
+| `dashboard/` | Console, daily board, exec report, followup/ops-agent loop, remediation contract, gauntlet, VRAM manager, idle-work broker |
 | `integration/` | Scheduler, shadow-hierarchy runner, qualification harness, hermetic-cycle tests |
-| `gateway/` | The second-brain gateway: MCP server + bridge to the ticket hub |
-| `deployment_profile.py` | Single source of config defaults (env vars / deployment.yaml override it) |
-| `docs/` | Testing service, pipeline checkpoints, decision points, buglist |
-| `config/deployment.yaml.example` | The deployment profile template |
+| `gateway/` | Second-brain gateway: MCP server, ingest bridge to the hub |
+| `bin/` | `aerial_verify.py`, `pii_scan.py` (publish gate), model-call tooling |
+| `deployment_profile.py` | Config resolution: env → deployment.yaml → defaults |
+| `config/deployment.yaml.example` | Configuration template |
+| `docs/` | Architecture, testing service, pipeline checkpoints, decision points, buglist |
 
-## Quick start
+## Install
 
-See **[GETTING-STARTED.md](GETTING-STARTED.md)** for the full
-zero-to-running walkthrough. In short:
+Python 3.10+, no third-party runtime dependencies for the core services
+(`gateway/` ships its own `pyproject.toml` if you use the MCP server).
 
-1. `cp config/deployment.yaml.example config/deployment.yaml` (optional — generic defaults work)
-2. Start the ticket hub (not in this repo — external service on `:8020`)
-3. `python3 dashboard/serve_console.py` (console on `:8777`, bearer-authed)
-4. `python3 -m dashboard.followup.runner --interval 300` (ops agent)
-5. `python3 integration/scheduler.py --interval 30` (shadow scheduler)
+```bash
+git clone https://github.com/rl-ai/aerial.git
+cd aerial
+cp config/deployment.yaml.example config/deployment.yaml
+mkdir -p ~/.aerial/secrets
+head -c 32 /dev/urandom | xxd -p -c 64 > ~/.aerial/secrets/hub-token
+chmod 600 ~/.aerial/secrets/hub-token
 
-Requires Python 3.10+ (no third-party runtime dependencies). Nothing
-phones home; the hub, console, and seats are all services you run
-yourself. Feature tour — including the head-to-head vs DeepSeek Harness: [FEATURES.md](FEATURES.md).
+TICKET_HUB_HOME=~/.aerial/hub-home python3 hub/api.py            # hub :8020
+PYTHONPATH="$PWD:$PWD/dashboard" python3 dashboard/serve_console.py   # console :8777
+PYTHONPATH="$PWD:$PWD/dashboard" python3 -m dashboard.followup.runner --interval 300  # ops agent
+```
 
-## Deployment profile
+Verify: `python3 bin/aerial_verify.py`. Full walkthrough including
+systemd units and troubleshooting: [GETTING-STARTED.md](GETTING-STARTED.md).
 
-All deployment-specific values come from, in order of precedence:
+## Configuration
 
-1. Environment variables — `AERIAL_<SECTION>__<KEY>` (double underscore
-   nests), e.g. `AERIAL_EMAIL__RECIPIENT_EMAIL=ops@example.com`. Flat
-   aliases like `AERIAL_NODE_NAME` also work.
-2. `config/deployment.yaml` (copy from `deployment.yaml.example`; it is
-   gitignored — never commit a real profile).
-3. Generic defaults in `deployment_profile.py` (localhost, empty
-   recipient, `~/.aerial` state root).
+Resolution order: environment variables (`AERIAL_<SECTION>__<KEY>`,
+double underscore nests; flat aliases like `AERIAL_NODE_NAME` also work)
+→ `config/deployment.yaml` (gitignored — never commit a real profile) →
+generic defaults in `deployment_profile.py`.
 
 Key settings:
 
-- `email.recipient_email` — empty disables email delivery entirely.
-- `cluster.node_name`, `cluster.provider`, `cluster.model` — the node
-  prefix used in job ids, service units, and agent dispatch.
-- `paths.state_dir` — root for logs, data, hub snapshots, workspaces.
-- `paths.repo_paths` — git repos scanned for the daily DONE digest.
+- `cluster.node_name` — prefix used in job ids, service units, dispatch
+- `cluster.hub_url`, `cluster.hub_token_file` — hub endpoint and bearer
+- `email.recipient_email` — empty disables email delivery entirely
+- `paths.state_dir` — root for logs, data, hub snapshots, workspaces
+- `dashboard/vram_registry.json` — model seats: name, port, service
+  unit, load command, displacement tier
+
+## Testing
+
+`python3 -m pytest dashboard/tests -q` (435 tests) and
+`python3 -m pytest hub/tests -q` (671 tests). The gauntlet
+(`dashboard/gauntlet.py`) runs five acceptance layers — unit suites,
+adversarial stress, backtest, a simulated day-in-the-life, and live
+smoke — and a release requires 5/5.
 
 ## Docs
 
-- [`GETTING-STARTED.md`](GETTING-STARTED.md) — zero to a running stack: config, services, health checks, troubleshooting
-- [`FEATURES.md`](FEATURES.md) — the feature list by area, with code locations
+- [`GETTING-STARTED.md`](GETTING-STARTED.md) — zero to running stack: config, services, health checks, troubleshooting
+- [`FEATURES.md`](FEATURES.md) — feature list by area with code locations, including the head-to-head vs DeepSeek Harness
+- [`docs/FLOW.md`](docs/FLOW.md) — data-flow diagram and stage narrative
+- [`docs/design-tokens.md`](docs/design-tokens.md) — design tokens for the architecture diagram
 - [`docs/testing-service.md`](docs/testing-service.md) — the testing service and how suites map to it
 - [`docs/pipeline-checkpoints.md`](docs/pipeline-checkpoints.md) — PC-1..PC-7 conformance checkpoints
 - [`docs/decision-points.md`](docs/decision-points.md) — recorded decision points
