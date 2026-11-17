@@ -65,20 +65,30 @@ Token files the services read:
 ## 4. Start the ticket hub
 
 The hub is the HTTP system of record (tickets, job_runs, mandates) on
-`127.0.0.1:8020` with a SQLite database. **The hub server is not part of
-this repository** — Aerial ships the clients and services that talk to
-it over HTTP with a bearer token; the hub itself runs in your
-deployment (native process or container) at `cluster.hub_url`
-(`http://127.0.0.1:8020` by default).
-
-Verify it is reachable:
+`127.0.0.1:8020` with a SQLite database. It ships in this repository
+under `hub/`:
 
 ```bash
-curl -s http://127.0.0.1:8020/health        # -> {"ok": true}
+TICKET_HUB_HOME=~/.aerial/hub-home python3 hub/api.py
 ```
 
-Without a hub the console and board still render (fail-closed, degraded
-banners), but the ops agent has nothing to reconcile against.
+- `TICKET_HUB_HOME` — where the hub keeps its database and health status
+- `TICKET_HUB_AUTH` — set to `off` only for a loopback first boot; the
+  default authenticates every non-health request with the hub token
+
+Verify it is live:
+
+```bash
+curl -s http://127.0.0.1:8020/health        # -> {"ok": true, ...}
+```
+
+On a fresh install the health note reads "no healthcheck has run yet" —
+that is expected until `scripts/healthcheck.sh` first runs. Without a
+hub the console and board still render (fail-closed, degraded banners),
+but the ops agent has nothing to reconcile against.
+
+Run it in the background for a long-lived deployment (systemd unit in
+step 6), or `nohup ... &` for a quick tour.
 
 ## 5. Start the operator console
 
