@@ -69,7 +69,7 @@ flowchart LR
    Multiple agents and roles work the same task, each inheriting the
    full chain of evidence, decisions, and history. Token scoping is
    deny-by-default; every action lands on the audit trail.
-4. **Agents** — the curator → lead → exec chain runs multi-agent
+4. **Agents** — the swarm: the curator → lead → exec chain runs multi-agent
    workflows on a single task; governed safe-fixes close the loop from
    failure to verified fix; the model-seat fleet runs BYOM with
    self-healing seats and VRAM management.

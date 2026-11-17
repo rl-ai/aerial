@@ -15,6 +15,13 @@ onboarding, and model-selection UX are still in progress — see
 
 ## How it works
 
+**Swarm-first.** Aerial assumes your agents run as a swarm — parallel
+lanes working independent tasks, coordinated through shared tickets —
+not as a single assistant. The hub is what makes a swarm workable:
+task-level shared context, per-lane logging, evidence on every claim,
+and a human gate where it counts.
+
+
 - **Ticket hub** (`hub/`) — FastAPI service on `:8020` backed by SQLite.
   Tickets are the shared context unit: multiple agents and roles work
   the same task, each inheriting the chain of evidence, decisions, and

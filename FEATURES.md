@@ -10,7 +10,7 @@ Aerial is the control tower for autonomous agent fleets. Below: the head-to-head
 
 ## Head to head — Aerial vs DeepSeek Harness
 
-Aerial is pilot-less operations for autonomous agents — agents fly solo, Aerial runs the control tower. Compared feature-for-feature with **DeepSeek Harness (DSH)**:
+Aerial is pilot-less operations for a **swarm** of autonomous agents — agents fly solo in parallel lanes, Aerial runs the control tower that keeps the swarm coordinated, evidenced, and saturated. Compared feature-for-feature with **DeepSeek Harness (DSH)**:
 
 | Feature | Aerial | DSH |
 |---|---|---|
