@@ -19,7 +19,7 @@ from hub_remote import HubRemoteError, HubTicketsRemote
 import qualify_real
 
 
-TOKEN_FILE = "/tp-data/tokens/x.token"  # a plain path, never a value
+TOKEN_FILE = "/home/you/.aerial/tokens/x.token"  # a plain path, never a value
 
 
 class FakeHubHandler(BaseHTTPRequestHandler):

@@ -112,7 +112,7 @@ def resources_doc() -> dict:
                 "provider": "openai-compatible",
                 "url": "http://fake.invalid",
                 "model": "fake-model",
-                "bearer_file": "/tp-data/tokens/fake-local.token",
+                "bearer_file": "/home/you/.aerial/tokens/fake-local.token",
                 "billing": "local",
                 "context": 8192,
                 "max_parallel": 1,
@@ -208,7 +208,7 @@ def deployment(tmp_path):
 def hire(deployment: Deployment):
     emp = deployment.registry.hire(
         deployment.pkg, profile="work",
-        token_ref="/tp-data/tokens/curator-ops.token")
+        token_ref="/home/you/.aerial/tokens/curator-ops.token")
     deployment.registry.transition(emp.employee_id, "sandbox",
                                    actor="OP-test", reason="sandbox ready")
     return emp

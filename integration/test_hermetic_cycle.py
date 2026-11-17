@@ -17,7 +17,7 @@ Gaps this file found in the landed code, stated rather than papered over:
   5.1 requires them on C2 always and on C3 inside a run, and Runtime mints
   the run id on admit. Test 2 checks that rule; the 15.8a list was drift.
 * (Resolved 2026-11-10.) ``RunStore.finish`` and ``RunStore.runs_for`` now
-  exist (TK-01M724H4RNQAXGS1Q2D6TG4B4Y); tests 4 and 8 use them.
+  exist (TK-EXAMPLE-3); tests 4 and 8 use them.
 """
 
 from __future__ import annotations
@@ -136,7 +136,7 @@ def resources_doc() -> dict:
                 "url": "http://fake.invalid",
                 "model": "fake-model",
                 # a plain path reference, never a credential (rule 1).
-                "bearer_file": "/tp-data/tokens/fake-local.token",
+                "bearer_file": "/home/you/.aerial/tokens/fake-local.token",
                 "billing": "local",
                 "context": 8192,
                 "max_parallel": 1,
@@ -232,7 +232,7 @@ def hire(deployment: Deployment):
     """Hire curator-ops; move it to sandbox so it can hold work."""
     emp = deployment.registry.hire(
         deployment.pkg, profile="work",
-        token_ref="/tp-data/tokens/curator-ops.token")
+        token_ref="/home/you/.aerial/tokens/curator-ops.token")
     deployment.registry.transition(emp.employee_id, "sandbox",
                                    actor="OP-test", reason="sandbox ready")
     return emp

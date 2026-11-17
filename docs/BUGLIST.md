@@ -1,6 +1,6 @@
 # Aerial — open bug & issue list (2026-11-14)
 
-Consolidated from: the attack swarm (TK-01M7DWNS5P6YFY115Y33Y72ERZ), the
+Consolidated from: the attack swarm (TK-EXAMPLE-1), the
 gap review (GAPS-20261112.md), the release checklist, ops-agent
 escalations, and the gauntlet runs. Fixed items stay at the bottom for
 the record.

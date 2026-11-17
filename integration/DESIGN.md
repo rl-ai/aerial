@@ -2,7 +2,7 @@
 
 ## A5a: the hermetic contract test (design doc §15.8a)
 
-Ticket TK-01M71TQDFWEYD7B0MEG7YVK0JZ (plan step A5a, plan review P1). This is the first acceptance gate of the MVP. It drives one full Ops Analyst duty through the three landed products against fakes only: Roles builds and schedules the work, Runtime admits and runs it, and Tickets records it. Its job is to prove the contracts join end to end. The products' own tests already prove each piece alone. No network, no model server, no clock: time is injected and every model call goes to a fake.
+Ticket TK-EXAMPLE-2 (plan step A5a, plan review P1). This is the first acceptance gate of the MVP. It drives one full Ops Analyst duty through the three landed products against fakes only: Roles builds and schedules the work, Runtime admits and runs it, and Tickets records it. Its job is to prove the contracts join end to end. The products' own tests already prove each piece alone. No network, no model server, no clock: time is injected and every model call goes to a fake.
 
 The metrics-panel assertions of §15.8a join when A4b lands; until then this test covers the rest.
 

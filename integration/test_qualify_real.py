@@ -1,7 +1,7 @@
 """Tests for the A5 qualification harness, stages 0-2 (integration DESIGN.md).
 
 Fakes only: no network, no hermes or docker binary, no real hub. The token
-file is a plain path (/tp-data/tokens/a5-test-01-read.token) and is never
+file is a plain path (/home/you/.aerial/tokens/a5-test-01-read.token) and is never
 opened — the fake transport's auth header is a fixed literal, so no test
 ever touches a credential value, and no credential-shaped literal appears
 in this file or in any evidence the harness writes.
@@ -51,7 +51,7 @@ from rlai_tickets.store import Store  # noqa: E402
 T0 = datetime(2026, 11, 10, 12, 0, 0, tzinfo=timezone.utc)
 
 # The token file is a plain path; no test ever opens it.
-TOKEN_FILE = "/tp-data/tokens/a5-test-01-read.token"
+TOKEN_FILE = "/home/you/.aerial/tokens/a5-test-01-read.token"
 
 # The fake transport's fixed auth header (built from parts so this file
 # carries no credential-shaped literal; never a value read from any file).
@@ -203,7 +203,7 @@ def resources_doc() -> dict:
                 "provider": "openai-compatible",
                 "url": "http://fake.invalid:9099",
                 "model": "a5-fake-model",
-                "bearer_file": "/tp-data/tokens/a5-route.token",  # a path
+                "bearer_file": "/home/you/.aerial/tokens/a5-route.token",  # a path
                 "billing": "local",
                 "context": 8192,
                 "max_parallel": 1,
