@@ -50,6 +50,19 @@ text.lbl2{fill:#f97316;font-size:11px;font-weight:600}
 <text class="t h" x="680" y="30">4 · Orchestration</text>
 <text class="t h" x="950" y="30">5 · Reporting</text>
 
+<line x1="30" y1="330" x2="1150" y2="330" stroke="#8b949e" stroke-width="1" stroke-dasharray="5 5" opacity="0.6"/>
+
+<path class="flow" d="M200,88 L240,140"/>
+<path class="flow" d="M200,156 L240,170"/>
+<path class="flow" d="M200,224 L240,190"/>
+<path class="flow" d="M200,292 L240,215"/>
+<path class="flow" d="M440,190 L470,185"/>
+<path class="flow" d="M650,185 L690,185"/>
+<path class="flow" d="M780,230 L780,330"/>
+<path class="flow" d="M870,185 L950,185"/>
+<path class="flow" d="M1040,230 L1040,340"/>
+<path class="flow" d="M690,160 C 640,90 600,90 560,140"/>
+
 <!-- COL 1: data sources -->
 <rect class="box" x="30" y="60" width="170" height="56"/>
 <text class="t" x="44" y="82">Web pages</text>
@@ -127,25 +140,15 @@ text.lbl2{fill:#f97316;font-size:11px;font-weight:600}
 
 <!-- FLOWS -->
 <!-- sources → storage -->
-<path class="flow" d="M200,88 L240,140"/>
-<path class="flow" d="M200,156 L240,170"/>
-<path class="flow" d="M200,224 L240,190"/>
-<path class="flow" d="M200,292 L240,215"/>
 <!-- storage → curator -->
-<path class="flow" d="M440,190 L470,185"/>
 <text class="lbl" x="443" y="172">context</text>
 <!-- curator → lead : gap analysis -->
-<path class="flow" d="M650,185 L690,185"/>
 <text class="lbl" x="655" y="172">gap analysis</text>
 <!-- lead → action endpoints -->
-<path class="flow" d="M780,230 L780,330"/>
 <!-- lead → exec -->
-<path class="flow" d="M870,185 L950,185"/>
 <text class="lbl" x="880" y="172">briefs · results</text>
 <!-- exec → report -->
-<path class="flow" d="M1040,230 L1040,340"/>
 <!-- feedback loop: lead → curator (what to look for) -->
-<path class="flow" d="M690,160 C 640,90 600,90 560,140"/>
 <text class="lbl" x="545" y="88">what to look for next</text>
 
 <!-- bottom note -->
