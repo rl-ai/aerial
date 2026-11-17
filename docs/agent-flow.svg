@@ -8,7 +8,7 @@ h1{font-size:20px;font-weight:600;margin:0 0 4px}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .sw{width:12px;height:12px;border-radius:3px;display:inline-block}
 svg{display:block;max-width:100%;height:auto}
-.box{fill:#161b22;stroke:#30363d;stroke-width:1}
+.box{stroke:#30363d;stroke-width:1}
 .box.agent{stroke:#f97316}
 .box.store{stroke:#94a3b8}
 .box.out{stroke:#58a6ff}
