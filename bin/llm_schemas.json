@@ -1,0 +1,672 @@
+{
+  "review": {
+    "type": "object",
+    "required": [
+      "verdict",
+      "findings"
+    ],
+    "properties": {
+      "verdict": {
+        "enum": [
+          "approve",
+          "changes"
+        ]
+      },
+      "findings": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "severity",
+            "file",
+            "issue",
+            "fix"
+          ],
+          "properties": {
+            "severity": {
+              "enum": [
+                "high",
+                "medium",
+                "low",
+                "info"
+              ]
+            },
+            "file": {
+              "type": "string",
+              "maxLength": 200
+            },
+            "issue": {
+              "type": "string",
+              "maxLength": 500
+            },
+            "fix": {
+              "type": "string",
+              "maxLength": 500
+            }
+          }
+        },
+        "maxItems": 10
+      }
+    }
+  },
+  "plan": {
+    "type": "object",
+    "required": [
+      "lanes"
+    ],
+    "properties": {
+      "lanes": {
+        "type": "array",
+        "maxItems": 4,
+        "items": {
+          "type": "object",
+          "required": [
+            "id",
+            "goal",
+            "kpi_metric_ids",
+            "target_tests",
+            "files_hint"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9._-]{0,39}$",
+              "maxLength": 40
+            },
+            "goal": {
+              "type": "string",
+              "maxLength": 500
+            },
+            "kpi_metric_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "maxItems": 20
+            },
+            "target_tests": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 300
+              },
+              "maxItems": 50
+            },
+            "files_hint": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "maxItems": 30
+            },
+            "ticket_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            }
+          }
+        }
+      }
+    }
+  },
+  "backlog_score": {
+    "type": "object",
+    "required": [
+      "items"
+    ],
+    "properties": {
+      "items": {
+        "type": "array",
+        "maxItems": 10,
+        "items": {
+          "type": "object",
+          "required": [
+            "candidate_id",
+            "value",
+            "fit",
+            "effort",
+            "risk",
+            "momentum",
+            "purpose",
+            "kpi_hint",
+            "rationale"
+          ],
+          "properties": {
+            "candidate_id": {
+              "type": "integer"
+            },
+            "value": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5
+            },
+            "fit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5
+            },
+            "effort": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5
+            },
+            "risk": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5
+            },
+            "momentum": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5
+            },
+            "purpose": {
+              "type": "string",
+              "maxLength": 300
+            },
+            "kpi_hint": {
+              "type": "string",
+              "maxLength": 200
+            },
+            "rationale": {
+              "type": "string",
+              "maxLength": 400
+            }
+          }
+        }
+      }
+    }
+  },
+  "gc_next": {
+    "type": "object",
+    "required": [
+      "next_seat",
+      "stop",
+      "reason"
+    ],
+    "properties": {
+      "next_seat": {
+        "type": "string",
+        "maxLength": 2000
+      },
+      "stop": {
+        "type": "boolean"
+      },
+      "reason": {
+        "type": "string",
+        "maxLength": 2000
+      }
+    }
+  },
+  "gc_decision": {
+    "type": "object",
+    "required": [
+      "conclusion",
+      "disagreements",
+      "follow_ups",
+      "confidence"
+    ],
+    "properties": {
+      "conclusion": {
+        "type": "string",
+        "maxLength": 2000
+      },
+      "disagreements": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "maxItems": 8
+      },
+      "follow_ups": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "maxItems": 8
+      },
+      "confidence": {
+        "enum": [
+          "low",
+          "medium",
+          "high"
+        ]
+      }
+    }
+  },
+  "listening_labels": {
+    "type": "object",
+    "required": [
+      "items"
+    ],
+    "properties": {
+      "items": {
+        "type": "array",
+        "maxItems": 10,
+        "items": {
+          "type": "object",
+          "required": [
+            "item_id",
+            "products",
+            "other_products",
+            "switch_from",
+            "switch_to",
+            "pricing",
+            "price_usd_month",
+            "sentiment",
+            "intent",
+            "pain"
+          ],
+          "properties": {
+            "item_id": {
+              "type": "integer"
+            },
+            "products": {
+              "type": "array",
+              "maxItems": 8,
+              "items": {
+                "enum": [
+                  "cursor",
+                  "claude-code",
+                  "copilot",
+                  "windsurf",
+                  "cline",
+                  "roo-code",
+                  "kilo-code",
+                  "aider",
+                  "opencode",
+                  "codex",
+                  "gemini-cli",
+                  "zed",
+                  "jetbrains-ai",
+                  "augment",
+                  "devin",
+                  "replit",
+                  "lovable",
+                  "bolt",
+                  "chatgpt",
+                  "claude",
+                  "gpt",
+                  "gemini",
+                  "llama",
+                  "qwen",
+                  "deepseek",
+                  "mistral",
+                  "glm",
+                  "kimi",
+                  "grok",
+                  "gemma",
+                  "minimax",
+                  "ollama",
+                  "vllm",
+                  "llama-cpp",
+                  "lm-studio",
+                  "sglang",
+                  "exllama",
+                  "mlx",
+                  "tensorrt-llm",
+                  "openrouter"
+                ]
+              }
+            },
+            "other_products": {
+              "type": "array",
+              "maxItems": 5,
+              "items": {
+                "type": "string",
+                "maxLength": 40
+              }
+            },
+            "switch_from": {
+              "type": "array",
+              "maxItems": 4,
+              "items": {
+                "enum": [
+                  "cursor",
+                  "claude-code",
+                  "copilot",
+                  "windsurf",
+                  "cline",
+                  "roo-code",
+                  "kilo-code",
+                  "aider",
+                  "opencode",
+                  "codex",
+                  "gemini-cli",
+                  "zed",
+                  "jetbrains-ai",
+                  "augment",
+                  "devin",
+                  "replit",
+                  "lovable",
+                  "bolt",
+                  "chatgpt",
+                  "claude",
+                  "gpt",
+                  "gemini",
+                  "llama",
+                  "qwen",
+                  "deepseek",
+                  "mistral",
+                  "glm",
+                  "kimi",
+                  "grok",
+                  "gemma",
+                  "minimax",
+                  "ollama",
+                  "vllm",
+                  "llama-cpp",
+                  "lm-studio",
+                  "sglang",
+                  "exllama",
+                  "mlx",
+                  "tensorrt-llm",
+                  "openrouter"
+                ]
+              }
+            },
+            "switch_to": {
+              "type": "array",
+              "maxItems": 4,
+              "items": {
+                "enum": [
+                  "cursor",
+                  "claude-code",
+                  "copilot",
+                  "windsurf",
+                  "cline",
+                  "roo-code",
+                  "kilo-code",
+                  "aider",
+                  "opencode",
+                  "codex",
+                  "gemini-cli",
+                  "zed",
+                  "jetbrains-ai",
+                  "augment",
+                  "devin",
+                  "replit",
+                  "lovable",
+                  "bolt",
+                  "chatgpt",
+                  "claude",
+                  "gpt",
+                  "gemini",
+                  "llama",
+                  "qwen",
+                  "deepseek",
+                  "mistral",
+                  "glm",
+                  "kimi",
+                  "grok",
+                  "gemma",
+                  "minimax",
+                  "ollama",
+                  "vllm",
+                  "llama-cpp",
+                  "lm-studio",
+                  "sglang",
+                  "exllama",
+                  "mlx",
+                  "tensorrt-llm",
+                  "openrouter"
+                ]
+              }
+            },
+            "pricing": {
+              "type": "array",
+              "maxItems": 5,
+              "items": {
+                "enum": [
+                  "price",
+                  "plan",
+                  "limits",
+                  "cost_complaint",
+                  "value"
+                ]
+              }
+            },
+            "price_usd_month": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "sentiment": {
+              "enum": [
+                "positive",
+                "neutral",
+                "negative",
+                "mixed"
+              ]
+            },
+            "intent": {
+              "enum": [
+                "question",
+                "complaint",
+                "praise",
+                "comparison",
+                "news",
+                "showcase",
+                "other"
+              ]
+            },
+            "pain": {
+              "type": "array",
+              "maxItems": 3,
+              "items": {
+                "type": "string",
+                "maxLength": 80
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "supervisor_review": {
+    "type": "object",
+    "required": [
+      "decisions",
+      "narrative"
+    ],
+    "additionalProperties": false,
+    "properties": {
+      "decisions": {
+        "type": "array",
+        "maxItems": 10,
+        "items": {
+          "type": "object",
+          "required": [
+            "action",
+            "role",
+            "reason"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "action": {
+              "enum": [
+                "pause",
+                "resume",
+                "reassign",
+                "escalate",
+                "none"
+              ]
+            },
+            "role": {
+              "type": "string",
+              "maxLength": 100
+            },
+            "ticket": {
+              "type": "string",
+              "maxLength": 100
+            },
+            "reason": {
+              "type": "string",
+              "maxLength": 300
+            }
+          }
+        }
+      },
+      "narrative": {
+        "type": "string",
+        "maxLength": 1200
+      }
+    }
+  },
+  "ops_diagnosis": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "summary",
+      "cause",
+      "fix_kind",
+      "paths",
+      "plan",
+      "tests",
+      "confidence"
+    ],
+    "properties": {
+      "summary": {
+        "type": "string",
+        "maxLength": 300
+      },
+      "cause": {
+        "type": "string",
+        "maxLength": 600
+      },
+      "fix_kind": {
+        "type": "string",
+        "enum": [
+          "code",
+          "config",
+          "host",
+          "external",
+          "transient",
+          "unknown"
+        ]
+      },
+      "paths": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "maxItems": 10
+      },
+      "plan": {
+        "type": "string",
+        "maxLength": 2000
+      },
+      "tests": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "maxItems": 5
+      },
+      "confidence": {
+        "type": "string",
+        "enum": [
+          "low",
+          "medium",
+          "high"
+        ]
+      }
+    }
+  },
+  "market_report": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "summary",
+      "findings"
+    ],
+    "properties": {
+      "summary": {
+        "type": "string",
+        "maxLength": 800
+      },
+      "findings": {
+        "type": "array",
+        "maxItems": 12,
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "theme",
+            "claim",
+            "evidence_urls"
+          ],
+          "properties": {
+            "theme": {
+              "type": "string",
+              "enum": [
+                "pain",
+                "switching",
+                "pricing"
+              ]
+            },
+            "claim": {
+              "type": "string",
+              "maxLength": 400
+            },
+            "evidence_urls": {
+              "type": "array",
+              "maxItems": 5,
+              "items": {
+                "type": "string",
+                "maxLength": 500
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "scout_triage": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "decisions"
+    ],
+    "properties": {
+      "decisions": {
+        "type": "array",
+        "maxItems": 40,
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "ref",
+            "decision",
+            "reason"
+          ],
+          "properties": {
+            "ref": {
+              "type": "string",
+              "maxLength": 300
+            },
+            "decision": {
+              "type": "string",
+              "enum": [
+                "accept",
+                "watch",
+                "reject"
+              ]
+            },
+            "reason": {
+              "type": "string",
+              "maxLength": 240
+            }
+          }
+        }
+      }
+    }
+  }
+}

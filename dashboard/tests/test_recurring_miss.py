@@ -72,7 +72,7 @@ def test_finding_shape_matches_runner():
 
 def test_contract_fixable_closes_verified(tmp_path):
     marker = tmp_path / "marker.txt"
-    rem, cmd = rm.schedule_miss_remediation(f"echo fixed > {marker}",
+    rem, cmd = rm.schedule_miss_remediation(f"sh -c 'echo fixed > {marker}'",
                                             str(marker))
     finding = rm.schedule_miss_finding("job-x", 1)
     out = rm.remediate_or_escalate(finding, rem)
