@@ -26,7 +26,7 @@ The installer:
    something is wrong (see [Troubleshooting](#troubleshooting-the-exact-failing-checks)).
 
 You need your read token file before running the command — ask the hub admin
-(Ray, initially) for it. Reads always work with just the read token; you do not
+(the operator, initially) for it. Reads always work with just the read token; you do not
 need the write token to see the board.
 
 ## Step 2 — Grant (write token)
@@ -52,7 +52,7 @@ an admin.
 The first time you open the console without a write token, a banner appears at
 the top of the page:
 
-> You're viewing Ray's operator console (read-only until your write token is
+> You're viewing the operator console (read-only until your write token is
 > granted). See docs: docs/pilot-onboarding.md
 
 - It is **dismissible, one-time** — click it away and it never comes back
@@ -99,7 +99,7 @@ Every queue row shows exactly three actions: **Approve**, **Dismiss**,
 
 **Dismiss** opens the same expansion with an optional one-line reason field
 (blank counts as "unspecified"). **Escalate** confirms inline with the route
-shown (curator → lead → Ray → JEV) and collapses the row's actions.
+shown (curator → lead → operator → JEV) and collapses the row's actions.
 
 After you act, the row itself is the feedback — approve shows
 "executed ✓ (attempts N)", dismiss shows "dismissed · calibration sample

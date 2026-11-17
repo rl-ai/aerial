@@ -16,7 +16,7 @@ Implements operator-dashboard spec §2 Decision 1 / §7 Q3, Q4, Q7:
   uncommitted (no partial write) and allows exactly one re-auth + retry.
 - Dismiss feeds the gate calibration loop; a reason-less dismissal records a
   negative sample with reason 'unspecified'.
-- Escalate routes curator → lead → Ray → JEV.
+- Escalate routes curator → lead → operator → JEV.
 """
 
 from __future__ import annotations
@@ -26,7 +26,7 @@ from typing import Any, Callable, Optional
 
 from .queue import Queue, QueueItem
 
-ESCALATION_ROUTE = ["curator", "lead", "Ray", "JEV"]
+ESCALATION_ROUTE = ["curator", "lead", "operator", "JEV"]
 MAX_EXECUTION_ATTEMPTS = 3
 
 
@@ -121,7 +121,7 @@ class MandateFlow:
     # -- the three decisions ----------------------------------------------
 
     def decide(self, item_id: str, decision: str, reason: Optional[str] = None,
-               actor: str = "Ray") -> dict:
+               actor: str = "operator") -> dict:
         item = self.queue.get(item_id)
         if item is None:
             raise KeyError(f"no queue row {item_id}")
@@ -364,7 +364,7 @@ class MandateFlow:
         self.calibration(item, sample_reason)
         return {"decision": "dismiss", "calibration_reason": sample_reason}
 
-    # 3) escalate — curator → lead → Ray → JEV ------------------------------
+    # 3) escalate — curator → lead → operator → JEV ------------------------------
 
     def _escalate(self, item: QueueItem, actor: str) -> dict:
         start = ESCALATION_ROUTE.index(actor) if actor in ESCALATION_ROUTE else 0

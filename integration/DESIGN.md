@@ -31,7 +31,7 @@ Done: tests 1–9 pass from the repo root with `python -m pytest integration -q`
 
 ## A5: the real-path qualification (design doc §15.8b)
 
-Ray approved starting A5 on 2026-11-10. This is the first gate that runs on the real system: Ray's hub, the real Hermes adapter (`rlai_runtime.adapters.hermes`, which drives `hermes kanban` and Docker contained mode), the real model route, and the real stop path. It follows Codex's bypass draft (`AERIAL-A5-BYPASS-DRAFT.md`, reviewed, draft only) for tests T1–T5 and its guardrails.
+The operator approved starting A5 on 2026-11-10. This is the first gate that runs on the real system: the operator's hub, the real Hermes adapter (`rlai_runtime.adapters.hermes`, which drives `hermes kanban` and Docker contained mode), the real model route, and the real stop path. It follows Codex's bypass draft (`AERIAL-A5-BYPASS-DRAFT.md`, reviewed, draft only) for tests T1–T5 and its guardrails.
 
 ### Guardrails (every stage)
 
@@ -51,7 +51,7 @@ Ray approved starting A5 on 2026-11-10. This is the first gate that runs on the 
 3. **Stop tests (§6.5).** Stop during a sandbox command, during a model request, with queued work, across a Runtime restart, with a concurrent admission, and with a late result arriving after the stop. Each reaches `verified_stopped`, or is reported `unverified` naming the unknown check.
 4. **Bypass tests (§11.7, Codex T1–T5).** Reach the network directly, read a credential path, call a tool not granted, use the disabled native terminal, and write with the read-only Tickets token. Each must fail at its expected layer (L1 admission or L2 sandbox) and be recorded. T1's verdict is capped at UNKNOWN until its execution mechanism is settled, as the draft says.
 5. **Operator view.** On the real hub mount, subagent visibility shows the parent task, role, model and slot, the orchestrator or worker label, elapsed time and links to results.
-6. **Metrics end to end (§11.9).** The panel's values match a manual computation from the underlying records, and stage B tiles show not applicable, never zero. Serving the projection through Ray's Datasette is a separate step behind Ray's gate and is not part of this stage.
+6. **Metrics end to end (§11.9).** The panel's values match a manual computation from the underlying records, and stage B tiles show not applicable, never zero. Serving the projection through the operator's Datasette is a separate step behind the operator's gate and is not part of this stage.
 
 ### Build order
 

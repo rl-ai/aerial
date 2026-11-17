@@ -1,5 +1,5 @@
 """Remediation contract tests — a self-fix closes a finding ONLY when the
-re-run symptom probe proves it (Ray's directive).
+re-run symptom probe proves it (the operator's directive).
 
 Covers: proved path (finding closes), unproved path (finding stays OPEN,
 escalation carries before+after), the mutation test (a verification-skipping

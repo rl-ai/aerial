@@ -130,11 +130,11 @@ def test_Q4_write_token_401_403_rotation_and_audit(queue):
         "SELECT COUNT(*) FROM audit_records").fetchone()[0]
     assert n_aud >= 1
 
-    # escalate follows curator→lead→Ray→JEV
+    # escalate follows curator→lead→ operator →JEV
     item4 = queue.admit(make_finding("w4", "blocking", a=0.9))
     mf4 = MandateFlow(queue, clock=lambda: T0)
     r = mf4.decide(item4.item_id, "escalate", actor="curator")
-    assert r["route"] == ["curator", "lead", "Ray", "JEV"]
+    assert r["route"] == ["curator", "lead", "operator", "JEV"]
 
 
 def test_Q5_panel_b_brief_classification(queue):

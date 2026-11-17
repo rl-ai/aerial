@@ -75,12 +75,12 @@ Write your decisions in review.md:
 The Lead has reviewed the Ops Analyst's findings and written decisions
 in review.md. Read the decisions.
 
-Compose a concise brief for Ray in brief.md:
+Compose a concise brief for the operator in brief.md:
 - What happened (1 sentence)
 - What was decided (1-2 sentences)
-- What Ray needs to do (specific, actionable)
+- What the operator needs to do (specific, actionable)
 
-Be concise. Ray reads this in the hub ticket.
+Be concise. The operator reads this in the hub ticket.
 """,
 }
 
@@ -141,10 +141,10 @@ def _run_exec_brief(ws: Path) -> None:
     """Exec tier: a tool-less one-shot DeepSeek call (ds-writer role) that
     synthesizes the brief from the curator findings + lead review, which are
     inlined by model_call. Brief text lands in brief.md."""
-    ask = ("Compose the executive brief for Ray (the operator) in plain "
+    ask = ("Compose the executive brief for the operator (the operator) in plain "
            "markdown: '- What happened (1 sentence)\\n- What was decided "
-           "(1-2 sentences)\\n- What Ray needs to do (specific, actionable "
-           "numbered items)'. Be concise — Ray reads this in a hub ticket. "
+           "(1-2 sentences)\\n- What the operator needs to do (specific, actionable "
+           "numbered items)'. Be concise — the operator reads this in a hub ticket. "
            "Output ONLY the brief text, nothing else.")
     cmd = ["python3", str(_dpv("paths.model_call_script") or (Path(__file__).resolve().parent.parent / "bin" / "model_call.py")),
            "--role", "ds-writer", "--max-tokens", "4096",
@@ -189,7 +189,7 @@ def _run_dashboard_build(ws: Path) -> None:
         "review.md (the lead's decisions), incident.json (raw job data).\n\n"
         "Requirements:\n"
         "- Self-contained single HTML file, no external assets\n"
-        "- Sections: What happened / What was decided / What Ray needs to do "
+        "- Sections: What happened / What was decided / What the operator needs to do "
         "(from brief.md), evidence table with verified/inferred/missing "
         "labels (from findings.md), hypothesis decisions (from review.md)\n"
         "- Clean, minimal, readable; the operator reads this instead of the "

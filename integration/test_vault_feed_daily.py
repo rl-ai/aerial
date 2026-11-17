@@ -9,7 +9,7 @@ Verifies:
   1. exit 0; the feed copy (FEED_ROOT) gains bridged notes, CAPPED at
      FEED_TOP (20/day default — asserted with the default by passing 30
      items and FEED_TOP unset? no: explicit FEED_TOP=20 and count <= 20)
-  2. Ray's real notes are NEVER touched: notes-src and the real
+  2. The operator's real notes are NEVER touched: notes-src and the real
      notes-vault are byte-identical before/after (hash comparison)
   3. IDEMPOTENT: a second run ingests 0 new notes (bridge state.json in
      the persistent feed root skips them; l0 object count unchanged)
@@ -65,7 +65,7 @@ def make_dogfood(root: Path) -> Path:
     ws.publish("main")
     ws.save()
     book = GrantBook(vault / "grants.db")
-    book.create(counterparty="Ray's planning agent", purpose="test",
+    book.create(counterparty="the operator's planning agent", purpose="test",
                 anchor_entities=["entity:project-orchestra"], alias="main",
                 ttl_days=30, query_budget=200,
                 disclosure={"generalize_location": "city",

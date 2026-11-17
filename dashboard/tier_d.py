@@ -8,7 +8,7 @@ dollars. Dispatch is therefore rate-limit aware: per-tool concurrency caps
 (default 2 each) and per-task timeouts so a throttle fails closed instead
 of stacking stuck workers.
 
-DESIGN (Ray, 2026-11): Claude and Codex are NOT standalone verdicts — they
+DESIGN (the operator, 2026-11): Claude and Codex are NOT standalone verdicts — they
 are INDEPENDENT PLANNERS AND REVIEWERS whose output feeds Kimi as INPUT
 SIGNALS:
 

@@ -4,7 +4,7 @@
 Enumerates the crontab's job_run.py entries and ensures each has a hub
 ticket (child of the ops epic) titled "Scheduled: <name>". Failures on a
 job are commented on its ticket and the ticket carries the ops assignee —
-the per-job failure history Ray can open directly.
+the per-job failure history the operator can open directly.
 """
 from __future__ import annotations
 

@@ -43,7 +43,7 @@ STALE_TOOLTIP = "stale snapshot — refresh before deciding"
 FALLBACK_NOTICE = "actions disabled — open the hub /dashboard to decide"
 #: §7 read-only banner: shown whenever the console renders non-interactive
 #: (no write token configured). serve.py re-exports this constant.
-READONLY_BANNER_TEXT = ("You're viewing Ray's operator console "
+READONLY_BANNER_TEXT = ("You're viewing the operator console "
                         "(read-only until your write token is granted).")
 EVIDENCE_BADGES = ("verified", "inferred", "stale")
 

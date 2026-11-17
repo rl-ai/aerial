@@ -1,6 +1,6 @@
 """Remediation contract — a self-fix is PROVEN only by re-running the symptom probe.
 
-Ray's directive: self-remediation must include test output proving the fix —
+The operator's directive: self-remediation must include test output proving the fix —
 it cannot return success until the fix is proven. This module is that
 contract:
 
@@ -11,9 +11,9 @@ contract:
   5. unproved -> the finding stays OPEN, escalation required, both outputs
      attached to the result.
 
-requires_human=True marks Ray-gated actions (container lifecycle restarts):
+requires_human=True marks operator-gated actions (container lifecycle restarts):
 the runner NEVER executes fix_cmd — it produces a prepared copy-paste block
-and pings Ray; the proof happens on the FOLLOWING poll, when the symptom
+and pings the operator; the proof happens on the FOLLOWING poll, when the symptom
 probe (re-run as the BEFORE check) comes back ok.
 
 Registry: REMEDIATIONS maps remediation id -> Remediation. find_remediation
@@ -48,7 +48,7 @@ class Remediation:
     #: re-probe after the fix; defaults to the same symptom_check.
     verify_check: Optional[SymptomCheck] = None
     max_attempts: int = 1
-    #: Ray-gated: never executed by the runner — prepared for a human; the
+    #: operator-gated: never executed by the runner — prepared for a human; the
     #: NEXT poll's symptom_check proves it.
     requires_human: bool = False
 
@@ -80,7 +80,7 @@ class RemediationResult:
     attempts: int
     output_tail: str
     fix_exit: Optional[int] = None
-    #: requires_human only: the prepared copy-paste block for Ray.
+    #: requires_human only: the prepared copy-paste block for the operator.
     prepared: Optional[str] = None
     #: set when NOT proved: escalation-required note with both outputs.
     escalation: Optional[str] = None
@@ -118,10 +118,10 @@ def run_fix(rem: Remediation) -> Dict[str, Any]:
 
 
 def prepared_block(rem: Remediation, finding, before: Dict[str, Any]) -> str:
-    """The copy-paste block pinged to Ray for a requires_human remediation."""
+    """The copy-paste block pinged to the operator for a requires_human remediation."""
     fid = getattr(finding, "finding_id", "?")
     return (
-        f"REMEDIATION {rem.id} PREPARED — HUMAN ACTION REQUIRED (Ray-gated)\n"
+        f"REMEDIATION {rem.id} PREPARED — HUMAN ACTION REQUIRED (operator-gated)\n"
         f"finding: {fid}\n"
         f"symptom BEFORE: {before['detail']}\n"
         f"copy-paste command:\n    {rem.fix_cmd}\n"
@@ -145,7 +145,7 @@ def run_remediation(rem: Remediation, finding=None,
 
     before = _run_check(rem.symptom_check)
 
-    # Ray-gated: prepare, never execute. Proof = the NEXT poll's probe
+    # operator-gated: prepare, never execute. Proof = the NEXT poll's probe
     # (the BEFORE check below comes back ok once the human ran the fix).
     if rem.requires_human:
         if before["ok"]:
@@ -196,7 +196,7 @@ def run_remediation(rem: Remediation, finding=None,
 # The registry + the first real remediation: hub fd exhaustion
 # (2026-11-17 incident: ticket-hub hit 1023/1024 fds, /board 500s, writes
 # stopped). Symptom = the same probe the SRE monitor uses: GET /board with
-# the READ token -> 200. Fix = docker restart ticket-hub — Ray-gated.
+# the READ token -> 200. Fix = docker restart ticket-hub — operator-gated.
 # ---------------------------------------------------------------------------
 
 HUB_BOARD_URL = "http://127.0.0.1:8020/board"
@@ -230,7 +230,7 @@ HUB_FD_REMEDIATION = Remediation(
     fix_cmd="docker restart ticket-hub",
     verify_check=hub_board_check,
     max_attempts=1,
-    requires_human=True,       # container lifecycle restart = Ray-gated
+    requires_human=True,       # container lifecycle restart = operator-gated
 )
 
 REMEDIATIONS: Dict[str, Remediation] = {

@@ -58,7 +58,7 @@ def main() -> int:
     # ---- fixture: sessions store (single 'done since' source) --------------
     sessions = SessionsStore(hub_db_path=os.path.join(tmp, "no-hub.db"),
                              mirror_path=os.path.join(tmp, "sessions-mirror.json"))
-    visit_ts = now - 3600  # Ray visited 1h ago
+    visit_ts = now - 3600  # the operator visited 1h ago
     sessions.record_visit(visit_ts=visit_ts, hub_available=False)
 
     project_items = [
@@ -199,18 +199,18 @@ def main() -> int:
     # ---- AC6: approve converts drafts into real mandates, ledger, continuation ----
     created: list[dict] = []
     ledger: list[dict] = []
-    res = promotion.approve_promotion(view_ok, actor="Ray",
+    res = promotion.approve_promotion(view_ok, actor="operator",
                                       mandate_creator=lambda spec: (created.append({"mandate_id": f"m{len(created)+1}", **spec}) or created[-1]),
                                       ledger=ledger)
     check("AC6 approve converts draft specs into real mandates",
           len(created) == 1 and created[0]["scope"] == draft["scope"], json.dumps(created))
     check("AC6 ledger records who/when/evidence",
-          ledger and ledger[0]["who"] == "Ray" and "when" in ledger[0] and "evidence" in ledger[0])
+          ledger and ledger[0]["who"] == "operator" and "when" in ledger[0] and "evidence" in ledger[0])
     check("AC6 record-only shadow continues post-promotion",
           res["mode"] == "live" and res["record_only_shadow_continues"])
     # two-phase creation actually goes through Lane A's MandateFlow for queue rows:
     flow = mandate_flow.MandateFlow(q, db_path=os.path.join(tmp, "mf.db"))
-    dec = flow.decide(item.item_id, "approve", actor="Ray")
+    dec = flow.decide(item.item_id, "approve", actor="operator")
     check("AC6 Lane A two-phase approve consumed via renderer's lane-A import",
           dec.get("phase") == "execution" and dec.get("ok") and dec.get("row_state") == "done",
           json.dumps(dec))

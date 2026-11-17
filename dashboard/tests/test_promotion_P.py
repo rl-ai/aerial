@@ -76,7 +76,7 @@ def test_P2_approve_converts_drafts_to_real_mandates_ledger_and_demote(now):
                                     shadow_cost={"calls": 40, "tokens": 12000})
     created, ledger = [], []
     res = promotion.approve_promotion(
-        view, actor="Ray",
+        view, actor="operator",
         mandate_creator=lambda spec: (created.append(
             {"mandate_id": f"m{len(created)+1}", **spec}) or created[-1]),
         ledger=ledger)
@@ -84,7 +84,7 @@ def test_P2_approve_converts_drafts_to_real_mandates_ledger_and_demote(now):
     # first real mandate(s)
     assert len(created) == 1 and created[0]["scope"] == draft["scope"]
     # the ledger records the evidence link (who/when/evidence)
-    assert ledger and ledger[0]["who"] == "Ray" and "when" in ledger[0] \
+    assert ledger and ledger[0]["who"] == "operator" and "when" in ledger[0] \
         and "evidence" in ledger[0]
     # post-promotion, record-only shadow continues
     assert res["mode"] == "live" and res["record_only_shadow_continues"]

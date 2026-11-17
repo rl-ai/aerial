@@ -26,7 +26,7 @@ from pathlib import Path
 DOCS_LINK = "docs/pilot-onboarding.md"
 
 READ_ONLY_BANNER = (
-    "You're viewing Ray's operator console (read-only until your write token "
+    "You're viewing the operator console (read-only until your write token "
     f"is granted). See docs: {DOCS_LINK}"
 )
 DECISIONS_ENABLED_BANNER = "decisions enabled ✓"

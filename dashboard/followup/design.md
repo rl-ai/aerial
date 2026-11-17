@@ -1,13 +1,13 @@
 # Failure-follow-up workflow — design spec
 
-Status: approved design (v1), implements Ray's binding policy of 2026-11-12.
+Status: approved design (v1), implements the operator's binding policy of 2026-11-12.
 Owner: designer → built by `dashboard/followup/` (worker lane t_2a5dff15).
 Bindings D1–D5 in the task body are **settled**; this document elaborates them,
 it does not re-open them.
 
 ## 0. Policy statement
 
-Ray's policy, binding: **individual failures never reach Ray.** Agents
+The operator's policy, binding: **individual failures never reach the operator.** Agents
 investigate every admitted failure and fix it themselves when the fix is
 safe. Only items that remain unresolved — or that are significant by rule —
 aggregate into the daily exec report's `decisions-needed` section. The
@@ -15,11 +15,11 @@ aggregate into the daily exec report's `decisions-needed` section. The
 
 Consequences this design enforces:
 
-- There is no code path that emails/pings Ray for a single failure. The only
+- There is no code path that emails/pings the operator for a single failure. The only
   individual-notification channel in the system emits for `platform-down`.
 - An agent fix is an ordinary write executed under the existing authority
   mechanism (MandateFlow). No second approval mechanism is introduced (D2).
-- The value Ray sees for this workflow is a single line in the daily report:
+- The value the operator sees for this workflow is a single line in the daily report:
   "agent-actions: N fixes closed silently, M decisions needed" (D5).
 
 ## 1. Pipeline overview
@@ -69,7 +69,7 @@ Rules:
   it the agent gathers evidence and MUST re-classify to `auto_fix` or
   `escalate` before any write. Exactly one re-classification is allowed; if
   evidence is still insufficient, the item escalates (insufficiency is itself
-  a decision Ray needs to see).
+  a decision the operator needs to see).
 - `fix_attempted → verified` requires the verification re-run described in §6.
   A failed verification may retry the fix **once** (fresh attempt logged); a
   second failure escalates.
@@ -155,7 +155,7 @@ The classifier verdict picks the mandate level. One authority mechanism:
      **scoped auto-fix mandate** is created. Scope = the single corrective
      action for this finding (mirrors `_prefill`: `proposed_action`/`claim` as
      scope); expiry = the finding's impact-class `expiry_hours`; actor = the
-     followup engine's agent identity (not "Ray" — Ray never approves here).
+     followup engine's agent identity (not "operator" — the operator never approves here).
   2. `_execute(item, mandate)` — runs the fix under the existing bounded
      retry / idempotency (`action_intents`, `execution_log.idem_key`,
      WriteToken re-auth-once) semantics unchanged. `mandate_id` is recorded on
@@ -233,13 +233,13 @@ escalation surface**:
 
 - `decisions-needed` section lists every `escalated_daily` item open at
   report time: id, one-line claim, verdict_reason, what the agent already
-  tried (attempt_log summary), and the decision required. Items Ray decides
+  tried (attempt_log summary), and the decision required. Items the operator decides
   on follow the existing queue decision verbs (`approve`/`dismiss`/`escalate`
   via `MandateFlow.decide`).
 - `agent-actions` line: counts followups closed as `closed_silent` in the
   reporting window (and running total), e.g.
   `agent-actions: 7 fixes closed silently · 2 decisions needed`. This is the
-  headline value Ray sees for the workflow.
+  headline value the operator sees for the workflow.
 - A followup that stays open across days appears once per day until decided;
   it never generates anything outside the report.
 
@@ -253,7 +253,7 @@ escalation surface**:
   `investigate`, defer, re-classify later.
 - **Mandate expiry mid-retry**: `_execute` under an expired mandate fails the
   WriteAuth path; the retry escalates instead of minting a longer mandate.
-- **Escalated item later becomes safe**: Ray's decision, not the agent's — the
+- **Escalated item later becomes safe**: the operator's decision, not the agent's — the
   agent may add evidence to the record but never re-opens auto-fix for an
   escalated item.
 - **Platform-down while followups pending**: followup engine halts (no

@@ -418,7 +418,7 @@ def test_render_daily_email_parts_written(tmp_path, sched_log, shadow_dir,
 
 
 def test_email_script_is_markdown_text_only():
-    """Ray 2026-11-12: the daily email is text/markdown, not HTML. The
+    """the operator 2026-11-12: the daily email is text/markdown, not HTML. The
     script sends ONE plain-text part built by email_report.build_email_text
     via email_delivery.send_report — no multipart/alternative, no HTML.
     Assertions are on the script's content only; it never runs in tests."""

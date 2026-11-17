@@ -6,7 +6,7 @@ and where the decision is recorded. Decisions execute within the flow
 state machine (every transition persisted with evidence).
 
 **Authority tiers:** `AUTO` (act, record, report in the daily aggregate) ·
-`PROPOSE` (queue as a decision for Ray) · `RAY` (never act without
+`PROPOSE` (queue as a decision for the operator) · `OPERATOR` (never act without
 explicit approval).
 
 | # | Variable | Probe | Decision rule | Action | Authority | Record |
@@ -21,7 +21,7 @@ explicit approval).
 | D8 | **Swarm tier routing** per task | Task type (governed vs burst); slot availability per tier | Governed/decision-touching → Tier A; burst/bulk → Tier B; attacker/analysis → Tier C; Tier A saturated → Tier B for mechanical parts only | Dispatch target selection | AUTO | flow |
 | D9 | **Token class** per caller | Caller identity + action (GET vs mutation) | Mutations require write-class tokens; reads accept any valid bearer; new callers get read-class by default | Token config update | AUTO (security-bound; R1 if bypassed) | access log |
 | D10 | **Model seat selection** per task | Seat liveness, load, model capability vs task needs | Best live seat for the task; a dead seat's tasks failover explicitly (never silent substitution) | Task routing | AUTO within policy / explicit cross-family | flow + access log |
-| D11 | **Report/email cadence** | Staleness, event volume, SEV events | Daily unless SEV; on-demand always available; SEV pings immediate — nothing else changes the cadence | Cron/policy already fixed; no runtime change | FIXED (Ray set) | daily report |
+| D11 | **Report/email cadence** | Staleness, event volume, SEV events | Daily unless SEV; on-demand always available; SEV pings immediate — nothing else changes the cadence | Cron/policy already fixed; no runtime change | FIXED (the operator set) | daily report |
 | D12 | **Backtest window** selection | Incident history: the window containing the latest SEV/postmortem | Post-SEV: replay that window; weekly: the last 7 real days | validate_days --backtest run | AUTO | flow + daily report |
 
 ## The meta-rules
@@ -30,7 +30,7 @@ explicit approval).
    probe data as evidence. A decision without a record is a defect.
 2. **Fail-closed always** — an unknown or unprobeable state means no
    action (R6), never a guess.
-3. **Ray-facing changes are PROPOSE** — anything altering what Ray sees
+3. **operator-facing changes are PROPOSE** — anything altering what the operator sees
    (cadence, report format, escalation policy) queues as a decision;
    the agent never silently changes its own visibility.
 4. **Security-bound decisions are AUTO but alarmed** — D9 tightening is

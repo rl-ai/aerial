@@ -217,11 +217,11 @@ def test_c6():
     q.admit(finding("c-e", "blocking", a=0.9))
     mf = MandateFlow(q, clock=lambda: T0)
     res = mf.decide("q-1", "escalate", actor="curator")
-    check("C6 route curator→lead→Ray→JEV",
-          res["route"] == ["curator", "lead", "Ray", "JEV"], str(res["route"]))
-    res2 = mf.decide("q-1", "escalate", actor="Ray")   # already escalated
+    check("C6 route curator→lead→ operator →JEV",
+          res["route"] == ["curator", "lead", "operator", "JEV"], str(res["route"]))
+    res2 = mf.decide("q-1", "escalate", actor="operator")   # already escalated
     check("C6 route resumes from actor",
-          res2["route"] == ["Ray", "JEV"], str(res2["route"]))
+          res2["route"] == ["operator", "JEV"], str(res2["route"]))
 
 
 if __name__ == "__main__":

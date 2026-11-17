@@ -66,7 +66,7 @@ def test_v4_approve_click_is_read_only_then_confirm_writes():
     calls = []
 
     real_decide = flow.decide
-    def spy_decide(item_id, decision, reason=None, actor="Ray"):
+    def spy_decide(item_id, decision, reason=None, actor="operator"):
         calls.append(decision)
         return real_decide(item_id, decision, reason=reason, actor=actor)
     flow.decide = spy_decide
@@ -183,6 +183,6 @@ def test_v7_escalate_shows_route_and_collapses_actions():
     queue, flow, item, ctx = make_fixture()
     r = actions.handle_queue_action(ctx, "escalate", item.item_id, {})
     assert r["status"] == "escalated"
-    assert r["route"] == ["curator", "lead", "Ray", "JEV"]
-    assert r["message"] == "escalated → curator → lead → Ray → JEV"
+    assert r["route"] == ["curator", "lead", "operator", "JEV"]
+    assert r["message"] == "escalated → curator → lead → operator → JEV"
     assert queue.get(item.item_id).state == "escalated"   # actions collapsed

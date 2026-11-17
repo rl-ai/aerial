@@ -1,6 +1,6 @@
 """Lane B — dashboard-sessions store.
 
-Single source of "done since last visit" (rev2 #5): one row per Ray visit,
+Single source of "done since last visit" (rev2 #5): one row per operator visit,
 written on dashboard load, read on render. Zone A (§1), L2, and the daily brief
 all read the SAME last_visit() value.
 
@@ -80,7 +80,7 @@ class SessionsStore:
     # ---- read on render (single source) ----------------------------------------------
 
     def last_visit(self) -> Optional[float]:
-        """Ray's last dashboard visit timestamp — the single 'done since' source."""
+        """the operator's last dashboard visit timestamp — the single 'done since' source."""
         if os.path.exists(self.hub_db_path):
             try:
                 conn = sqlite3.connect(f"file:{self.hub_db_path}?mode=ro", uri=True, timeout=30.0)

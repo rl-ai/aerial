@@ -7,7 +7,7 @@ Implements console-rc-ui.md §3/§4/§8 V4–V7 on top of the Lane A backend
   (pre-filled scope/expiry, NO write); only the Confirm approve call touches
   the mandate flow. Cancel never reaches the write path.
 - Dismiss with a blank reason records 'unspecified' (Q7).
-- Escalate returns the route curator → lead → Ray → JEV; the row's actions
+- Escalate returns the route curator → lead → operator → JEV; the row's actions
   collapse to a pending-escalation line.
 - Error treatments: write-token 401/403 → two-step inline error
   ("write token rejected — re-authenticated once, retrying…" then
@@ -49,7 +49,7 @@ REJECTED_STEPS = [
 ]
 NOT_RE_RUN = "executed 0 times · intent NOT re-run — approve again for a fresh decision"
 NOT_COMMITTED = "not committed — nothing changed"
-ESCALATION_ROUTE_LABEL = " → ".join(ESCALATION_ROUTE)  # curator → lead → Ray → JEV
+ESCALATION_ROUTE_LABEL = " → ".join(ESCALATION_ROUTE)  # curator → lead → operator → JEV
 
 
 def _fmt_expiry(expiry_at: float) -> str:
@@ -204,7 +204,7 @@ def _dismiss(flow, item_id, payload, out) -> dict:
 
 
 def _escalate(flow, item_id, payload, out) -> dict:
-    # the console shows the full route curator → lead → Ray → JEV; an actor
+    # the console shows the full route curator → lead → operator → JEV; an actor
     # outside ESCALATION_ROUTE makes mandate_flow start at curator
     actor = payload.get("actor") or "console-operator"
     result = flow.decide(item_id, "escalate", actor=actor)

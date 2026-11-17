@@ -438,7 +438,7 @@ def _read_json(path: str) -> dict:
 
 
 # ---------------------------------------------------------------------------
-# Schedule reconciliation (added per Ray): every job that was SUPPOSED to run
+# Schedule reconciliation (added per the operator): every job that was SUPPOSED to run
 # actually ran. Parses the host crontab (job_run.py pattern: `--job
 # job_run.py pattern: `--job <node>:<name> --ticket <tk>` + trailing
 # `<name>` comment), evaluates
@@ -814,7 +814,7 @@ docs/runtime-optimization.md (ngl-from-free-VRAM, seat placement,
 bare→systemd conversion, shard completeness, monitor budget,
 parallel/context split) and stay inside your mandate: never touch another
 seat's processes; container lifecycle restarts and anything outside the
-mandate are human-gated (document and block for Ray). SEV/security pings
+mandate are human-gated (document and block for the operator). SEV/security pings
 immediately before any fix.
 """
 
@@ -1015,7 +1015,7 @@ class OpsRunner:
         generic fix session. The finding closes ONLY on proved=True;
         unproved → stays OPEN with an escalation note carrying the before/
         after outputs. requires_human remediations are never executed —
-        a prepared copy-paste block is produced and Ray is pinged; the
+        a prepared copy-paste block is produced and the operator is pinged; the
         proof happens on the FOLLOWING poll's probe."""
         fid = finding.finding_id
         if not rem.requires_human and self.dedupe.hit(fid, rem.max_attempts):
@@ -1054,7 +1054,7 @@ class OpsRunner:
         # Unproved: finding stays OPEN — escalation with both outputs.
         self.dedupe.record_fix(fid)
         if res.prepared:
-            self.notify(clf.MANDATE, finding)      # ping Ray with the block
+            self.notify(clf.MANDATE, finding)      # ping the operator with the block
         self.flow._escalate(finding, res.escalation or
                             "remediation not proved")
         log.warning("remediation %s NOT proved %s: before=%r after=%r",

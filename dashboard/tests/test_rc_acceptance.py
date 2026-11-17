@@ -287,8 +287,8 @@ def test_v7_blank_dismiss_unspecified_and_escalate_route(backend):
     r = actions.handle_queue_action({"queue": queue2, "mandate_flow": flow2},
                                     "escalate", item2.item_id, {})
     assert r["status"] == "escalated"
-    assert r["route"] == ["curator", "lead", "Ray", "JEV"]
-    assert "curator → lead → Ray → JEV" in r["message"]
+    assert r["route"] == ["curator", "lead", "operator", "JEV"]
+    assert "curator → lead → operator → JEV" in r["message"]
 
 
 # ------------------------------------------------------------------- V5/V6

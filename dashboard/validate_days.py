@@ -3,7 +3,7 @@
 
 Two modes — the PRIMARY one is the historical backtest:
 
-1. BACKTEST (Ray's primary validation mode) — replay REAL windows from our
+1. BACKTEST (the operator's primary validation mode) — replay REAL windows from our
    own raw data instead of synthetic chaos:
 
        python -m dashboard.validate_days --backtest \

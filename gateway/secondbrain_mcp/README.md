@@ -52,7 +52,7 @@ A grant is the *entire* access boundary: it pins an entity scope (anchor entitie
 from secondbrain import GrantBook
 book = GrantBook("/home/you/notes-ws/grants.db")
 grant_id, key = book.create(
-    counterparty="Ray's planner agent",
+    counterparty="the operator's planner agent",
     purpose="planning over my training notes",
     anchor_entities=["entity:gym-riverbank"],   # entity:<name> node ids
     alias="main",                                # the published L2 alias
@@ -66,7 +66,7 @@ The equivalent **JSON grant file format** (what a future CLI will accept; keep o
 
 ```json
 {
-  "counterparty": "Ray's planner agent",
+  "counterparty": "the operator's planner agent",
   "purpose": "planning over my training notes",
   "anchor_entities": ["entity:gym-riverbank"],
   "alias": "main",

@@ -2,7 +2,7 @@
 
 Status: built on branch `rlai-tickets-product` (off `hub-access-p1`, the
 image `ticket-hub:p1` runs). Not deployed. Redeploying the container is
-Ray's call.
+The operator's call.
 
 ## Why
 
@@ -34,7 +34,7 @@ Aerial code, `ticket_hub/rlai.py` adds `<RLAI_PACKAGES_DIR>/<pkg>/src` to
 POST routes answer 503 `rlai_unavailable` and the operator mount is not
 registered. In the container this means a read-only bind mount of
 `~/ai-ops/packages` at, say, `/rlai-packages`, plus
-`RLAI_PACKAGES_DIR=/rlai-packages`. That is a deploy change (Ray's).
+`RLAI_PACKAGES_DIR=/rlai-packages`. That is a deploy change (the operator's).
 
 ### C2 ingestion: `record()` over the hub's own tables
 
@@ -145,7 +145,7 @@ Behind `RLAI_OPERATOR=1`, `create_app` mounts
   routes. Writing tickets and comments *as the employee* with the
   `eva-harness` token also needs an `act_as` scope on that credential,
   or those writes must be attributed to `eva-harness`. That is a minting
-  decision, so it is Ray's.
+  decision, so it is the operator's.
 - An expression index on `json_extract(payload,'$.record.message_id')`.
   Dedup scans the events table (about 6,600 rows today). Add the index if
   that grows.

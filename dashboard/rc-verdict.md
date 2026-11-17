@@ -20,7 +20,7 @@
 | V4 | Exactly 3 actions/row; Approve expands §4 panel (prefilled scope/expiry); Confirm is the only write; Cancel commits nothing | **PASS** | `...::test_v4_three_actions_confirm_only_write_cancel_commits_nothing` (write-spy: zero `_create_transaction`/`_execute` calls on confirm + cancel) |
 | V5 | Approve success → `executed ✓ (attempts N)`, row transitions out; 401/403 → two-step inline error, `not committed — nothing changed`, row stays waiting-on-you, buttons re-enabled | **PASS** | `...::test_v5_approve_success_executed_attempts_row_leaves`, `...::test_v5_write_token_401_two_step_error_then_recover` (WriteToken fail_times fixture, recovery approve executes) |
 | V6 | Execution failure → `intent NOT re-run — approve again for a fresh decision`, no auto-retry (NoFreshDecision) | **PASS** | `...::test_v6_execution_failure_no_auto_retry` (bad executor + drained bounded retries) |
-| V7 | Blank dismiss posts `'unspecified'`; escalate shows curator → lead → Ray → JEV and collapses the row | **PASS** | `...::test_v7_blank_dismiss_unspecified_and_escalate_route` |
+| V7 | Blank dismiss posts `'unspecified'`; escalate shows curator → lead → operator → JEV and collapses the row | **PASS** | `...::test_v7_blank_dismiss_unspecified_and_escalate_route` |
 | V8 | Evidence badges verified solid / inferred outline / stale striped+tooltip; age goes amber at the class SLA from `queue-policy.yaml` (4h/24h/72h) | **PASS** | `...::test_v8_evidence_badges_and_sla_amber_from_policy` (fixtures: blocking 5h, degraded 30h, routine 80h → all amber; blocking 2h → gray) |
 | V9 | Sparkline strip: 3 charts from 7 daily values each, values match real aggregates, current value + delta arrow, no pointer handlers | **PASS** | `...::test_v9_sparklines_three_charts_seven_values_no_interactivity` (7-day real fixture store: a5-runtime.db job_runs + model-calls.jsonl + scrapes.db via `collect_series`; `days:` tag absent = all 7 present; no onclick/onmouseover/tooltip) |
 | V10 | Kept panels render unchanged content: exec summary, themes+trend arrows, stack overlap, Zone A columns, raw stats + untagged bucket | **PASS** | `...::test_v10_kept_panels_render_content` (board from real `render_board()` pipeline) |
@@ -55,7 +55,7 @@ POST approve (commit) → the single write; ledger written; row leaves the queue
 commit -> {"status": "executed", "message": "executed ✓ (attempts 1)", "attempts": 1, "phase": "commit"}
 mandates ledger: [('m-q-1-1', 'q-1', 'act-1', 'consumed')]
 action_intents: [('q-1', 'executed', 1)]
-audit_records: [('approve-create', 'q-1', 'Ray')]
+audit_records: [('approve-create', 'q-1', 'operator')]
 row state: done | waiting rows: []
 ```
 
@@ -68,7 +68,7 @@ row state: done | waiting rows: []
 
 ## 5. Known gaps (scoped out of this verdict)
 
-- **Email ping channel:** blocked on Ray's email provider — the verdict covers **hub-mention pings only**.
+- **Email ping channel:** blocked on the operator's email provider — the verdict covers **hub-mention pings only**.
 - **Live-feed gap:** the board shows bridge/dogfood-derived items until the listening pipeline lands (per parent spec).
 - **v0.9-rc1 non-features (per spec):** no notification center, no history/drill-down charts, no multi-tenant switching, no in-page login, no websocket/polling (static-fallback parity is a feature, tested by V13).
 - Onboarding installer is CLI-first (`python -m console.installer`); the in-page first-look banner is served by serve.py and dismissed via config, not a JS tour (rejected alternative per spec).

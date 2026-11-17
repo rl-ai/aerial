@@ -1,6 +1,6 @@
 """dashboard/soak.py — Layer 6 SOAK: time-compressed durability detection.
 
-Ray's gap class: accumulation bugs (fd leaks, memory growth, disk creep,
+The operator's gap class: accumulation bugs (fd leaks, memory growth, disk creep,
 SQLite WAL bloat) scale with REQUEST VOLUME, not wall-clock — a week of
 quiet production can hide a leak that no 5-minute smoke ever sees. The soak
 layer compresses "days of load" into minutes by AMPLIFYING synthetic traffic

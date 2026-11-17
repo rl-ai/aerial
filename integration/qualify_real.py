@@ -27,7 +27,7 @@ Stages (each gates the next):
   tool not granted (T3, expected L1: admission/registry), use the disabled
   native terminal (T4, expected L2) and write with the read-only Tickets
 * 5 operator view - the /operator mount refuses anonymous and non-owner
-  viewers and, with a Ray-issued owner credential, the active-run rows
+  viewers and, with an operator-issued owner credential, the active-run rows
   carry the acceptance fields (design §11.9).
 * 6 metrics - each panel value is computed TWO ways: by hand from the
   products' own stores (the Tickets C2 records, the Runtime store, the
@@ -282,7 +282,7 @@ class HTTPPoster:
 
 
 class Hub:
-    """Ray's hub over an injected getter/poster with bearer auth (rule 2).
+    """the operator's hub over an injected getter/poster with bearer auth (rule 2).
 
     The bearer is held as a file *path* only and its value is never read
     here: the auth header is built by the injected ``token_provider`` (the
@@ -437,10 +437,10 @@ class Deployment:
     # recording check unverified — this harness never emits on its own.
     bypass_control: object = None
     bypass_c2_sink: object = None
-    # The stage-5 owner credential: a Ray-issued operator session (the
+    # The stage-5 owner credential: an operator-issued operator session (the
     # harness token is not an owner and can never see the operator view).
     operator_token_file: str = ""
-    # The T5 read-only token fixture (Ray-minted, D3-A): a REFERENCE path
+    # The T5 read-only token fixture (operator-minted, D3-A): a REFERENCE path
     # whose value the control reads at call time only.
     t5_token_ref: str = ""
     bypass_fixture_dir: str = ""  # T2 fixture folder (default below)
@@ -650,7 +650,7 @@ class Harness:
             f"POST the employee's C5 identity to hub "
             f"{self.dep.hub.base_url}/identity (bearer auth from file "
             f"{self.dep.hub.token_file})",
-            "operator step (bin/profile-ctl, Ray-gated): create the "
+            "operator step (bin/profile-ctl, operator-gated): create the "
             f"non-vault Hermes profile {PROFILE!r}; the harness prints the "
             "command and never runs bin/* itself",
             f"append_event 'checkpoint' on epic {self.dep.epic_ticket_id} "
@@ -1720,7 +1720,7 @@ class Harness:
         }
 
         for name, _tid, layer in _STAGE4_TESTS:
-            # T1's mechanism is SETTLED (Ray, D1-A: the docker-exec route
+            # T1's mechanism is SETTLED (the operator, D1-A: the docker-exec route
             # probe) — it goes through the same refusal check as T2-T5;
             # BYPASS_NETWORK_MECHANISM stays recorded as the mechanism.
             entry = self._bypass_check(
@@ -1808,7 +1808,7 @@ class Harness:
             "(the harness token is not an owner: a 200 means the mount "
             "admits non-owners: fail)",
             f"GET {op}/view.json with the OPERATOR credential "
-            "(--operator-token-file, a Ray-issued owner session): expect "
+            "(--operator-token-file, an operator-issued owner session): expect "
             "200 and the view document",
             "check the active-run rows for the acceptance fields: parent "
             "task (ticket_id), role, model, slot, the orchestrator/worker "
@@ -1821,7 +1821,7 @@ class Harness:
         """The operator-view stage: the mount refuses anonymous and
         non-owner viewers (both checks pass on a positive 403), and the
         acceptance fields are observed on the active-run rows of the view
-        document — which needs a Ray-issued owner credential; without one
+        document — which needs an operator-issued owner credential; without one
         the field check is honestly unverified (rule 6)."""
         self.dry_run_actions = []
         for line in self.stage5_plan_lines():
@@ -1848,7 +1848,7 @@ class Harness:
             checks.append(self._unverified(
                 "operator-view-fields",
                 "no operator credential: --operator-token-file (a "
-                "Ray-issued owner internal session) is required — the "
+                "operator-issued owner internal session) is required — the "
                 "harness token is not an owner and the mount refuses it"))
             return {"stage": 5, "live": True,
                     "verdict": self._verdict(checks), "checks": checks}
@@ -2575,7 +2575,7 @@ class HermesBypassControl:
     def attempt_network_direct(self, run_id: str, targets) -> dict:
         """T1 (expected L2): reach the inert targets outside the gateway.
 
-        Mechanism (settled by Ray, D1-A: docker-exec probe): inspect the
+        Mechanism (settled by the operator, D1-A: docker-exec probe): inspect the
         sandbox's routes from INSIDE its container — a sandbox with no
         default route is structurally unable to reach anything beyond its
         own loopback, which is the L2 denial the draft expects. A default
@@ -3015,7 +3015,7 @@ def _build_live_bypass_control(dep, worker_slot: str,
 
 def _worker_slot(resources):
     """The worker route: a slot named ``worker``, else the slot the
-    ``qwen-oneshot`` alias names (Ray's deployment), else the first slot."""
+    ``qwen-oneshot`` alias names (the operator's deployment), else the first slot."""
     for name in ("worker", "qwen-oneshot"):
         try:
             return resources.slot(name)
@@ -3070,10 +3070,10 @@ def build_arg_parser() -> argparse.ArgumentParser:
                     help="usage ledger jsonl path (live)")
     ap.add_argument("--t5-token-ref", default="",
                     help="path of the T5 read-only token fixture "
-                         "(Ray-minted; read at call time)")
+                         "(operator-minted; read at call time)")
     ap.add_argument("--operator-token-file", default="",
                     help="path of the OPERATOR credential file (a "
-                         "Ray-issued owner session; read at call time, "
+                         "operator-issued owner session; read at call time, "
                          "never by this harness at build time)")
     ap.add_argument("--epic", help=f"test epic ticket id, must carry tag "
                                    f"{TAG!r} (live)")

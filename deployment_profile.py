@@ -12,7 +12,7 @@ precedence:
      ``config/deployment.yaml.example`` customized per deployment.
   3. The generic defaults below — the OSS version runs with these alone:
      localhost URLs, empty recipients (email disabled), and repo-relative
-     paths. No Ray-specific values anywhere.
+     paths. No deployment-specific values anywhere.
 
 Usage::
 

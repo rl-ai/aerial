@@ -952,7 +952,7 @@ def build_ask_text(data: Dict[str, Any]) -> str:
     label = ((data.get("window") or {}).get("label") or "yesterday")
     return (
         "You are writing the executive summary block for the operator's "
-        f"daily board — window: {label} (audience: Ray, 15 seconds). Use ONLY "
+        f"daily board — window: {label} (audience: the operator, 15 seconds). Use ONLY "
         "the data below — do not invent numbers, and mark anything unavailable "
         "as unavailable.\n\n"
         "Respond in EXACTLY this markdown structure:\n"

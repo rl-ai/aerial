@@ -168,7 +168,7 @@ def demote_check(live_role_comparison: Dict[str, Any], false_positive_rate: floa
 
 # --------------------------------------------------------------------------- approve / demote actions
 
-def approve_promotion(view: Dict[str, Any], actor: str = "Ray",
+def approve_promotion(view: Dict[str, Any], actor: str = "operator",
                       mandate_creator: Optional[Callable[[Dict[str, Any]], Dict[str, Any]]] = None,
                       ledger: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
     """Panel C decision: convert each shadow action's DRAFT mandate spec into
@@ -197,7 +197,7 @@ def approve_promotion(view: Dict[str, Any], actor: str = "Ray",
             "ledger_entry": ledger[-1] if ledger else None}
 
 
-def demote_to_shadow(role: str, reason: str, actor: str = "Ray",
+def demote_to_shadow(role: str, reason: str, actor: str = "operator",
                      ledger: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
     entry = {"who": actor, "when": clock.now(), "action": "demote-to-shadow",
              "role": role, "reason": reason}

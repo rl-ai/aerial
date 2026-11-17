@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """The Now list — report-design-v2.md §6 (task t_75327824).
 
-The one thing Ray reads when he opens the console: the top ≤3 things he could
+The one thing the operator reads on opening the console: the top ≤3 things they could
 do right now, at different effort levels, with a crossed-off mechanic and a
 tally. Not a filtered queue — a hard-capped list.
 
 Sourcing (§6.1) — union of three sources, ranked, capped at 3:
   rank 1  decisions needed from the exec summary
   rank 2  Zone B decision-queue items with admission score ≥ ADMISSION_GATE
-          (Ray-gated gates arrive here — their score is pinned high because
-          they are Ray-gated, not a fourth source)
+          (operator-gated gates arrive here — their score is pinned high because
+          they are operator-gated, not a fourth source)
   rank 3  pending onboarding / setup steps (declared checklists only)
 
 NEVER on the list (§6.1 never-list): queue items below the admission gate,
@@ -65,7 +65,7 @@ EFFORT_HINT = {"quick-win": "under 5 minutes", "medium": "about 30 minutes",
                "deep": "focus block (> 30 min)"}
 
 #: States meaning "an agent is already on it" — never a Now item (§6.1).
-#: (`in-progress` is deliberately NOT here: an item Ray took in-progress is
+#: (`in-progress` is deliberately NOT here: an item the operator took in-progress is
 #: the list itself per §6.3.2.)
 AGENT_HANDLED_STATES = frozenset({
     "working", "fix-attempted", "verifying", "in-fix",
@@ -160,7 +160,7 @@ def item_from_decision(line: str, idx: int,
 def item_from_queue(item: Any, now: float) -> Optional[NowItem]:
     """An admitted Zone B queue item → rank-2 Now item (§6.1.2).
 
-    Ray-gated gates arrive through this source: a record that declares
+    operator-gated gates arrive through this source: a record that declares
     `ray_gated` (or a claim tagged 'ray-gated') is admitted at a pinned-high
     score. Returns None for anything that must never appear (below-gate,
     agent-handled states) — the never-list is enforced here AND in
@@ -508,7 +508,7 @@ def detail_fields(item: NowItem) -> Dict[str, str]:
                                   if item.admission_score else "unavailable")
         out["why_admitted"] = (f"admission score {item.admission_score:.2f} ≥ gate "
                                f"{ADMISSION_GATE}"
-                               + (" (Ray-gated: score pinned high)" if item.ray_gated else ""))
+                               + (" (operator-gated: score pinned high)" if item.ray_gated else ""))
         out["shadow_action"] = str(d.get("proposed_action") or "unavailable")
         out["steps"] = "; ".join(str(s) for s in (d.get("steps") or ())) or "unavailable"
     elif item.kind == "decision":

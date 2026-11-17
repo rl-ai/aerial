@@ -2,7 +2,7 @@
 
 :class:`HubTicketsRemote` implements the five ``rlai_tickets`` ``Store``
 methods the harness calls (``create_ticket``, ``get``, ``append_event``,
-``events``, ``record``) against Ray's hub through the existing injected
+``events``, ``record``) against the operator's hub through the existing injected
 :class:`Hub` transport. Every id that goes into a path is percent-encoded,
 a non-2xx answer raises :class:`HubRemoteError` naming the method and the
 status (never a body or a token), and the bearer is read only by the

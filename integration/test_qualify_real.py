@@ -1129,7 +1129,7 @@ def test_stage4_emit_failure_is_a_named_fail(env, tmp_path):
 
 def test_stage4_t1_names_the_control_mechanism_when_given(env, tmp_path):
     """T1 names the control's mechanism when it reports one — the
-    mechanism is settled (Ray, D1-A) but stays recorded in evidence."""
+    mechanism is settled (the operator, D1-A) but stays recorded in evidence."""
     dep, _, _, _ = env
     control = FakeBypassControl(
         mechanism="docker exec into the run's sandbox (settled)")
@@ -1228,7 +1228,7 @@ def test_control_t1_without_a_seam_is_honest_unknown():
 
 
 def test_control_t1_no_default_route_is_l2():
-    """Mechanism settled (Ray, D1-A: the docker-exec route probe): a
+    """Mechanism settled (the operator, D1-A: the docker-exec route probe): a
     sandbox with no default route is structurally denied at L2."""
     class RouteAdapterFake(ControlAdapterFake):
         def container_for(self, run_id):
@@ -1563,7 +1563,7 @@ def test_dry_run_stage5_prints_plan_and_calls_nothing(env, tmp_path):
 
     text = "\n".join(lines)
     assert "403" in text and "view.json" in text
-    assert "OPERATOR credential" in text          # the Ray gate named
+    assert "OPERATOR credential" in text          # the the operator gate named
     assert provider.calls == [] and transport.calls == []
     assert not (tmp_path / "out").exists()
     assert result["verdict"] == "unverified"
@@ -1581,7 +1581,7 @@ def test_stage5_mount_refuses_anon_and_non_owner(env, tmp_path):
     assert by_name["operator-mount-403-anon"]["result"] == "pass"
     assert by_name["operator-mount-403-non-owner"]["result"] == "pass"
     assert by_name["operator-view-fields"]["result"] == "unverified"
-    assert "Ray-issued owner" in by_name["operator-view-fields"]["evidence"]["unknown"]
+    assert "operator-issued owner" in by_name["operator-view-fields"]["evidence"]["unknown"]
     assert result["verdict"] == "unverified"
 
 

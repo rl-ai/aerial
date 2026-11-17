@@ -1,6 +1,6 @@
 """dashboard/recurring_miss.py — Layer 4 extension: recurring-failure day-type.
 
-Ray's finding: `schedule:*` misses were the weakest fix path — findings could
+The operator's finding: `schedule:*` misses were the weakest fix path — findings could
 end up silently closed or left unclassified. This layer makes the correct
 behavior a TESTED contract, using the remediation contract
 (dashboard/followup/remediation.py) as the gate:

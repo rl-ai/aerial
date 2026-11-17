@@ -4,7 +4,7 @@ Spec §3–4 + §5 step 3: a weekly batch job discovers 1st/2nd-degree source
 candidates from the scrape corpus, scores them with the exception queue's
 ``0.5·A + 0.3·U + 0.2·G`` shape, and writes **proposal rows** — Routine class —
 into a persisted proposal ledger. **Shadow mode**: proposals are computed and
-logged, never surfaced to Ray (observation-only for 2 weeks).
+logged, never surfaced to the operator (observation-only for 2 weeks).
 
 Decisions bound by the lane brief (do not re-decide):
 
