@@ -155,11 +155,11 @@ def test_schedule_miss_retrigger_allows_two_then_escalates(runner):
     runner.mandate_creator.create = lambda f, s: {"mandate_id": "m", "scope": s,
                                                   "expiry_at": T0 + 100}
     f = rn.OpsFinding(
-        finding_id="schedule:morpheus:x:20261113",
-        claim="scheduled job morpheus:x MISSED", reversible=True,
+        finding_id="schedule:node-1:x:20261113",
+        claim="scheduled job node-1:x MISSED", reversible=True,
         scope="internal", tags=("schedule-reconciliation",),
         proposed_action="re-trigger", check={"kind": "schedule-miss",
-                                             "job_id": "morpheus:x",
+                                             "job_id": "node-1:x",
                                              "ticket": "TK-1"},
         verify=lambda: False, max_fixes=2)
     runner.handle(f)
@@ -177,15 +177,15 @@ def test_schedule_miss_retrigger_allows_two_then_escalates(runner):
 def test_poll_window_only_new_failures(tmp_path):
     hub = tmp_path / "hub.db"
     make_hub_db(hub, [
-        ("morpheus:old", "failed", 1, iso(T0 - 7200), "old failure", 1, None),
-        ("morpheus:new", "failed", 1, iso(T0 - 60), "new failure", 1, None),
-        ("morpheus:ok", "ok", 0, iso(T0 - 30), "", 1, None),
+        ("node-1:old", "failed", 1, iso(T0 - 7200), "old failure", 1, None),
+        ("node-1:new", "failed", 1, iso(T0 - 60), "new failure", 1, None),
+        ("node-1:ok", "ok", 0, iso(T0 - 30), "", 1, None),
     ])
     fs = rn.job_run_findings(str(hub), T0 - 900, T0, Clock())
     ids = [f.finding_id for f in fs]
-    assert any("morpheus:new" in i for i in ids)
-    assert not any("morpheus:old" in i for i in ids), "window excludes old runs"
-    assert not any("morpheus:ok" in i for i in ids)
+    assert any("node-1:new" in i for i in ids)
+    assert not any("node-1:old" in i for i in ids), "window excludes old runs"
+    assert not any("node-1:ok" in i for i in ids)
 
 
 def test_poll_once_window_uses_checkpoint(tmp_path):
@@ -241,10 +241,10 @@ def test_seat_verify_reprobes():
 # ---------------------------------------------------------------------------
 
 CRONTAB = (
-    "*/5 * * * * $HOME/ai-ops/bin/job_run.py run --node morpheus --job "
-    "morpheus:roles-runner --ticket TK-1 -- 'true' >> log 2>&1  # roles-runner\n"
-    "30 13 * * * $HOME/ai-ops/bin/job_run.py run --node morpheus --job "
-    "morpheus:daily-board --ticket TK-2 -- 'true' >> log 2>&1  # daily-board\n"
+    "*/5 * * * * $HOME/ai-ops/bin/job_run.py run --node node-1 --job "
+    "node-1:roles-runner --ticket TK-1 -- 'true' >> log 2>&1  # roles-runner\n"
+    "30 13 * * * $HOME/ai-ops/bin/job_run.py run --node node-1 --job "
+    "node-1:daily-board --ticket TK-2 -- 'true' >> log 2>&1  # daily-board\n"
     "@reboot $HOME/ai-ops/dashboard/ops-agent.sh  # ops-agent\n")
 
 
@@ -264,7 +264,7 @@ def test_parse_crontab():
     assert set(names) == {"roles-runner", "daily-board"}
     reboot = [l for l in CRONTAB.splitlines() if l.startswith("@reboot")]
     assert reboot, "@reboot lines exist but are excluded from job entries"
-    assert names["roles-runner"].job_id == "morpheus:roles-runner"
+    assert names["roles-runner"].job_id == "node-1:roles-runner"
     assert names["roles-runner"].ticket == "TK-1"
 
 
@@ -279,8 +279,8 @@ def test_recon_missed_and_stale(tmp_path):
     # roles-runner (*/5) has NO run in the window nor in 2× interval → MISSED.
     fs = _recon(tmp_path, [])
     fids = [f.finding_id for f in fs]
-    assert any(f.startswith("schedule:morpheus:roles-runner:") for f in fids)
-    assert "morpheus:daily-board" not in " ".join(fids) or True
+    assert any(f.startswith("schedule:node-1:roles-runner:") for f in fids)
+    assert "node-1:daily-board" not in " ".join(fids) or True
     # daily-board (30 13) is not due and @reboot excluded → nothing else.
     missed = [f for f in fs if "roles-runner" in f.finding_id][0]
     assert missed.check["kind"] == "schedule-miss"
@@ -291,9 +291,9 @@ def test_recon_missed_and_stale(tmp_path):
 
 def test_recon_failed_job(tmp_path):
     fs = _recon(tmp_path, [
-        ("morpheus:roles-runner", "failed", 1, iso(T0 - 60), "boom", 1, None)])
+        ("node-1:roles-runner", "failed", 1, iso(T0 - 60), "boom", 1, None)])
     failed = [f for f in fs if "FAILED" in f.claim]
-    assert failed and failed[0].finding_id.startswith("job:morpheus:roles-runner:")
+    assert failed and failed[0].finding_id.startswith("job:node-1:roles-runner:")
 
 
 def test_recon_sev_adjacent_daily_board(tmp_path):
@@ -301,8 +301,8 @@ def test_recon_sev_adjacent_daily_board(tmp_path):
     win = (T0 - 60, T0)
     # shift T0 to 13:30:00Z via monkey clock: easier — craft spec directly.
     entries = rn.parse_crontab(
-        "*/5 * * * * $HOME/ai-ops/bin/job_run.py run --node morpheus --job "
-        "morpheus:daily-board --ticket TK-2 -- 'true' 2>&1  # daily-board\n")
+        "*/5 * * * * $HOME/ai-ops/bin/job_run.py run --node node-1 --job "
+        "node-1:daily-board --ticket TK-2 -- 'true' 2>&1  # daily-board\n")
     hub = tmp_path / "hub.db"
     make_hub_db(hub, [])
     fs = rn.schedule_findings(entries, str(hub), win[0], win[1], Clock())
@@ -314,24 +314,24 @@ def test_recon_sev_adjacent_daily_board(tmp_path):
 
 def test_recon_ok_job_no_finding(tmp_path):
     fs = _recon(tmp_path, [
-        ("morpheus:roles-runner", "ok", 0, iso(T0 - 60), "", 1, None)])
+        ("node-1:roles-runner", "ok", 0, iso(T0 - 60), "", 1, None)])
     assert fs == []
 
 
 def test_retrigger_command_shape():
-    cmd = rn.retrigger_command("morpheus:x", "TK-9")
+    cmd = rn.retrigger_command("node-1:x", "TK-9")
     # Portable since the OSS split: the runner re-triggers with its own
     # interpreter (sys.executable), not a hardcoded /usr/bin/python3.
     assert cmd[0] == sys.executable
     assert cmd[1] == os.path.expanduser("~/ai-ops/bin/job_run.py")
-    assert "run" in cmd and "morpheus:x" in cmd and "TK-9" in cmd
+    assert "run" in cmd and "node-1:x" in cmd and "TK-9" in cmd
 
 
 def test_retrigger_carries_cron_payload():
     """Regression (prod): a re-trigger without the post-'--' command no-ops
     (job_run.py exits 2 'run needs a command after --')."""
-    cron = ("*/20 * * * * $HOME/ai-ops/bin/job_run.py run --node morpheus "
-            "--job morpheus:curator-poll --skip-exit 75 "
+    cron = ("*/20 * * * * $HOME/ai-ops/bin/job_run.py run --node node-1 "
+            "--job node-1:curator-poll --skip-exit 75 "
             "--ticket TK-9 -- '/usr/bin/flock -n -E 75 /tmp/x.lock "
             "/usr/bin/python3 <install-dir>/curator_poll.py' "
             ">> <install-dir>/poll.log 2>&1  # curator-poll")
@@ -339,7 +339,7 @@ def test_retrigger_carries_cron_payload():
     assert len(entries) == 1
     assert entries[0].cmd == ("/usr/bin/flock -n -E 75 /tmp/x.lock "
                               "/usr/bin/python3 <install-dir>/curator_poll.py")
-    cmd = rn.retrigger_command("morpheus:curator-poll", "TK-9", entries[0].cmd)
+    cmd = rn.retrigger_command("node-1:curator-poll", "TK-9", entries[0].cmd)
     assert cmd[-2] == "--"
     assert cmd[-1] == entries[0].cmd
 
@@ -348,7 +348,7 @@ def test_poll_once_full_cycle_hermetic(tmp_path, runner):
     # kimi down + one failed job in window → 2 findings handled end-to-end.
     hub = tmp_path / "hub2.db"
     make_hub_db(hub, [
-        ("morpheus:roles-runner", "failed", 1, iso(T0 - 60), "boom", 1, None)])
+        ("node-1:roles-runner", "failed", 1, iso(T0 - 60), "boom", 1, None)])
     runner.hub_db = str(hub)
     runner.clock = Clock()
     runner.probe = lambda p, b=None: None if p == 18102 else 200
