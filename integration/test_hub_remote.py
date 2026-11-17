@@ -14,6 +14,13 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import pytest
 
+# qualify_real needs packages/rlai-* (the products live in the private
+# monorepo; the public tree ships without them). Skip rather than error.
+from pathlib import Path as _Path
+if not (_Path(__file__).resolve().parents[1] / "packages").is_dir():
+    pytest.skip("needs packages/rlai-* (not shipped in the public tree)",
+                allow_module_level=True)
+
 import hub_remote
 from hub_remote import HubRemoteError, HubTicketsRemote
 import qualify_real

@@ -110,31 +110,31 @@ WORKSPACE_ROOT = str(_pv("ops_workspace_root"))
 #: auto-fix path executes [script] as the deterministic fix (guarded by
 #: os.path.exists + executable + the f8 trust check) instead of dispatching
 #: a generic fix session. The glm seat can be SERVED ON A REMOTE HOST and
-#: is recovered via cluster/bin/ariel_glm_recover.sh (ssh forced-command
+#: is recovered via cluster/bin/seat_glm_recover.sh (ssh forced-command
 #: ladder + forwarder restarts) — NEVER by local systemctl (2026-11-16 GLM
 #: 3-h outage; see docs/sre-runbook-glm-seat.md).
 #:
 #: f8: the driver path is HARD-RESOLVED from the deployment profile
-#: (cluster.ariel_recovery_script, default cluster/bin/ariel_glm_recover.sh
+#: (cluster.seat_recovery_script, default cluster/bin/seat_glm_recover.sh
 #: resolved relative to the repo root) — never from vram_registry.json.
 
 
-def _ariel_recovery_script() -> str:
+def _seat_recovery_script() -> str:
     """Trusted recovery-driver path (f8): profile key
-    cluster.ariel_recovery_script, default cluster/bin/ariel_glm_recover.sh,
+    cluster.seat_recovery_script, default cluster/bin/seat_glm_recover.sh,
     resolved relative to the repo root. Registry-provided paths are NEVER
     used — whoever can write vram_registry.json must not gain execution."""
-    rel = str(_pv("cluster.ariel_recovery_script")
-              or "cluster/bin/ariel_glm_recover.sh")
+    rel = str(_pv("cluster.seat_recovery_script")
+              or "cluster/bin/seat_glm_recover.sh")
     return os.path.normpath(os.path.join(_ROOT, rel))
 
 
-_ARIEL_RECOVERY_SCRIPT = _ariel_recovery_script()
+_SEAT_RECOVERY_SCRIPT = _seat_recovery_script()
 
 MODEL_SEATS = (
     ("kimi", 18102),
     ("deepseek", 18095),
-    ("glm", 18110, _ARIEL_RECOVERY_SCRIPT),
+    ("glm", 18110, _SEAT_RECOVERY_SCRIPT),
 )
 
 #: Fallback recovery drivers by seat name — applies when a MODEL_SEATS entry
@@ -142,7 +142,7 @@ MODEL_SEATS = (
 #: recovery_script field). Values are always the profile-resolved trusted
 #: path; seat_recovery_script() rejects anything else (f8).
 SEAT_RECOVERY_SCRIPTS = {
-    "glm": _ARIEL_RECOVERY_SCRIPT,
+    "glm": _SEAT_RECOVERY_SCRIPT,
 }
 
 
@@ -150,7 +150,7 @@ def seat_recovery_script(seat) -> Optional[str]:
     """Recovery driver for one MODEL_SEATS entry (2- or 3-tuple), or None.
 
     f8 trust gate: ONLY the profile-resolved trusted driver path
-    (_ARIEL_RECOVERY_SCRIPT) may ever be returned — a registry-supplied or
+    (_SEAT_RECOVERY_SCRIPT) may ever be returned — a registry-supplied or
     hand-set 3rd tuple element pointing anywhere else is rejected (logged,
     returns None → classic playbook). Only a script that exists and is
     executable counts as a driver (fail-safe: no driver → classic playbook).
@@ -159,10 +159,10 @@ def seat_recovery_script(seat) -> Optional[str]:
         SEAT_RECOVERY_SCRIPTS.get(seat[0])
     if not script:
         return None
-    if os.path.realpath(script) != os.path.realpath(_ARIEL_RECOVERY_SCRIPT):
+    if os.path.realpath(script) != os.path.realpath(_SEAT_RECOVERY_SCRIPT):
         log.warning(
             "rejected recovery path %r — drivers are profile-resolved "
-            "(cluster.ariel_recovery_script), never registry-supplied (f8)",
+            "(cluster.seat_recovery_script), never registry-supplied (f8)",
             script)
         return None
     if os.path.isfile(script) and os.access(script, os.X_OK):
@@ -260,7 +260,7 @@ SEAT_PLAYBOOK = """
    `GET http://127.0.0.1:<port>/v1/models` with the cluster bearer.
 5. If the restart fails twice, STOP: write what you tried to close-out.md and
    leave the seat for a human — do not loop-restart.
-6. Remote seats (Ariel) are recovered via cluster/bin/ariel_glm_recover.sh,
+6. Remote seats (on the seat host) are recovered via cluster/bin/seat_glm_recover.sh,
    never by local systemctl.
 """
 
@@ -333,8 +333,8 @@ def seat_findings(clock: Callable[[], float], probe: Callable[..., Optional[int]
     A seat with a recovery driver (3-tuple MODEL_SEATS entry, or a name in
     SEAT_RECOVERY_SCRIPTS) gets the driver path in its proposed_action and in
     check['recovery_script'] — the auto-fix path then executes the driver
-    instead of dispatching a generic fix session (remote seats on Ariel are
-    recovered via cluster/bin/ariel_glm_recover.sh, never by local systemctl).
+    instead of dispatching a generic fix session (remote seats on the seat host are
+    recovered via cluster/bin/seat_glm_recover.sh, never by local systemctl).
     """
     day = time.strftime("%Y%m%d", time.gmtime(clock()))
     out = []
@@ -346,7 +346,7 @@ def seat_findings(clock: Callable[[], float], probe: Callable[..., Optional[int]
             continue
         if script:
             action = (f"run the recovery driver {script} — remote seat on "
-                      f"Ariel (ssh forced-command recovery + forwarder "
+                      f"the seat host (ssh forced-command recovery + forwarder "
                       f"restart); verify GET /v1/models returns 200")
             check = {"kind": "seat", "name": name, "port": port,
                      "recovery_script": script}
@@ -968,7 +968,7 @@ class OpsRunner:
             except subprocess.TimeoutExpired:
                 return {"exit": None, "timed_out": True, "cmd": cmd}
         if finding.check.get("kind") == "seat":
-            # Remote seats (Ariel): the recovery driver IS the deterministic
+            # Remote seats (on the seat host): the recovery driver IS the deterministic
             # fix — never local systemctl for a seat served on another host
             # (2026-11-16 GLM 3-h outage). Guards (f8): only when the driver
             # is the TRUSTED profile-resolved path and exists + executable;
@@ -977,7 +977,7 @@ class OpsRunner:
             # session must never crash the runner.
             script = finding.check.get("recovery_script") or ""
             trusted = script and os.path.realpath(script) == \
-                os.path.realpath(_ARIEL_RECOVERY_SCRIPT)
+                os.path.realpath(_SEAT_RECOVERY_SCRIPT)
             if not trusted and script:
                 log.warning("seat fix: rejected non-trusted recovery path "
                             "%r (f8) — falling back to the agent session",

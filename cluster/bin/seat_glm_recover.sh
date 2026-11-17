@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
-# ariel_glm_recover.sh — ops-host-side recovery driver for the GLM-5.3-Flash
-# orchestrator seat (Ariel:18110, forwarded to the ops host:18110).
+# seat_glm_recover.sh — ops-host-side recovery driver for the GLM-5.3-Flash
+# orchestrator seat (seat host:18110, forwarded to the ops host:18110).
 #
 # Recovery ladder (see docs/sre-runbook-glm-seat.md):
 #   (a) probe the local seat  GET http://127.0.0.1:18110/v1/models with the
 #       cluster bearer — HTTP 200 means up (f6: HTTP-ready, not TCP), exit 0.
-#   (b) diagnostic only: raw TCP to Ariel:18110 (f11: NEVER gates any
+#   (b) diagnostic only: raw TCP to seat host:18110 (f11: NEVER gates any
 #       decision — diagnostics go to stderr).
-#   (c) pinned-host-key forced-command recovery on Ariel (f12):
+#   (c) pinned-host-key forced-command recovery on the seat host (f12):
 #       timeout 300 ssh -i $RECOVERY_KEY -o BatchMode=yes
 #         -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$KNOWN_HOSTS
 #         -o ServerAliveInterval=15 -o ServerAliveCountMax=3 (f7)
-#         -o ConnectTimeout=5 $ARIEL_RECOVERY_USER@$ARIEL_HOST recover
-#       (the sshd forced command runs /usr/local/sbin/ariel-glm-recover;
+#         -o ConnectTimeout=5 $SEAT_RECOVERY_USER@$SEAT_HOST recover
+#       (the sshd forced command runs /usr/local/sbin/seat-glm-recover;
 #       ssh exit 0 = seat up, 1 = attempted+failed, 3 = throttled).
 #       The driver REFUSES to run when the pinned known_hosts file is
 #       missing or its fingerprint does not match (fail closed, exit 2).
@@ -28,7 +28,7 @@
 #   0 = seat up (JSON state=up)
 #   1 = recovery attempted / probe-only, seat still down (state=failed)
 #   2 = refused to run: pinned host key missing/mismatched, bad flag (state=failed, via=host-key)
-#   3 = Ariel reported throttled — still down, retry later; NO forwarder
+#   3 = the seat host reported throttled — still down, retry later; NO forwarder
 #       restart, NO driver restart by the runner (state=throttled)
 #   4 = lock contention — another driver instance owns the recovery
 #       (state=skipped); the single JSON line is still emitted
@@ -38,40 +38,40 @@
 #   --force       run the full ladder even when the local probe answers 200.
 #
 # Concurrency (f4): flock -n on a file the driver creates inside
-# ${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/ariel-glm-recover/ (mode 700, owner
+# ${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/seat-glm-recover/ (mode 700, owner
 # verified, symlink-checked — never follows a planted symlink). Contention
 # emits the JSON line (state=skipped) and exits 4 — never a silent 0.
 #
 # Required (your deployment's values; nothing is built in):
-#   ARIEL_HOST, ARIEL_RECOVERY_USER, ARIEL_HOST_KEY_FP (the seat host's
+#   SEAT_HOST, SEAT_RECOVERY_USER, SEAT_HOST_KEY_FP (the seat host's
 #   pinned SHA256 ed25519 fingerprint), CLUSTER_BEARER_PATH.
 # Optional: GLM_FORWARDER_UNIT (no forwarder restart without it),
-#   ARIEL_RECOVERY_KEY (default ~/.ssh/ariel_recovery_ed25519), ARIEL_PORT,
-#   GLM_SEAT_PORT, ARIEL_KNOWN_HOSTS, ARIEL_SSH_TIMEOUT.
+#   SEAT_RECOVERY_KEY (default ~/.ssh/seat_recovery_ed25519), SEAT_PORT,
+#   GLM_SEAT_PORT, SEAT_KNOWN_HOSTS, SEAT_SSH_TIMEOUT.
 set -uo pipefail
 
-ARIEL_HOST=${ARIEL_HOST:-}
-ARIEL_PORT=${ARIEL_PORT:-18110}
+SEAT_HOST=${SEAT_HOST:-}
+SEAT_PORT=${SEAT_PORT:-18110}
 SEAT_PORT=${GLM_SEAT_PORT:-18110}
 BEARER_PATH=${CLUSTER_BEARER_PATH:-}
-RECOVERY_KEY=${ARIEL_RECOVERY_KEY:-$HOME/.ssh/ariel_recovery_ed25519}
-RECOVERY_USER=${ARIEL_RECOVERY_USER:-}
-SSH_TIMEOUT=${ARIEL_SSH_TIMEOUT:-300}
-EXPECTED_FP=${ARIEL_HOST_KEY_FP:-}
+RECOVERY_KEY=${SEAT_RECOVERY_KEY:-$HOME/.ssh/seat_recovery_ed25519}
+RECOVERY_USER=${SEAT_RECOVERY_USER:-}
+SSH_TIMEOUT=${SEAT_SSH_TIMEOUT:-300}
+EXPECTED_FP=${SEAT_HOST_KEY_FP:-}
 # f12: pinned known_hosts lives in the profile state dir; bootstrap once via
-#   ssh-keyscan -t ed25519 "$ARIEL_HOST" > "$KNOWN_HOSTS"   (see runbook)
-KNOWN_HOSTS=${ARIEL_KNOWN_HOSTS:-${XDG_STATE_HOME:-$HOME/.local/state}/ariel/ariel_known_hosts}
+#   ssh-keyscan -t ed25519 "$SEAT_HOST" > "$KNOWN_HOSTS"   (see runbook)
+KNOWN_HOSTS=${SEAT_KNOWN_HOSTS:-${XDG_STATE_HOME:-$HOME/.local/state}/seat-host/seat_known_hosts}
 # f5: GLM-specific unit ONLY — a shared worker-forward unit serves other
 # seats and must never be restarted by this driver.
 GLM_FORWARDER=${GLM_FORWARDER_UNIT:-}
 
 missing=""
-for v in ARIEL_HOST:"$ARIEL_HOST" ARIEL_RECOVERY_USER:"$RECOVERY_USER" \
-         ARIEL_HOST_KEY_FP:"$EXPECTED_FP" CLUSTER_BEARER_PATH:"$BEARER_PATH"; do
+for v in SEAT_HOST:"$SEAT_HOST" SEAT_RECOVERY_USER:"$RECOVERY_USER" \
+         SEAT_HOST_KEY_FP:"$EXPECTED_FP" CLUSTER_BEARER_PATH:"$BEARER_PATH"; do
   [ -n "${v#*:}" ] || missing="$missing ${v%%:*}"
 done
 if [ -n "$missing" ]; then
-  echo "ariel_glm_recover: set the deployment values:$missing (see the header)" >&2
+  echo "seat_glm_recover: set the deployment values:$missing (see the header)" >&2
   printf '{"seat":"glm","state":"failed","via":"config","ssh_exit":-1}\n'
   exit 2
 fi
@@ -83,7 +83,7 @@ for arg in "$@"; do
     --probe-only) PROBE_ONLY=1 ;;
     --force)      FORCE=1 ;;
     -h|--help)    sed -n '2,45p' "$0" >&2; exit 0 ;;
-    *) echo "ariel_glm_recover: unknown flag: $arg (try --help)" >&2; \
+    *) echo "seat_glm_recover: unknown flag: $arg (try --help)" >&2; \
        printf '{"seat":"glm","state":"failed","via":"bad-flag","ssh_exit":-1}\n'; exit 2 ;;
   esac
 done
@@ -92,11 +92,11 @@ done
 emit() {  # state via ssh_exit — exactly one JSON line on stdout
   printf '{"seat":"glm","state":"%s","via":"%s","ssh_exit":%s}\n' "$1" "$2" "$3"
 }
-log() { echo "ariel_glm_recover: $*" >&2; }
+log() { echo "seat_glm_recover: $*" >&2; }
 
 # -- f4: safe lock (no /tmp, no symlink following) ----------------------------
 LOCK_ROOT="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
-LOCKDIR="$LOCK_ROOT/ariel-glm-recover"
+LOCKDIR="$LOCK_ROOT/seat-glm-recover"
 if [ -L "$LOCKDIR" ]; then
   log "lock dir $LOCKDIR is a symlink — refusing (f4)"
   emit skipped lock-symlink -1
@@ -132,9 +132,9 @@ probe() {
   echo "$code"
 }
 
-ariel_tcp() {
+seat_tcp() {
   # DIAGNOSTIC ONLY (f11) — never gates a restart decision
-  timeout 3 bash -c 'exec 3<>/dev/tcp/"$1"/"$2"' _ "$ARIEL_HOST" "$ARIEL_PORT" 2>/dev/null
+  timeout 3 bash -c 'exec 3<>/dev/tcp/"$1"/"$2"' _ "$SEAT_HOST" "$SEAT_PORT" 2>/dev/null
 }
 
 systemctl_user_ok() {
@@ -164,35 +164,35 @@ VIA=probe-only
 
 # -- --probe-only short-circuit -------------------------------------------------
 if [ "$PROBE_ONLY" = "1" ]; then
-  if ariel_tcp; then log "ariel:${ARIEL_PORT} tcp=open"; else log "ariel:${ARIEL_PORT} tcp=closed"; fi
+  if seat_tcp; then log "seat-host:${SEAT_PORT} tcp=open"; else log "seat-host:${SEAT_PORT} tcp=closed"; fi
   code=$(probe)
   if [ "$code" = "200" ]; then emit up already "$SSH_EXIT"; exit 0; fi
   emit failed probe-only "$SSH_EXIT"
   exit 1
 fi
 
-# -- (b) Ariel TCP pre-check — diagnostic to stderr (f10/f11) --------------------
-if ariel_tcp; then log "ariel:${ARIEL_PORT} tcp=open"; else log "ariel:${ARIEL_PORT} tcp=closed"; fi
+# -- (b) seat-host TCP pre-check — diagnostic to stderr (f10/f11) --------------------
+if seat_tcp; then log "seat-host:${SEAT_PORT} tcp=open"; else log "seat-host:${SEAT_PORT} tcp=closed"; fi
 
-# -- (c) pinned-host-key forced-command recovery on Ariel (f12/f7) ---------------
+# -- (c) pinned-host-key forced-command recovery on the seat host (f12/f7) ---------------
 if [ ! -f "$KNOWN_HOSTS" ] || [ -L "$KNOWN_HOSTS" ]; then
   log "pinned known_hosts $KNOWN_HOSTS missing — refusing to run (f12, fail closed)"
-  log "bootstrap once: ssh-keyscan -t ed25519 ${ARIEL_HOST} > $KNOWN_HOSTS (see runbook)"
+  log "bootstrap once: ssh-keyscan -t ed25519 ${SEAT_HOST} > $KNOWN_HOSTS (see runbook)"
   emit failed host-key -1
   exit 2
 fi
-if ! ssh-keygen -F "$ARIEL_HOST" -f "$KNOWN_HOSTS" >/dev/null 2>&1; then
-  log "no pinned entry for $ARIEL_HOST in $KNOWN_HOSTS — refusing (f12)"
+if ! ssh-keygen -F "$SEAT_HOST" -f "$KNOWN_HOSTS" >/dev/null 2>&1; then
+  log "no pinned entry for $SEAT_HOST in $KNOWN_HOSTS — refusing (f12)"
   emit failed host-key -1
   exit 2
 fi
-if ! ssh-keygen -F "$ARIEL_HOST" -f "$KNOWN_HOSTS" 2>/dev/null | grep -qF "$EXPECTED_FP"; then
+if ! ssh-keygen -F "$SEAT_HOST" -f "$KNOWN_HOSTS" 2>/dev/null | grep -qF "$EXPECTED_FP"; then
   log "pinned key fingerprint mismatch (expected $EXPECTED_FP) — refusing (f12)"
   emit failed host-key -1
   exit 2
 fi
 
-log "running ariel recovery via ssh (${RECOVERY_USER}@${ARIEL_HOST}, key ${RECOVERY_KEY})"
+log "running seat-host recovery via ssh (${RECOVERY_USER}@${SEAT_HOST}, key ${RECOVERY_KEY})"
 ssh_out=$(timeout "$SSH_TIMEOUT" ssh -i "$RECOVERY_KEY" \
   -o BatchMode=yes \
   -o StrictHostKeyChecking=yes \
@@ -200,15 +200,15 @@ ssh_out=$(timeout "$SSH_TIMEOUT" ssh -i "$RECOVERY_KEY" \
   -o ServerAliveInterval=15 \
   -o ServerAliveCountMax=3 \
   -o ConnectTimeout=5 \
-  "${RECOVERY_USER}@${ARIEL_HOST}" recover 2>&1)
+  "${RECOVERY_USER}@${SEAT_HOST}" recover 2>&1)
 SSH_EXIT=$?
 [ -n "$ssh_out" ] && echo "$ssh_out" >&2
-VIA=ariel-recover
+VIA=seat-recover
 
 # -- f3: throttled is NOT failed — no forwarder restart, retry later -----------
 if [ "$SSH_EXIT" = "3" ]; then
-  log "ariel throttled the recovery (exit 3) — seat still down, retry later"
-  emit throttled ariel-recover 3
+  log "the seat host throttled the recovery (exit 3) — seat still down, retry later"
+  emit throttled seat-recover 3
   exit 3
 fi
 
@@ -224,7 +224,7 @@ if [ "$code" != "200" ]; then
     else
       log "systemctl --user restart ${GLM_FORWARDER} FAILED (f9: surfaced, not swallowed)"
     fi
-    sleep "${ARIEL_RESTART_WAIT:-5}"
+    sleep "${SEAT_RESTART_WAIT:-5}"
     code=$(probe)
     VIA=forwarder-restart
   else

@@ -1,4 +1,4 @@
-"""Ariel GLM-seat self-heal tests — hermetic (no network, no ssh, no docker).
+"""Seat-host GLM self-heal tests — hermetic (no network, no ssh, no docker).
 
 Covers the 2026-11-16 remote-seat recovery lane (docs/sre-runbook-glm-seat.md),
 including the 12 DS red-team fixes:
@@ -6,11 +6,11 @@ including the 12 DS red-team fixes:
   runner (Python, in-process):
   - MODEL_SEATS recovery-driver selection: glm yes, kimi/deepseek never
   - f8: the driver path is hard-resolved from the deployment profile
-    (cluster.ariel_recovery_script); registry-supplied paths are REJECTED
+    (cluster.seat_recovery_script); registry-supplied paths are REJECTED
   - f9: systemctl --user availability check never crashes the runner
   - auto-fix executes [script] only when it is the trusted path
 
-  driver + Ariel root script (bash, executed with stub PATH):
+  driver + seat-host root script (bash, executed with stub PATH):
   - f3/f4: exit-code semantics 0 (up) / 1 (failed) / 3 (throttled) /
     4 (lock contention, JSON state=skipped)
   - f6: readiness is HTTP 200 on /v1/models with the bearer
@@ -19,7 +19,7 @@ including the 12 DS red-team fixes:
   - f7: ssh wrapped in `timeout 300` + ServerAlive keepalives
   - f10: exactly ONE JSON line on stdout, diagnostics on stderr
   - f12: pinned known_hosts required (fail closed, exit 2)
-  - f1/f2 (Ariel side): scoped PID ejection, atomic flock before throttle
+  - f1/f2 (seat-host side): scoped PID ejection, atomic flock before throttle
 """
 import fcntl
 import json
@@ -38,9 +38,9 @@ T0 = calendar.timegm((2026, 11, 16, 2, 0, 0))   # the GLM 3-h outage day
 
 TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(os.path.dirname(TEST_DIR))
-DRIVER = os.path.join(REPO_ROOT, "cluster", "bin", "ariel_glm_recover.sh")
-ARIEL_SCRIPT = os.path.join(REPO_ROOT, "cluster", "ariel", "ariel-glm-recover")
-EXPECTED_FP = "SHA256:test-only-fake-fingerprint"
+DRIVER = os.path.join(REPO_ROOT, "cluster", "bin", "seat_glm_recover.sh")
+SEAT_HOST_SCRIPT = os.path.join(REPO_ROOT, "cluster", "seat-host", "seat-glm-recover")
+EXPECTED_FP = "SHA256:test-only-fake-fingerprint"  # fake: tests only
 
 
 class Clock:
@@ -51,8 +51,8 @@ class Clock:
         return self.t
 
 
-def make_script(tmp_path, name="ariel_glm_recover.sh", executable=True):
-    """Stand-in for cluster/bin/ariel_glm_recover.sh (never ssh here)."""
+def make_script(tmp_path, name="seat_glm_recover.sh", executable=True):
+    """Stand-in for cluster/bin/seat_glm_recover.sh (never ssh here)."""
     p = tmp_path / name
     p.write_text("#!/bin/sh\necho ok\n")
     p.chmod(0o755 if executable else 0o644)
@@ -62,12 +62,12 @@ def make_script(tmp_path, name="ariel_glm_recover.sh", executable=True):
 def use_driver(monkeypatch, tmp_path, executable=True):
     """Point the f8 trusted driver at a tmp stand-in and wire the seat table.
 
-    The trusted path (_ARIEL_RECOVERY_SCRIPT) is monkeypatched exactly the
+    The trusted path (_SEAT_RECOVERY_SCRIPT) is monkeypatched exactly the
     way the deployment profile resolves it in production; tests then verify
     that ONLY this path is ever executed.
     """
     script = make_script(tmp_path, executable=executable)
-    monkeypatch.setattr(rn, "_ARIEL_RECOVERY_SCRIPT", script)
+    monkeypatch.setattr(rn, "_SEAT_RECOVERY_SCRIPT", script)
     monkeypatch.setattr(rn, "SEAT_RECOVERY_SCRIPTS", {"glm": script})
     seats = (("kimi", 18102), ("deepseek", 18095), ("glm", 18110, script))
     monkeypatch.setattr(rn, "MODEL_SEATS", seats)
@@ -87,7 +87,7 @@ def test_glm_seat_finding_selects_recovery_driver(tmp_path, monkeypatch):
     assert f.check["kind"] == "seat" and f.check["recovery_script"] == script
     assert script in f.proposed_action, \
         "proposed_action must instruct running the recovery driver"
-    assert "ariel_glm_recover.sh" in f.task_text()
+    assert "seat_glm_recover.sh" in f.task_text()
 
 
 def test_kimi_deepseek_never_get_the_recovery_driver(tmp_path, monkeypatch):
@@ -104,8 +104,8 @@ def test_kimi_deepseek_never_get_the_recovery_driver(tmp_path, monkeypatch):
             "local seats keep the classic systemctl playbook action"
 
 
-def test_seat_playbook_documents_ariel_recovery():
-    assert "ariel_glm_recover.sh" in rn.SEAT_PLAYBOOK
+def test_seat_playbook_documents_seat_recovery():
+    assert "seat_glm_recover.sh" in rn.SEAT_PLAYBOOK
     assert "never by local systemctl" in rn.SEAT_PLAYBOOK
 
 
@@ -170,18 +170,18 @@ def test_missing_or_non_executable_script_is_no_driver(tmp_path, monkeypatch):
 # ---------------------------------------------------------------------------
 
 def test_recovery_script_defaults_to_repo_relative_profile_value():
-    """Default: cluster/bin/ariel_glm_recover.sh under the repo root."""
+    """Default: cluster/bin/seat_glm_recover.sh under the repo root."""
     expected = os.path.normpath(
-        os.path.join(rn._ROOT, "cluster", "bin", "ariel_glm_recover.sh"))
-    assert rn._ARIEL_RECOVERY_SCRIPT == expected
+        os.path.join(rn._ROOT, "cluster", "bin", "seat_glm_recover.sh"))
+    assert rn._SEAT_RECOVERY_SCRIPT == expected
 
 
 def test_recovery_script_honors_profile_override(tmp_path, monkeypatch):
     monkeypatch.setattr(rn, "_pv",
                         lambda key, default=None:
                         str(tmp_path / "custom" / "recover.sh")
-                        if key == "cluster.ariel_recovery_script" else None)
-    assert rn._ariel_recovery_script() == str(tmp_path / "custom" / "recover.sh")
+                        if key == "cluster.seat_recovery_script" else None)
+    assert rn._seat_recovery_script() == str(tmp_path / "custom" / "recover.sh")
 
 
 def test_registry_provided_path_is_rejected(tmp_path, monkeypatch):
@@ -194,7 +194,7 @@ def test_registry_provided_path_is_rejected(tmp_path, monkeypatch):
     # even a path that merely LOOKS like the driver (different directory)
     elsewhere = os.path.join(str(tmp_path), "sub")
     os.makedirs(elsewhere, exist_ok=True)
-    moved = make_script(tmp_path / "sub", "ariel_glm_recover.sh")
+    moved = make_script(tmp_path / "sub", "seat_glm_recover.sh")
     assert rn.seat_recovery_script(("glm", 18110, moved)) is None
 
 
@@ -322,7 +322,7 @@ def test_execute_fix_runs_driver_command(tmp_path, monkeypatch):
 
     class Proc:
         returncode = 0
-        stdout = ('{"seat":"glm","state":"up","via":"ariel-recover",'
+        stdout = ('{"seat":"glm","state":"up","via":"seat-recover",'
                   '"ssh_exit":0}')
 
     monkeypatch.setattr(rn.subprocess, "run",
@@ -365,7 +365,7 @@ def test_handle_glm_down_end_to_end_executes_driver(tmp_path, monkeypatch):
 
     class Proc:
         returncode = 1
-        stdout = ('{"seat":"glm","state":"failed","via":"ariel-recover",'
+        stdout = ('{"seat":"glm","state":"failed","via":"seat-recover",'
                   '"ssh_exit":255}')
 
     monkeypatch.setattr(rn.subprocess, "run",
@@ -389,7 +389,7 @@ def _write_stub(path, body):
 
 def run_driver(tmp_path, args=("--probe-only",), env_extra=None,
                pre_lock=False):
-    """Run out2 cluster/bin/ariel_glm_recover.sh with stubbed binaries.
+    """Run out2 cluster/bin/seat_glm_recover.sh with stubbed binaries.
 
     Returns (returncode, stdout, stderr, calls_dir).
     """
@@ -415,7 +415,7 @@ def run_driver(tmp_path, args=("--probe-only",), env_extra=None,
                 '        echo "Host $2 found: line 1 ED25519 $FAKE_KEYGEN_FP";\n'
                 '      fi; exit 0 ;;\n'
                 '  -lf) if [ -n "${FAKE_KEYGEN_FP:-}" ]; then\n'
-                '         echo "256 $FAKE_KEYGEN_FP ariel"; exit 0\n'
+                '         echo "256 $FAKE_KEYGEN_FP seat-host"; exit 0\n'
                 '       fi; exit 1 ;;\n'
                 '  *) exit 0 ;;\n'
                 'esac\n')
@@ -427,23 +427,26 @@ def run_driver(tmp_path, args=("--probe-only",), env_extra=None,
                 'exit "${FAKE_SYSTEMCTL_RC:-0}"\n')
 
     xdg = tmp_path / "xdg"
-    (xdg / "ariel-glm-recover").mkdir(parents=True, exist_ok=True)
-    lockfile = xdg / "ariel-glm-recover" / "lock"
-    kh = tmp_path / "ariel_known_hosts"
-    kh.write_text("# pinned ariel host key goes here (bootstrapped)\n")
+    (xdg / "seat-glm-recover").mkdir(parents=True, exist_ok=True)
+    lockfile = xdg / "seat-glm-recover" / "lock"
+    kh = tmp_path / "seat_known_hosts"
+    kh.write_text("# pinned seat-host key goes here (bootstrapped)\n")
 
     env = dict(os.environ,
                PATH=f"{stub}:{os.environ['PATH']}",
                CALLS_DIR=str(calls),
                XDG_RUNTIME_DIR=str(xdg),
-               ARIEL_KNOWN_HOSTS=str(kh),
-               ARIEL_HOST="127.0.0.1",          # keep ariel_tcp hermetic
-               ARIEL_PORT="9",
+               SEAT_KNOWN_HOSTS=str(kh),
+               SEAT_HOST="127.0.0.1",          # keep seat_tcp hermetic
+               SEAT_PORT="9",
                CLUSTER_BEARER_PATH=str(tmp_path / "bearer"),
                HOME=str(tmp_path),
-               ARIEL_RESTART_WAIT="0.1",        # hermetic: no real sleeps
+               SEAT_RESTART_WAIT="0.1",        # hermetic: no real sleeps
                FAKE_CURL_CODE="000",
                FAKE_KEYGEN_FP=EXPECTED_FP,
+               SEAT_HOST_KEY_FP=EXPECTED_FP,
+               SEAT_RECOVERY_USER="recovery",
+               GLM_FORWARDER_UNIT="node-1-glm-forward.service",
                FAKE_KEYGEN_HAS_HOST="1")
     (tmp_path / "bearer").write_text("testbearer\n")
     env.update(env_extra or {})
@@ -483,7 +486,7 @@ def test_driver_probe_only_down_exit1(tmp_path):
 
 
 def test_driver_exit_codes_throttled_3_no_forwarder_restart(tmp_path):
-    """f3: ssh exit 3 (Ariel throttled) → driver exit 3, state=throttled,
+    """f3: ssh exit 3 (the seat host throttled) → driver exit 3, state=throttled,
     and NO forwarder restart (nothing for the runner to re-churn)."""
     rc, out, err, calls = run_driver(
         tmp_path, args=(), env_extra={"FAKE_SSH_EXIT": "3"})
@@ -508,7 +511,7 @@ def test_driver_exit4_lock_contention_emits_json(tmp_path):
 def test_driver_f12_fail_closed_missing_pinned_hosts(tmp_path):
     rc, out, err, _ = run_driver(
         tmp_path, args=(),
-        env_extra={"ARIEL_KNOWN_HOSTS": str(tmp_path / "absent")})
+        env_extra={"SEAT_KNOWN_HOSTS": str(tmp_path / "absent")})
     assert rc == 2, "fail closed when the pinned known_hosts file is absent"
     j = json.loads(out.strip())
     assert j["via"] == "host-key" and j["state"] == "failed"
@@ -534,7 +537,7 @@ def test_driver_f7_f12_ssh_invocation_is_pinned_and_bounded(tmp_path):
         f"ssh must be wrapped in `timeout 300`: {timeout_lines!r}"
     ssh_line = (calls / "ssh.log").read_text()
     for opt in ("-o StrictHostKeyChecking=yes",
-                f"-o UserKnownHostsFile={tmp_path / 'ariel_known_hosts'}",
+                f"-o UserKnownHostsFile={tmp_path / 'seat_known_hosts'}",
                 "-o ServerAliveInterval=15",
                 "-o ServerAliveCountMax=3"):
         assert opt in ssh_line, f"missing {opt} in ssh argv"
@@ -590,11 +593,11 @@ def test_driver_f6_probe_is_http_v1_models_with_bearer(tmp_path):
 
 
 # ---------------------------------------------------------------------------
-# Ariel root script — scoped PID ejection (f1), atomic lock (f2),
+# seat-host root script — scoped PID ejection (f1), atomic lock (f2),
 # HTTP readiness (f6), exit codes (f3)
 # ---------------------------------------------------------------------------
 
-def run_ariel_script(tmp_path, env_extra=None, args=()):
+def run_seat_host_script(tmp_path, env_extra=None, args=()):
     stub = tmp_path / "astub"
     stub.mkdir(exist_ok=True)
     calls = tmp_path / "acalls"
@@ -622,53 +625,53 @@ def run_ariel_script(tmp_path, env_extra=None, args=()):
     env = dict(os.environ,
                PATH=f"{stub}:{os.environ['PATH']}",
                CALLS_DIR=str(calls),
-               ARIEL_GLM_LOCK_DIR=str(tmp_path / "lockdir"),
-               ARIEL_GLM_BEARER=str(tmp_path / "bearer"),
-               ARIEL_GLM_WAIT_S="0.1",          # hermetic: no real sleeps
-               ARIEL_GLM_EJECT_WAIT_S="0.1",
+               SEAT_GLM_LOCK_DIR=str(tmp_path / "lockdir"),
+               SEAT_GLM_BEARER=str(tmp_path / "bearer"),
+               SEAT_GLM_WAIT_S="0.1",          # hermetic: no real sleeps
+               SEAT_GLM_EJECT_WAIT_S="0.1",
                FAKE_CURL_CODE="000",
                FAKE_MAINPID="0")
     (tmp_path / "bearer").write_text("testbearer\n")
     env.update(env_extra or {})
-    p = subprocess.run([ARIEL_SCRIPT, *args], capture_output=True, text=True,
+    p = subprocess.run([SEAT_HOST_SCRIPT, *args], capture_output=True, text=True,
                        timeout=120, env=env)
     return p.returncode, p.stdout, p.stderr, calls
 
 
-def test_ariel_exit0_when_http_up(tmp_path):
-    rc, out, err, calls = run_ariel_script(
+def test_seat_host_exit0_when_http_up(tmp_path):
+    rc, out, err, calls = run_seat_host_script(
         tmp_path, env_extra={"FAKE_CURL_CODE": "200"})
     assert rc == 0
     assert not (calls / "docker.log").exists(), "up → no docker action"
     assert not (calls / "nvidia-smi.log").exists()
 
 
-def test_ariel_exit3_throttled_by_recent_attempt(tmp_path):
-    rc, out, err, calls = run_ariel_script(tmp_path)
+def test_seat_host_exit3_throttled_by_recent_attempt(tmp_path):
+    rc, out, err, calls = run_seat_host_script(tmp_path)
     assert rc == 1, \
         "first run without a prior attempt attempts the recovery (exit 1), not 3"
     # second run within the throttle window → exit 3
-    rc, out, err, _ = run_ariel_script(tmp_path)
+    rc, out, err, _ = run_seat_host_script(tmp_path)
     assert rc == 3
     assert "throttled" in err
     # and the throttle timestamp was NOT refreshed by the throttled run
-    last = tmp_path / "lockdir" / "ariel-glm-recover.last"
+    last = tmp_path / "lockdir" / "seat-glm-recover.last"
     first_mtime = os.stat(last).st_mtime
-    rc, _, _, _ = run_ariel_script(tmp_path)
+    rc, _, _, _ = run_seat_host_script(tmp_path)
     assert os.stat(last).st_mtime == first_mtime, \
         "f2: the lock timestamp is refreshed only on an actual attempt"
 
 
-def test_ariel_exit1_when_docker_start_fails(tmp_path):
-    rc, out, err, _ = run_ariel_script(
+def test_seat_host_exit1_when_docker_start_fails(tmp_path):
+    rc, out, err, _ = run_seat_host_script(
         tmp_path, env_extra={"FAKE_DOCKER_RC": "1"})
     assert rc == 1
 
 
-def test_ariel_f1_scoped_pid_ejection_only(tmp_path):
+def test_seat_host_f1_scoped_pid_ejection_only(tmp_path):
     """f1: no blanket nvidia-smi kill loop — only the container's own PIDs
     (111, 222) are ejected; co-tenant PID 9999 is never touched."""
-    rc, out, err, calls = run_ariel_script(
+    rc, out, err, calls = run_seat_host_script(
         tmp_path, env_extra={"FAKE_DOCKER_RUNNING": "false"})
     assert rc in (0, 1)
     assert not (calls / "nvidia-smi.log").exists(), \
@@ -679,11 +682,11 @@ def test_ariel_f1_scoped_pid_ejection_only(tmp_path):
     assert "111" in serr and "222" in serr, "container PIDs are ejected"
     assert "9999" not in serr, "co-tenant PIDs are never touched"
     slog = (calls / "systemctl.log").read_text()
-    assert "stop ariel-vllm-qwen36.service" in slog
+    assert "stop seat-critic.service" in slog
 
 
-def test_ariel_f1_critic_mainpid_linger_is_killed_exactly(tmp_path):
-    rc, out, err, calls = run_ariel_script(
+def test_seat_host_f1_critic_mainpid_linger_is_killed_exactly(tmp_path):
+    rc, out, err, calls = run_seat_host_script(
         tmp_path, env_extra={"FAKE_MAINPID": "4242"})
     slog = (calls / "systemctl.log").read_text()
     serr = err
@@ -691,10 +694,22 @@ def test_ariel_f1_critic_mainpid_linger_is_killed_exactly(tmp_path):
     assert slog.count("4242") >= 0
 
 
-def test_ariel_f6_restarts_running_but_not_serving_container(tmp_path):
-    rc, out, err, calls = run_ariel_script(
+def test_seat_host_f6_restarts_running_but_not_serving_container(tmp_path):
+    rc, out, err, calls = run_seat_host_script(
         tmp_path, env_extra={"FAKE_DOCKER_RUNNING": "true"})
     dlog = (calls / "docker.log").read_text()
     assert "restart glm53-fp4" in dlog, \
         "running-but-not-serving → docker restart (start is a no-op)"
     assert "start glm53-fp4" not in dlog.replace("restart glm53-fp4", "")
+
+
+def test_driver_refuses_without_deployment_values(tmp_path):
+    """No built-in host, user or fingerprint: a missing value is exit 2, one JSON line."""
+    rc, out, err, calls = run_driver(
+        tmp_path, args=("--probe-only",),
+        env_extra={"SEAT_HOST_KEY_FP": "", "SEAT_RECOVERY_USER": ""})
+    assert rc == 2
+    lines = out.strip().splitlines()
+    assert len(lines) == 1 and '"via":"config"' in lines[0]
+    assert "SEAT_HOST_KEY_FP" in err and "SEAT_RECOVERY_USER" in err
+

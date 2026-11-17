@@ -18,7 +18,7 @@
       "pillar": "reliability",
       "statement": "No single point of failure: a component's failure must degrade, not take the platform down.",
       "status": "gap",
-      "evidence": "check bp.failure.autorecovery on fallback placement: GLM depends on one host (Ariel); no documented failover seat",
+      "evidence": "check bp.failure.autorecovery on fallback placement: GLM depends on one host (the seat host); no documented failover seat",
       "decision_point": "D2",
       "links": [],
       "check": "bp.reliability.no_spof"

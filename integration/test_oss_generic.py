@@ -96,6 +96,8 @@ def test_source_tree_has_no_banned_tokens():
 
 def test_hermetic_cycle_runs_generic():
     """The hermetic cycle suite proves the pipeline end-to-end offline."""
+    if not (ROOT / "packages").is_dir():
+        pytest.skip("hermetic cycle needs packages/ (not shipped in the public tree)")
     r = subprocess.run(
         [sys.executable, "-m", "pytest", "integration/test_hermetic_cycle.py",
          "-q", "-p", "no:cacheprovider"],

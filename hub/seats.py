@@ -46,7 +46,7 @@ SEAT_BINDINGS = {
     "design": ["critic", "glm"],
     "pmf": ["glm", "critic"],
     "code-design": ["glm", "critic"],
-    "execution": ["utility_worker", "ariel_orchestrator", "eva_operator"],
+    "execution": ["utility_worker", "remote_orchestrator", "eva_operator"],
     "measurement": ["utility_worker"],
     "product-owner": ["glm", "critic"],
     "orchestrator": ["glm", "critic"],

@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
-# ariel-glm-recover — fixed, idempotent recovery for the GLM-5.3-Flash seat
-# on ai-ariel. Runs AS ROOT via sudo, invoked ONLY through the ssh
+# seat-glm-recover — fixed, idempotent recovery for the GLM-5.3-Flash seat
+# on the seat host. Runs AS ROOT via sudo, invoked ONLY through the ssh
 # forced-command installed for the ops host's recovery key (no arbitrary ssh exec).
 #
 # What it does, in order:
-#   1. Atomic claim: flock -n on $LOCK_DIR/ariel-glm-recover.lock BEFORE the
+#   1. Atomic claim: flock -n on $LOCK_DIR/seat-glm-recover.lock BEFORE the
 #      throttle check (f2) — concurrent forced-command invocations serialize
 #      here, not just on the ops host. Throttle: refuse (exit 3) if a recovery
 #      ATTEMPT started <10 min ago; the last-attempt timestamp is refreshed
 #      ONLY when an actual attempt begins (f2/f3).
 #   2. Readiness: HTTP, not TCP (f6) — GET /v1/models with the cluster
 #      bearer must answer 200. 200 → no-op, exit 0.
-#   3. Eject GPU holders — SCOPED (f1): stop ariel-vllm-qwen36.service
+#   3. Eject GPU holders — SCOPED (f1): stop seat-critic.service
 #      (systemctl stop; kill its exact MainPID only if it lingers) and kill
 #      ONLY PIDs belonging to the glm53-fp4 container (docker top). There is
 #      NO blanket nvidia-smi kill loop — co-tenant GPU jobs are never
@@ -27,13 +27,13 @@
 # Diagnostics go to stderr (and syslog); stdout stays parseable.
 set -uo pipefail
 
-LOGTAG=ariel-glm-recover
-CONTAINER=${ARIEL_GLM_CONTAINER:-glm53-fp4}
-CRITIC=${ARIEL_GLM_CRITIC_UNIT:-ariel-vllm-qwen36.service}
-BEARER=${ARIEL_GLM_BEARER:?set ARIEL_GLM_BEARER to the cluster bearer file}
-LOCK_DIR=${ARIEL_GLM_LOCK_DIR:-/run}
-LOCK="$LOCK_DIR/ariel-glm-recover.lock"          # flock target (f2)
-LAST_ATTEMPT="$LOCK_DIR/ariel-glm-recover.last"  # throttle timestamp
+LOGTAG=seat-glm-recover
+CONTAINER=${SEAT_GLM_CONTAINER:-glm53-fp4}
+CRITIC=${SEAT_GLM_CRITIC_UNIT:-seat-critic.service}
+BEARER=${SEAT_GLM_BEARER:?set SEAT_GLM_BEARER to the cluster bearer file}
+LOCK_DIR=${SEAT_GLM_LOCK_DIR:-/run}
+LOCK="$LOCK_DIR/seat-glm-recover.lock"          # flock target (f2)
+LAST_ATTEMPT="$LOCK_DIR/seat-glm-recover.last"  # throttle timestamp
 
 log() { logger -t "$LOGTAG" -- "$*" 2>/dev/null || true; echo "[$LOGTAG] $*" >&2; }
 
@@ -87,7 +87,7 @@ for p in "${scoped_pids[@]:-}"; do
   log "SIGTERM scoped container pid $p"
   kill "$p" 2>/dev/null || true
 done
-sleep "${ARIEL_GLM_EJECT_WAIT_S:-5}"
+sleep "${SEAT_GLM_EJECT_WAIT_S:-5}"
 # SIGKILL escalation — same scoped set only, after the grace period
 for p in "${scoped_pids[@]:-}"; do
   [ -n "$p" ] || continue
@@ -121,7 +121,7 @@ for i in $(seq 1 48); do
     log "glm recovered on 18110 (HTTP 200) after ~$((i)) probe cycles"
     exit 0
   fi
-  sleep "${ARIEL_GLM_WAIT_S:-5}"
+  sleep "${SEAT_GLM_WAIT_S:-5}"
 done
 
 log "glm did NOT reach HTTP 200 on /v1/models within 240s; last container logs:"

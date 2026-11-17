@@ -30,6 +30,13 @@ for _pkg in ("rlai-contracts", "rlai-roles", "rlai-runtime", "rlai-tickets"):
     if _src not in sys.path:
         sys.path.insert(0, _src)
 
+# The public tree ships without packages/ (the products live in the private
+# monorepo). Skip, rather than fail to import, when they are absent.
+if not all((_PACKAGES / _p / "src").is_dir() for _p in
+           ("rlai-contracts", "rlai-roles", "rlai-runtime", "rlai-tickets")):
+    pytest.skip("needs packages/rlai-* (not shipped in the public tree)",
+                allow_module_level=True)
+
 import rlai_contracts  # noqa: E402
 
 from rlai_roles import registry as roles_registry  # noqa: E402
