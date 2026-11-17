@@ -40,7 +40,7 @@ TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(os.path.dirname(TEST_DIR))
 DRIVER = os.path.join(REPO_ROOT, "cluster", "bin", "ariel_glm_recover.sh")
 ARIEL_SCRIPT = os.path.join(REPO_ROOT, "cluster", "ariel", "ariel-glm-recover")
-EXPECTED_FP = "SHA256:test-only-fake-fingerprint"
+EXPECTED_FP = "SHA256:test-only-fake-fingerprint"  # fake: tests only
 
 
 class Clock:
@@ -444,6 +444,9 @@ def run_driver(tmp_path, args=("--probe-only",), env_extra=None,
                ARIEL_RESTART_WAIT="0.1",        # hermetic: no real sleeps
                FAKE_CURL_CODE="000",
                FAKE_KEYGEN_FP=EXPECTED_FP,
+               ARIEL_HOST_KEY_FP=EXPECTED_FP,
+               ARIEL_RECOVERY_USER="recovery",
+               GLM_FORWARDER_UNIT="node-1-glm-forward.service",
                FAKE_KEYGEN_HAS_HOST="1")
     (tmp_path / "bearer").write_text("testbearer\n")
     env.update(env_extra or {})
@@ -698,3 +701,15 @@ def test_ariel_f6_restarts_running_but_not_serving_container(tmp_path):
     assert "restart glm53-fp4" in dlog, \
         "running-but-not-serving → docker restart (start is a no-op)"
     assert "start glm53-fp4" not in dlog.replace("restart glm53-fp4", "")
+
+
+def test_driver_refuses_without_deployment_values(tmp_path):
+    """No built-in host, user or fingerprint: a missing value is exit 2, one JSON line."""
+    rc, out, err, calls = run_driver(
+        tmp_path, args=("--probe-only",),
+        env_extra={"ARIEL_HOST_KEY_FP": "", "ARIEL_RECOVERY_USER": ""})
+    assert rc == 2
+    lines = out.strip().splitlines()
+    assert len(lines) == 1 and '"via":"config"' in lines[0]
+    assert "ARIEL_HOST_KEY_FP" in err and "ARIEL_RECOVERY_USER" in err
+

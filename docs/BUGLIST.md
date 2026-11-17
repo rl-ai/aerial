@@ -1,4 +1,4 @@
-# Aerial — open bug & issue list (2026-11-14)
+# Aerial — open bug & issue list (updated 2026-11-17)
 
 Consolidated from: the attack swarm (TK-EXAMPLE-1), the
 gap review (GAPS-20261112.md), the release checklist, ops-agent
@@ -9,8 +9,6 @@ the record.
 
 | # | Sev | Bug | Fix path |
 |---|---|---|---|
-| S1 | CRITICAL | Hub does not scope tokens: any valid bearer can create tickets and pass PATCH gates (attack-swarm) | **Project #6 phase 1** — scoped tokens actor×family×action, deny-by-default. Kimi phase-1 brief in flight |
-| S2 | HIGH | Hub PATCH gate accepts the read-only bearer (same root as S1) | P6 phase 1 |
 | S3 | LOW | Bridge `validate_source_entry` accepts 100KB targets and shell-metachar targets (no length/charset cap) | small lane: length + charset validation |
 | S4 | LOW | Hub has no DELETE route — attack-created tickets can only be cancelled, not removed | P6 design note |
 
@@ -26,6 +24,8 @@ the record.
 
 | Sev | Bug | Fixed |
 |---|---|---|
+| CRITICAL | Hub did not scope tokens: any valid bearer could create tickets and pass PATCH gates (attack swarm, was S1) | ✅ 2026-11-15 — read and write token classes enforced: every non-GET request needs a write-class token, else 403 `read_only_token`; per-family write ACLs (`hub/ticket_hub/family_acl.py`). Verified live: read-token POST 403, write-token POST 201 |
+| HIGH | Hub PATCH gate accepted the read-only bearer (same root as S1, was S2) | ✅ 2026-11-15 — same fix |
 | HIGH | Console write gate accepted the read-only bearer (shared default token) | ✅ 2026-11-14 — distinct ops-write token; read token POST → 401 verified |
 | HIGH | roles-runner/roles-supervisor hub 400/401/404 cluster | ✅ lane 1 (a9234b3) |
 | MED | curator-poll 300s timeouts / "(no summary)" cluster | ✅ lane 2 (incremental rating, 8e0c4c2) |

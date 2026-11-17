@@ -82,6 +82,8 @@ def test_source_tree_has_no_banned_tokens():
                 continue
             if "vram_registry.json" in s:
                 continue  # data file; sanitized separately
+            if p.name == "pii_scan.py":
+                continue  # the scanner: its patterns are the banned strings
             try:
                 text = p.read_text(encoding="utf-8")
             except Exception:

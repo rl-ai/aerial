@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# ariel_glm_recover.sh — Morpheus-side recovery driver for the GLM-5.3-Flash
-# orchestrator seat (Ariel:18110, forwarded to Morpheus:18110).
+# ariel_glm_recover.sh — ops-host-side recovery driver for the GLM-5.3-Flash
+# orchestrator seat (Ariel:18110, forwarded to the ops host:18110).
 #
 # Recovery ladder (see docs/sre-runbook-glm-seat.md):
 #   (a) probe the local seat  GET http://127.0.0.1:18110/v1/models with the
@@ -11,14 +11,14 @@
 #       timeout 300 ssh -i $RECOVERY_KEY -o BatchMode=yes
 #         -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$KNOWN_HOSTS
 #         -o ServerAliveInterval=15 -o ServerAliveCountMax=3 (f7)
-#         -o ConnectTimeout=5 recovery@192.0.2.10 recover
+#         -o ConnectTimeout=5 $ARIEL_RECOVERY_USER@$ARIEL_HOST recover
 #       (the sshd forced command runs /usr/local/sbin/ariel-glm-recover;
 #       ssh exit 0 = seat up, 1 = attempted+failed, 3 = throttled).
 #       The driver REFUSES to run when the pinned known_hosts file is
 #       missing or its fingerprint does not match (fail closed, exit 2).
 #   (d) forwarder restart — decided ONLY by the local HTTP probe (f11), and
-#       restricted to the GLM-specific unit morpheus-glm-forward-18083.service
-#       (f5: morpheus-worker-forward.service is SHARED by kimi/deepseek and
+#       restricted to the GLM-specific unit $GLM_FORWARDER_UNIT
+#       (f5: a shared worker-forward unit serves other seats and
 #       is never restarted here). Skipped with a diagnostic when
 #       `systemctl --user` is unavailable in this context (f9).
 #   (e) final verdict: EXACTLY ONE JSON line on stdout (f10); all
@@ -42,25 +42,39 @@
 # verified, symlink-checked — never follows a planted symlink). Contention
 # emits the JSON line (state=skipped) and exits 4 — never a silent 0.
 #
-# Env overrides: ARIEL_RECOVERY_KEY (default ~/.ssh/ariel_recovery_ed25519),
-# ARIEL_HOST, ARIEL_PORT, GLM_SEAT_PORT, CLUSTER_BEARER_PATH,
-# ARIEL_RECOVERY_USER, ARIEL_KNOWN_HOSTS, ARIEL_SSH_TIMEOUT.
+# Required (your deployment's values; nothing is built in):
+#   ARIEL_HOST, ARIEL_RECOVERY_USER, ARIEL_HOST_KEY_FP (the seat host's
+#   pinned SHA256 ed25519 fingerprint), CLUSTER_BEARER_PATH.
+# Optional: GLM_FORWARDER_UNIT (no forwarder restart without it),
+#   ARIEL_RECOVERY_KEY (default ~/.ssh/ariel_recovery_ed25519), ARIEL_PORT,
+#   GLM_SEAT_PORT, ARIEL_KNOWN_HOSTS, ARIEL_SSH_TIMEOUT.
 set -uo pipefail
 
-ARIEL_HOST=${ARIEL_HOST:-192.0.2.10}
+ARIEL_HOST=${ARIEL_HOST:-}
 ARIEL_PORT=${ARIEL_PORT:-18110}
 SEAT_PORT=${GLM_SEAT_PORT:-18110}
-BEARER_PATH=${CLUSTER_BEARER_PATH:-/srv/ai/config/cluster_bearer}
+BEARER_PATH=${CLUSTER_BEARER_PATH:-}
 RECOVERY_KEY=${ARIEL_RECOVERY_KEY:-$HOME/.ssh/ariel_recovery_ed25519}
-RECOVERY_USER=${ARIEL_RECOVERY_USER:-recovery}
+RECOVERY_USER=${ARIEL_RECOVERY_USER:-}
 SSH_TIMEOUT=${ARIEL_SSH_TIMEOUT:-300}
-EXPECTED_FP="SHA256:test-only-fake-fingerprint"
+EXPECTED_FP=${ARIEL_HOST_KEY_FP:-}
 # f12: pinned known_hosts lives in the profile state dir; bootstrap once via
-#   ssh-keyscan -t ed25519 192.0.2.10 > "$KNOWN_HOSTS"   (see runbook)
+#   ssh-keyscan -t ed25519 "$ARIEL_HOST" > "$KNOWN_HOSTS"   (see runbook)
 KNOWN_HOSTS=${ARIEL_KNOWN_HOSTS:-${XDG_STATE_HOME:-$HOME/.local/state}/ariel/ariel_known_hosts}
-# f5: GLM-specific unit ONLY — morpheus-worker-forward.service is shared by
-# kimi/deepseek and must never be restarted by this driver.
-GLM_FORWARDER="morpheus-glm-forward-18083.service"
+# f5: GLM-specific unit ONLY — a shared worker-forward unit serves other
+# seats and must never be restarted by this driver.
+GLM_FORWARDER=${GLM_FORWARDER_UNIT:-}
+
+missing=""
+for v in ARIEL_HOST:"$ARIEL_HOST" ARIEL_RECOVERY_USER:"$RECOVERY_USER" \
+         ARIEL_HOST_KEY_FP:"$EXPECTED_FP" CLUSTER_BEARER_PATH:"$BEARER_PATH"; do
+  [ -n "${v#*:}" ] || missing="$missing ${v%%:*}"
+done
+if [ -n "$missing" ]; then
+  echo "ariel_glm_recover: set the deployment values:$missing (see the header)" >&2
+  printf '{"seat":"glm","state":"failed","via":"config","ssh_exit":-1}\n'
+  exit 2
+fi
 
 PROBE_ONLY=0
 FORCE=0
@@ -203,7 +217,9 @@ code=$(probe)
 if [ "$code" != "200" ]; then
   if systemctl_user_ok; then
     log "local seat dead (HTTP probe ${code}) — restarting ${GLM_FORWARDER} ONLY (shared worker-forward untouched, f5)"
-    if systemctl --user restart "$GLM_FORWARDER" 2>&1; then
+    if [ -z "$GLM_FORWARDER" ]; then
+      log "GLM_FORWARDER_UNIT unset — forwarder restart skipped"
+    elif systemctl --user restart "$GLM_FORWARDER" 2>&1; then
       log "restarted ${GLM_FORWARDER}"
     else
       log "systemctl --user restart ${GLM_FORWARDER} FAILED (f9: surfaced, not swallowed)"

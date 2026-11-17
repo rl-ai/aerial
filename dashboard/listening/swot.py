@@ -402,7 +402,8 @@ JOB_NODE = "aerial"
 
 def weekly_crontab_line(workdir: str = "~/workspaces/worker/lanes-p1a-swot/out",
                         log_path: str = "~/services/scrape-pipeline/logs/swot-weekly.log",
-                        node: str = JOB_NODE, ticket: Optional[str] = None) -> str:
+                        node: str = JOB_NODE, ticket: Optional[str] = None,
+                        user: Optional[str] = None) -> str:
     """job_run.py crontab entry (weekly), matching the ingest-bridge
     convention: `sched user cd <dir> && job_run.py --job <node>:<name>
     [--ticket <tk>] -- <payload> >> log 2>&1`."""
@@ -410,7 +411,9 @@ def weekly_crontab_line(workdir: str = "~/workspaces/worker/lanes-p1a-swot/out",
                f"--entities dashboard/listening/swot_entities.json "
                f"--digest-path bridge/digest-latest.json --window-days 7")
     ticket_arg = f" --ticket {ticket}" if ticket else ""
-    return (f"{JOB_SCHEDULE} ai-eva cd {workdir} && "
+    # the system-crontab user column: the caller's, $AERIAL_JOB_USER, or "aerial"
+    user = user or os.environ.get("AERIAL_JOB_USER") or "aerial"
+    return (f"{JOB_SCHEDULE} {user} cd {workdir} && "
             f"python3 ~/ai-ops/bin/job_run.py --job {node}:{JOB_NAME}"
             f"{ticket_arg} -- {payload} >> {log_path} 2>&1")
 

@@ -30,8 +30,9 @@ contact channels. Please do not include secrets or tokens in reports.
 
 - Keep `config/deployment.yaml` out of git (it is in `.gitignore`).
   It holds your tokens' locations, recipients, and node names.
-- Serve the console on localhost or put your own auth in front; the
-  console itself has no built-in authentication.
+- The console requires a read token for every page and a distinct
+  write token for decisions. It has no user accounts or TLS, so serve
+  it on localhost or put your own authentication and TLS in front.
 - Put real secrets in files under `paths.state_dir`/secrets or your
   own secret store — never in the profile or code.
 

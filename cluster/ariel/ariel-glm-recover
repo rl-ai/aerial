@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # ariel-glm-recover — fixed, idempotent recovery for the GLM-5.3-Flash seat
 # on ai-ariel. Runs AS ROOT via sudo, invoked ONLY through the ssh
-# forced-command installed for ai-eva@morpheus (no arbitrary ssh exec).
+# forced-command installed for the ops host's recovery key (no arbitrary ssh exec).
 #
 # What it does, in order:
 #   1. Atomic claim: flock -n on $LOCK_DIR/ariel-glm-recover.lock BEFORE the
 #      throttle check (f2) — concurrent forced-command invocations serialize
-#      here, not just on Morpheus. Throttle: refuse (exit 3) if a recovery
+#      here, not just on the ops host. Throttle: refuse (exit 3) if a recovery
 #      ATTEMPT started <10 min ago; the last-attempt timestamp is refreshed
 #      ONLY when an actual attempt begins (f2/f3).
 #   2. Readiness: HTTP, not TCP (f6) — GET /v1/models with the cluster
@@ -30,7 +30,7 @@ set -uo pipefail
 LOGTAG=ariel-glm-recover
 CONTAINER=${ARIEL_GLM_CONTAINER:-glm53-fp4}
 CRITIC=${ARIEL_GLM_CRITIC_UNIT:-ariel-vllm-qwen36.service}
-BEARER=${ARIEL_GLM_BEARER:-/srv/ai/config/cluster_bearer}
+BEARER=${ARIEL_GLM_BEARER:?set ARIEL_GLM_BEARER to the cluster bearer file}
 LOCK_DIR=${ARIEL_GLM_LOCK_DIR:-/run}
 LOCK="$LOCK_DIR/ariel-glm-recover.lock"          # flock target (f2)
 LAST_ATTEMPT="$LOCK_DIR/ariel-glm-recover.last"  # throttle timestamp

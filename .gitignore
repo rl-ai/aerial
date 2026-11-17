@@ -20,3 +20,4 @@ config/deployment.yaml
 
 # OS
 .DS_Store
+config/pii-patterns.local
