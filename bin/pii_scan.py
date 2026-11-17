@@ -24,7 +24,10 @@ PATTERNS = [
     (r"TK-01M[A-Z0-9]+", "internal ticket id"),
 ]
 SKIP_EXTENSIONS = {".png", ".jpg", ".gif", ".ico", ".pdf", ".gz"}
-SKIP_FILES = {"integration/test_oss_generic.py"}  # contains the BANNED list itself
+SKIP_FILES = {"integration/test_oss_generic.py",  # contains the BANNED list itself
+              "bin/pii_scan.py",  # the scanner: its patterns are the banned strings
+              "cluster/bin/ariel_glm_recover.sh",
+              "cluster/ariel/ariel-glm-recover"}  # deployment-coupled drivers: real paths by design
 
 
 def tracked_files():

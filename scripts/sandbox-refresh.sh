@@ -19,8 +19,8 @@ fi
 # Known tree names → sources (local origin paths; a full "name:path" spec
 # overrides). The workspace copy is cloned from / pulled toward these.
 declare -A SRC=(
-    [ai-ops]="/home/ai-eva/repos/ai-ops.git"
-    [second-brain-gateway]="/home/ai-eva/workspaces/build/second-brain-gateway"
+    [ai-ops]="/home/you/repos/ai-ops.git"
+    [second-brain-gateway]="/home/you/workspaces/build/second-brain-gateway"
 )
 
 mkdir -p "$WS"

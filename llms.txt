@@ -1,0 +1,88 @@
+# llms.txt — Aerial onboarding for AI agents
+
+This file tells an AI agent how to install, configure, and verify Aerial
+(the control tower for autonomous agent fleets) on the machine it is
+running on. Follow the steps in order. Every command is safe to re-run.
+
+## What Aerial is
+
+An operations layer over your existing agent harness: a ticket hub (the
+system of record), an ops agent that detects failures and applies
+governed fixes, an operator console, built-in reporting, and fleet
+management for local model seats. MIT licensed, fully local, no telemetry.
+
+## Repo layout
+
+- `hub/` — the ticket hub (FastAPI service, SQLite storage, port 8020)
+- `dashboard/` — operator console (:8777), daily board, ops agent loop
+- `integration/` — scheduler, shadow-hierarchy runner
+- `bin/aerial_verify.py` — end-to-end chain check
+- `config/deployment.yaml.example` — configuration template
+
+## Install steps
+
+### 1. Requirements
+
+Python 3.10+ and curl. No third-party runtime dependencies for the core
+services. Docker optional (the hub can run bare).
+
+### 2. Configuration
+
+```bash
+cp config/deployment.yaml.example config/deployment.yaml
+mkdir -p ~/.aerial/secrets ~/.aerial/logs ~/.aerial/data
+head -c 32 /dev/urandom | xxd -p -c 64 > ~/.aerial/secrets/hub-token
+chmod 600 ~/.aerial/secrets/hub-token
+```
+
+The only values worth changing on first boot: `cluster.node_name`
+(prefix for job ids) and — later — `email.recipient_email` (empty =
+delivery disabled).
+
+### 3. Start the ticket hub
+
+```bash
+TICKET_HUB_HOME=$HOME/.aerial/hub-home python3 hub/api.py
+```
+
+Health check: `curl -s http://127.0.0.1:8020/health` → `{"ok": true, ...}`.
+Hub auth tokens live at `cluster.hub_token_file` (default
+`~/.aerial/secrets/hub-token`).
+
+### 4. Start the operator console
+
+```bash
+export PYTHONPATH="$PWD:$PWD/dashboard"
+python3 dashboard/serve_console.py
+```
+
+Console: `http://127.0.0.1:8777/dashboard` — bearer-authed with the same
+hub token. Health: `/dashboard/health`.
+
+### 5. Verify the chain
+
+```bash
+python3 bin/aerial_verify.py
+```
+
+All rows ✓ = the chain is live. The ops agent and scheduler are started
+the same way (`dashboard/followup/runner.py --interval 300`,
+`integration/scheduler.py --interval 30`); systemd unit examples are in
+docs/GETTING-STARTED.md.
+
+## Adding a model seat (BYOM)
+
+Edit `dashboard/vram_registry.json`: add a seat entry with `name`,
+`port`, `service_unit`, and `load_cmd`. The ops agent probes every seat
+each cycle; a seat that does not answer is a finding, not a crash.
+
+## Common failure modes
+
+- `ModuleNotFoundError: dashboard` → export
+  `PYTHONPATH="$PWD:$PWD/dashboard"` from the repo root
+- `FileNotFoundError` under `~/.aerial/...` → create the parent
+  directories (see step 2)
+- Console returns 401 → every request needs
+  `Authorization: Bearer <hub-token>`
+- Board shows degraded sections → they fill as the ops agent accumulates
+  data; the first daily render is `dashboard/render_daily.py`
