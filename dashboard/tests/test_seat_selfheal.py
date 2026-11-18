@@ -521,7 +521,7 @@ def test_driver_f12_fail_closed_missing_pinned_hosts(tmp_path):
 def test_driver_f12_fail_closed_fingerprint_mismatch(tmp_path):
     rc, out, err, _ = run_driver(
         tmp_path, args=(),
-        env_extra={"FAKE_KEYGEN_FP": "SHA256:WRONGWRONGWRONGWRONGWRONGWRONGWRONGWRONG"})
+        env_extra={"FAKE_KEYGEN_FP": "SHA256:NOT-A-REAL-FINGERPRINT"})
     assert rc == 2, "fail closed on a fingerprint mismatch (no TOFU/MITM)"
     assert json.loads(out.strip())["via"] == "host-key"
 
