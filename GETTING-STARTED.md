@@ -211,6 +211,16 @@ environment); `hub/deploy/` ships launchd templates and install scripts.
 
 ## 7. Verify the chain
 
+One command checks the whole chain (python, imports, hub deps, state dirs,
+token file, hub health, console auth, ops-agent log) and prints a fix for
+anything that fails:
+
+```bash
+python3 aerial_verify.py          # add --json for machine output
+```
+
+Manual alternative (the same checks by hand):
+
 ```bash
 curl -s http://127.0.0.1:8021/health                        # hub:      ok: true
 T=$(cat ~/aerial-monorepo-demo/secrets/hub-token)

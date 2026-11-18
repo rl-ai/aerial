@@ -1,0 +1,100 @@
+# Aerial loopback demo: ticket hub + operator console + ops agent.
+# All commands follow GETTING-STARTED.md sections 4-6 and the code defaults.
+# Build: images are built locally from this tree (hub via ./hub, the shared
+# dashboard image via the repo root with dashboard/Dockerfile).
+
+services:
+  hub:
+    build: ./hub
+    restart: unless-stopped
+    environment:
+      # Loopback demo: bearer auth off (GETTING-STARTED.md section 4).
+      # The hub token is still used by the console and ops agent below.
+      TICKET_HUB_AUTH: "off"
+      TICKET_HUB_PORT: "8777"
+      # State under the hub's own named volume (the hub's own env contract).
+      TICKET_HUB_HOME: /home/aerial/.aerial/hub-home
+    volumes:
+      - hub-state:/home/aerial/.aerial
+    healthcheck:
+      # Same endpoint as GETTING-STARTED.md section 7 (hub /health).
+      # python -c instead of curl: python:3.12-slim has no curl.
+      test: ["CMD", "python3", "-c", "import json,urllib.request; r=urllib.request.urlopen('http://127.0.0.1:8777/health', timeout=3); assert json.load(r)['ok']"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  console:
+    build:
+      context: .
+      dockerfile: dashboard/Dockerfile
+    restart: unless-stopped
+    # GETTING-STARTED.md section 5: --port 8779. Inside the container the
+    # listen host must be 0.0.0.0 (the code's 127.0.0.1 default binds only
+    # container loopback, so the published port would never answer);
+    # publishing below still restricts the host side to 127.0.0.1.
+    command: >-
+      python3 dashboard/serve_console.py
+      --port 8779
+      --host 0.0.0.0
+      --hub-url http://hub:8777
+      --hub-token-file /run/secrets/hub-token
+    environment:
+      AERIAL_HUB_URL: http://hub:8777
+      AERIAL_HUB_TOKEN_FILE: /run/secrets/hub-token
+    secrets:
+      - hub-token
+    volumes:
+      - aerial-state:/home/aerial/.aerial
+    ports:
+      # Console published on loopback only (GETTING-STARTED.md section 5
+      # uses 8779 for the console).
+      - "127.0.0.1:8779:8779"
+    depends_on:
+      hub:
+        condition: service_healthy
+    healthcheck:
+      # Same endpoint as GETTING-STARTED.md section 7: /dashboard/health
+      # with the bearer read from the token file.
+      test: ["CMD-SHELL", "python3 -c \"import json,urllib.request; t=open('/run/secrets/hub-token').read().strip(); rq=urllib.request.Request('http://127.0.0.1:8779/dashboard/health', headers={'Authorization': 'Bearer ' + t}); r=urllib.request.urlopen(rq, timeout=3); assert json.load(r)['ok']\""]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  ops-agent:
+    build:
+      context: .
+      dockerfile: dashboard/Dockerfile
+    restart: unless-stopped
+    # GETTING-STARTED.md section 6: python3 -m dashboard.followup.runner
+    # --interval 300. Log under the state volume (the default ops_log
+    # subpath is <state_dir>/logs/ops-agent.log; the --log flag is the
+    # documented way to point it there).
+    command: >-
+      python3 -m dashboard.followup.runner
+      --interval 300
+      --log /home/aerial/.aerial/logs/ops-agent.log
+    environment:
+      AERIAL_HUB_URL: http://hub:8777
+      AERIAL_HUB_TOKEN_FILE: /run/secrets/hub-token
+    secrets:
+      - hub-token
+    volumes:
+      - aerial-state:/home/aerial/.aerial
+    depends_on:
+      hub:
+        condition: service_healthy
+
+volumes:
+  # State for console and ops agent, mounted where the deployment profile
+  # expects it (~/.aerial of the non-root user). The hub gets its own
+  # volume so the non-root ownership of aerial-state is preserved.
+  aerial-state:
+  hub-state:
+
+secrets:
+  # Created once by the operator; see docs/DOCKER.md. Never committed.
+  hub-token:
+    file: ./secrets/hub-token

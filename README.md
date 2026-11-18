@@ -65,8 +65,20 @@ state dir, ledger, and model seats; prints a pass/fail table.
 
 ## Install
 
-Python 3.10+, no third-party runtime dependencies for the core services
-(`gateway/` ships its own `pyproject.toml` if you use the MCP server).
+Three ways to get a running stack (Python 3.10+; the core services are
+stdlib-only):
+
+- **From source** — clone, copy the example profile, start the services:
+  [GETTING-STARTED.md](GETTING-STARTED.md)
+- **pip** — install the `aerial-*` commands from PyPI:
+  [docs/INSTALL-PIP.md](docs/INSTALL-PIP.md)
+- **Docker** — compose up the hub, console, and ops agent:
+  [docs/DOCKER.md](docs/DOCKER.md)
+
+Bring your own models — local VRAM, self-hosted endpoints, or cloud APIs —
+with the [BYOM guide](docs/BYOM.md). Release history: [CHANGELOG.md](CHANGELOG.md).
+
+### From source
 
 ```bash
 git clone https://github.com/rl-ai/aerial.git

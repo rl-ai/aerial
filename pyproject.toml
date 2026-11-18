@@ -1,0 +1,50 @@
+# Aerial — root packaging (pip lane).
+#
+# `pip install .` from a clone gives working console scripts with no
+# PYTHONPATH edits. The dashboard/ tree relies on bare sibling imports
+# (`from deployment_profile import value`, `import render_daily`,
+# `from console.serve import ...`), so the console and ops-agent entry
+# points go through the `aerial_entry` shim, which puts the installed
+# repo-root and dashboard/ directories on sys.path before importing the
+# real mains. No existing module is moved or renamed; hub/ and gateway/
+# keep their own pyproject.toml and are not packaged here.
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aerial"
+version = "1.0.1"
+description = "Aerial: ticket hub, operator console and ops agent in one repository."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+# The console, ops agent and verify lane are stdlib-only: no required deps.
+# The `hub` extra below mirrors hub/requirements.txt (fastapi, uvicorn).
+
+[project.optional-dependencies]
+# Mirrors hub/requirements.txt (fastapi, uvicorn) for the ticket hub.
+hub = [
+    "fastapi",
+    "uvicorn",
+]
+
+[project.scripts]
+# aerial_verify.py lives at the repo root (see GETTING-STARTED.md and the
+# verify lane); the shim below covers the two dashboard entry points.
+aerial-verify = "aerial_verify:main"
+aerial-console = "aerial_entry:console_main"
+aerial-ops-agent = "aerial_entry:ops_agent_main"
+
+[tool.setuptools]
+# Repo-root modules the dashboard code imports bare, plus the shim.
+py-modules = ["aerial_entry", "aerial_verify", "deployment_profile"]
+
+[tool.setuptools.packages.find]
+# Only the dashboard tree is packaged here; hub/ and gateway/ have their
+# own pyproject.toml files and integration/ stays a repo-side test lane.
+include = ["dashboard*"]
+exclude = ["dashboard.tests*"]
+
+[tool.setuptools.package-data]
+dashboard = ["*.json", "*.yaml"]
