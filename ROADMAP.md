@@ -4,6 +4,40 @@ Aerial is a **pilot release (beta)** — production-tested daily on the
 team's own fleet, but not yet packaged for general distribution. What
 works, what's rough, and what's next.
 
+## Operating principle: ship at 90%
+
+Releases ship at ~90% complete, with hard requirements that are never
+traded away: privacy (all-local, zero telemetry), verified core
+(remediation fixes proven by symptom probes), and honest documentation
+of every known limitation. The last mile is deliberately finished in
+public — real users and real failures define it better than we can
+pre-launch, and the remediation + gauntlet layers catch what ships
+rough. Known limitations are documented before users find them:
+imperfect is fine, surprised is not.
+
+## Continuous rebuild loop
+
+The product does not get maintained by hand after release — it gets
+**rebuilt continuously**:
+
+1. **Signals in** — the listening pipeline watches data sources,
+   upstream listeners (GitHub, Hugging Face, tech forums), and OSS
+   activity of related projects; failures and gaps from the running
+   deployment flow back as findings.
+2. **Seeds** — the founder seeds ideas and direction at ~90%
+   specification; the swarm builds them.
+3. **Rebuild** — a team of agents driven by the snapshot builder
+   (the forge: continuous snapshot builds with integrity gates, role
+   fences, and review) rebuilds the product incorporating the new
+   signals — scrapes, curation, discovery proposals, verified fixes —
+   as an Aerial-managed service.
+4. **Gate & ship** — the gauntlet gates every rebuild; verified builds
+   ship, unproved changes escalate.
+
+Status: the forge tooling exists and is proven on lane integrations;
+connecting it to Aerial's listening/scrape outputs as a managed service
+is the next build (see In progress above).
+
 ## Working now (v1.0-mvp)
 
 - Ticket hub with task-level shared context, evidence labels, mandates,
